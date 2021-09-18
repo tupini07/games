@@ -1,0 +1,11 @@
+help:
+    just --list
+
+build: 
+    p8tool build {{file_stem(invocation_directory())}}.p8 --lua main.lua
+
+develop:
+    watchexec -e lua just build
+
+minimize:
+    p8tool luamin 
