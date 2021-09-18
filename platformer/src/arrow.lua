@@ -41,12 +41,9 @@ local function get_clamped_arrow_dir(a)
     return directions_map[segment]
 end
 
---- Gets the direction of the arrow clamped to one of the 8 cardinal directions
 --- @param a Arrow
-local function collide_with_floor_walls(a)
-    -- we want to check if the 1/3 nearest to the sprite limit in the direction in which
-    -- the arrow is moving, is colliding with a wall or floor (a collidable sprite). If yes
-    -- then stop arrow
+--- @return Vector
+local function get_collision_vec(a)
     local arrow_dir = get_clamped_arrow_dir(a)
 
     local collision_x
@@ -78,9 +75,20 @@ local function collide_with_floor_walls(a)
         collision_y = a.y + 5
     end
 
+    return {x = collision_x, y = collision_y}
+end
+
+--- Gets the direction of the arrow clamped to one of the 8 cardinal directions
+--- @param a Arrow
+local function collide_with_floor_walls(a)
+    -- we want to check if the 1/3 nearest to the sprite limit in the direction in which
+    -- the arrow is moving, is colliding with a wall or floor (a collidable sprite). If yes
+    -- then stop arrow
+    local collision_vec = get_collision_vec(a)
+
     local is_colliding_with_solid = map.cell_has_flag(map.sprite_flags.solid,
-                                                      flr(collision_x / 8),
-                                                      flr(collision_y / 8))
+                                                      flr(collision_vec.x / 8),
+                                                      flr(collision_vec.y / 8))
 
     -- if collision point lies in a "solid" map tile then stop movement
     if is_colliding_with_solid then
@@ -110,6 +118,7 @@ local function update_arrow(a)
     a.dy = a.dy + 0.12
 
     collide_with_floor_walls(a)
+    -- todo collide with bullseye
 end
 
 --- @param a Arrow

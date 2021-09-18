@@ -1,4 +1,4 @@
-local sprite_flags = {solid = 0}
+local sprite_flags = {solid = 0, bullseye = 1}
 
 local map = {
     draw = function() map(0, 0, 0, 0, 33, 33) end,
