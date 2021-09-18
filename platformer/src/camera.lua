@@ -9,5 +9,11 @@ return {
         cam_y = mid(0, cam_y, map_tiles_height * 8 - 127)
 
         camera(cam_x, cam_y)
+    end,
+    focus_section = function (map_x, map_y)
+        camera(
+            map_x * 8,
+            map_y * 8
+        )
     end
 }

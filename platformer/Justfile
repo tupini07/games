@@ -8,4 +8,4 @@ develop:
     watchexec -e lua just build
 
 minimize:
-    p8tool luamin 
+    p8tool luamin {{file_stem(invocation_directory())}}.p8

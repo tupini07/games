@@ -128,7 +128,7 @@ return {
         move_player()
         check_floor()
         check_walls()
-        camera_utils.camera_center(player.x, player.y, 128, 64)
+        -- camera_utils.camera_center(player.x, player.y, 128, 64)
 
         bow.update()
     end,
