@@ -1,5 +1,5 @@
 local math = require("utils/math")
-local map = require("map")
+local map = require("src/map")
 
 --- @class Arrow:table
 --- @field public x number
@@ -10,13 +10,13 @@ local map = require("map")
 --- @field public is_stuck boolean
 
 --- @type Arrow[]
-arrows = {}
+ARROWS = {}
 
 local function fire_arrow(x, y, force, angle)
     local dx = cos(angle) * force
     local dy = sin(angle) * force
 
-    add(arrows,
+    add(ARROWS,
         {x = x, y = y, dx = dx, dy = dy, lifetime = 60, is_stuck = false})
 end
 
@@ -101,9 +101,13 @@ local function collide_with_floor_walls(a)
 end
 
 --- @param a Arrow
+local function collide_with_bullseye(a)
+end
+
+--- @param a Arrow
 local function update_arrow(a)
     if a.lifetime == 0 then
-        del(arrows, a)
+        del(ARROWS, a)
         return
     else
         a.lifetime = a.lifetime - 1
@@ -118,7 +122,7 @@ local function update_arrow(a)
     a.dy = a.dy + 0.12
 
     collide_with_floor_walls(a)
-    -- todo collide with bullseye
+    collide_with_bullseye(a)
 end
 
 --- @param a Arrow
@@ -142,7 +146,7 @@ local function draw_arrow(a)
 end
 
 return {
-    update_all = function() foreach(arrows, update_arrow) end,
-    draw_all = function() foreach(arrows, draw_arrow) end,
+    update_all = function() foreach(ARROWS, update_arrow) end,
+    draw_all = function() foreach(ARROWS, draw_arrow) end,
     fire_arrow = fire_arrow
 }

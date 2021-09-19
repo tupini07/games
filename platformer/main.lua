@@ -1,9 +1,12 @@
 -- Marksman
 -- by Dadum
 local map = require("src/map")
-local player = require("src/player")
-local arrow = require("src/arrow")
-local camera_utils = require("camera")
+local camera_utils = require("src/camera")
+
+local player = require("entities/player")
+local arrow = require("entities/arrow")
+local bullseye = require("entities/bullseye")
+
 
 function _init()
     player.init()
@@ -17,8 +20,9 @@ function _update()
 end
 
 function _draw()
-    cls(6)
+    cls(12)
     map.draw()
     player.draw()
+    bullseye.draw()
     arrow.draw_all()
 end

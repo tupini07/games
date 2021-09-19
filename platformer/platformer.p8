@@ -5,6 +5,8 @@ package={loaded={},_c={}}
 package._c["src/map"]=function()
 local sprite_flags = {solid = 0, bullseye = 1}
 
+local bullseye = require("entities/bullseye")
+
 local map = {
     draw = function() map(0, 0, 0, 0, 33, 33) end,
     sprite_flags = sprite_flags,
@@ -15,8 +17,13 @@ local map = {
                 local sprt = mget(x, y)
                 if sprt == 3 then
                     mset(x, y, 0)
-                    player.x = x * 8
-                    player.y = y * 8
+                    PLAYER.x = x * 8
+                    PLAYER.y = y * 8
+                end
+
+                if sprt == 5 then
+                    -- this means it's the top left corner of left-facing bullseye
+                    bullseye.replace_in_map(x, y, bullseye.orientation.left)
                 end
             end
         end
@@ -25,149 +32,59 @@ local map = {
 
 return map
 end
-package._c["src/player"]=function()
-local camera_utils = require("camera")
-local math = require("utils/math")
-local map = require("map")
-local bow = require("bow")
-
-player = {
+package._c["entities/bullseye"]=function()
+--- @class Bullseye:table
+--- @field public x number x coordinates of top left
+--- @field public y number y coordinates of top left
+--- @field public sprite_x number x coords of sprite
+--- @field public sprite_y number y coords of sprite
+--- @field public hitbox_x number x coords of hitbox
+--- @field public hitbox_y number y coords of hitbox
+--- @field public hitbox_w number width of hitbox
+--- @field public hitbox_h number height of hitbox
+--- @type Bullseye
+BULLSEYE = {
     x = 0,
     y = 0,
-    dx = 0,
-    dy = 0,
-    ddy = 0.12,
-    dir = 1,
-    is_jumping = false,
-    changing_bow_dir = false
+    sprite_x = 0,
+    sprite_y = 0,
+    hitbox_x = 0,
+    hitbox_y = 0,
+    hitbox_h = 0,
+    hitbox_w = 0
 }
 
-local function move_player()
-    local jumping_mod = 0.55
-    if not player.is_jumping then jumping_mod = 1 end
-    if not player.changing_bow_dir then
-        if btn(0) then
-            player.dx = player.dx - 1 * jumping_mod
-        elseif btn(1) then
-            player.dx = player.dx + 1 * jumping_mod
-        end
-
-        if btnp(2) and not player.is_jumping then player.dy = -2 end
-    end
-
-    -- cap deltas
-    player.dx = math.cap_with_sign(player.dx, 0, 2)
-    player.dy = math.cap_with_sign(player.dy, 0, 2)
-
-    -- apply velocity
-    player.dir = sgn(player.dx)
-    player.x = player.x + player.dx
-    player.y = player.y + player.dy
-
-    -- apply gravity
-    player.dy = player.dy + player.ddy
-
-    -- apply friction
-    player.dx = player.dx * 0.5
-end
-
-local function check_floor()
-    local bottom_x = flr((player.x + 4) / 8)
-    local bottom_y = flr((player.y + 8) / 8)
-
-    local is_bottom_floor = map.cell_has_flag(map.sprite_flags.solid, bottom_x,
-                                              bottom_y)
-
-    if is_bottom_floor then
-        player.is_jumping = false
-        player.y = (bottom_y - 1) * 8
-        player.dy = 0
-    else
-        player.is_jumping = true
-    end
-end
-
-local function check_walls()
-    local pl_y = flr(player.y / 8)
-    local left_x = flr(player.x / 8)
-    local right_x = flr((player.x + 8) / 8)
-
-    local is_left_wall = map.cell_has_flag(map.sprite_flags.solid, left_x, pl_y)
-    local is_right_wall = map.cell_has_flag(map.sprite_flags.solid, right_x,
-                                            pl_y)
-
-    -- todo this is not working properly
-    if is_left_wall then
-        player.x = ((left_x + 1) * 8)
-        player.dx = 0
-    elseif is_right_wall then
-        player.x = ((right_x - 1) * 8)
-        player.dx = 0
-    end
-end
-
-local function change_bow_direction()
-    if btn(4) then
-        player.changing_bow_dir = true
-        local left = btn(0)
-        local right = btn(1)
-        local up = btn(2)
-        local down = btn(3)
-
-        -- first check corners
-        -- see bow.lua for map of directions
-        if up and left then
-            player.dir = -1
-            bow.change_dir(4)
-        elseif up and right then
-            player.dir = 1
-            bow.change_dir(2)
-        elseif down and left then
-            player.dir = -1
-            bow.change_dir(6)
-        elseif down and right then
-            player.dir = 1
-            bow.change_dir(8)
-        elseif up then
-            player.dir = 1
-            bow.change_dir(3)
-        elseif right then
-            player.dir = 1
-            bow.change_dir(1)
-        elseif down then
-            player.dir = 1
-            bow.change_dir(7)
-        elseif left then
-            player.dir = -1
-            bow.change_dir(5)
-        end
-    else
-        player.changing_bow_dir = false
-    end
-end
+local orientations = {left = 1}
 
 return {
-    init = function()
-        -- player = {x = 5 * 8, y = 11 * 8} 
-        bow.init()
-    end,
-    update = function()
-        change_bow_direction()
-        move_player()
-        check_floor()
-        check_walls()
-        -- camera_utils.camera_center(player.x, player.y, 128, 64)
+    orientation = orientations,
+    replace_in_map = function(mapx, mapy, type)
+        mset(mapx, mapy, 0)
+        mset(mapx + 1, mapy, 0)
+        mset(mapx, mapy + 1, 0)
+        mset(mapx + 1, mapy + 1, 0)
 
-        bow.update()
+        BULLSEYE.x = mapx * 8
+        BULLSEYE.y = mapy * 8
+
+        if type == orientations.left then
+            BULLSEYE.sprite_x = 40
+            BULLSEYE.sprite_y = 0
+            BULLSEYE.hitbox_x = BULLSEYE.x + 6
+            BULLSEYE.hitbox_y = BULLSEYE.y + 7
+
+            BULLSEYE.hitbox_w = 6
+            BULLSEYE.hitbox_h = 6
+        end
     end,
+
     draw = function()
-        spr(3, player.x, player.y, 1, 1, player.dir == -1)
-        bow.draw()
+        sspr(BULLSEYE.sprite_x, BULLSEYE.sprite_y, 16, 16, BULLSEYE.x,
+             BULLSEYE.y)
     end
 }
-
 end
-package._c["camera"]=function()
+package._c["src/camera"]=function()
 local logger = require("utils/logger")
 
 return {
@@ -197,6 +114,148 @@ return {
         assert(condition, msg)
     end
 }
+end
+package._c["entities/player"]=function()
+local math = require("utils/math")
+local map = require("src/map")
+local camera_utils = require("src/camera")
+local bow = require("entities/bow")
+
+PLAYER = {
+    x = 0,
+    y = 0,
+    dx = 0,
+    dy = 0,
+    ddy = 0.12,
+    dir = 1,
+    is_jumping = false,
+    changing_bow_dir = false
+}
+
+local function move_player()
+    local jumping_mod = 0.55
+    if not PLAYER.is_jumping then jumping_mod = 1 end
+    if not PLAYER.changing_bow_dir then
+        if btn(0) then
+            PLAYER.dx = PLAYER.dx - 1 * jumping_mod
+        elseif btn(1) then
+            PLAYER.dx = PLAYER.dx + 1 * jumping_mod
+        end
+
+        if btnp(2) and not PLAYER.is_jumping then PLAYER.dy = -2 end
+    end
+
+    -- cap deltas
+    PLAYER.dx = math.cap_with_sign(PLAYER.dx, 0, 2)
+    PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 2)
+
+    -- apply velocity
+    PLAYER.dir = sgn(PLAYER.dx)
+    PLAYER.x = PLAYER.x + PLAYER.dx
+    PLAYER.y = PLAYER.y + PLAYER.dy
+
+    -- apply gravity
+    PLAYER.dy = PLAYER.dy + PLAYER.ddy
+
+    -- apply friction
+    PLAYER.dx = PLAYER.dx * 0.5
+end
+
+local function check_floor()
+    local bottom_x = flr((PLAYER.x + 4) / 8)
+    local bottom_y = flr((PLAYER.y + 8) / 8)
+
+    local is_bottom_floor = map.cell_has_flag(map.sprite_flags.solid, bottom_x,
+                                              bottom_y)
+
+    if is_bottom_floor then
+        PLAYER.is_jumping = false
+        PLAYER.y = (bottom_y - 1) * 8
+        PLAYER.dy = 0
+    else
+        PLAYER.is_jumping = true
+    end
+end
+
+local function check_walls()
+    local pl_y = flr(PLAYER.y / 8)
+    local left_x = flr(PLAYER.x / 8)
+    local right_x = flr((PLAYER.x + 8) / 8)
+
+    local is_left_wall = map.cell_has_flag(map.sprite_flags.solid, left_x, pl_y)
+    local is_right_wall = map.cell_has_flag(map.sprite_flags.solid, right_x,
+                                            pl_y)
+
+    -- todo this is not working properly
+    if is_left_wall then
+        PLAYER.x = ((left_x + 1) * 8)
+        PLAYER.dx = 0
+    elseif is_right_wall then
+        PLAYER.x = ((right_x - 1) * 8)
+        PLAYER.dx = 0
+    end
+end
+
+local function change_bow_direction()
+    if btn(4) then
+        PLAYER.changing_bow_dir = true
+        local left = btn(0)
+        local right = btn(1)
+        local up = btn(2)
+        local down = btn(3)
+
+        -- first check corners
+        -- see bow.lua for map of directions
+        if up and left then
+            PLAYER.dir = -1
+            bow.change_dir(4)
+        elseif up and right then
+            PLAYER.dir = 1
+            bow.change_dir(2)
+        elseif down and left then
+            PLAYER.dir = -1
+            bow.change_dir(6)
+        elseif down and right then
+            PLAYER.dir = 1
+            bow.change_dir(8)
+        elseif up then
+            PLAYER.dir = 1
+            bow.change_dir(3)
+        elseif right then
+            PLAYER.dir = 1
+            bow.change_dir(1)
+        elseif down then
+            PLAYER.dir = 1
+            bow.change_dir(7)
+        elseif left then
+            PLAYER.dir = -1
+            bow.change_dir(5)
+        end
+    else
+        PLAYER.changing_bow_dir = false
+    end
+end
+
+return {
+    init = function()
+        -- player = {x = 5 * 8, y = 11 * 8} 
+        bow.init()
+    end,
+    update = function()
+        change_bow_direction()
+        move_player()
+        check_floor()
+        check_walls()
+        -- camera_utils.camera_center(player.x, player.y, 128, 64)
+
+        bow.update()
+    end,
+    draw = function()
+        spr(3, PLAYER.x, PLAYER.y, 1, 1, PLAYER.dir == -1)
+        bow.draw()
+    end
+}
+
 end
 package._c["utils/math"]=function()
 --- @class Vector:table
@@ -230,31 +289,8 @@ local math = {
 
 return math
 end
-package._c["map"]=function()
-local sprite_flags = {solid = 0, bullseye = 1}
-
-local map = {
-    draw = function() map(0, 0, 0, 0, 33, 33) end,
-    sprite_flags = sprite_flags,
-    cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
-    replace_entities = function()
-        for x = 0, 128 do
-            for y = 0, 64 do
-                local sprt = mget(x, y)
-                if sprt == 3 then
-                    mset(x, y, 0)
-                    player.x = x * 8
-                    player.y = y * 8
-                end
-            end
-        end
-    end
-}
-
-return map
-end
-package._c["bow"]=function()
-local arrows = require("arrow")
+package._c["entities/bow"]=function()
+local arrows = require("entities/arrow")
 
 --[[
 directions:
@@ -263,47 +299,47 @@ directions:
   6   7   8
 --]]
 
-bow = {x = 0, y = 0, dir = 1}
+BOW = {x = 0, y = 0, dir = 1}
 
 local function fire_arrow()
-    local arrow_dir = (bow.dir - 1) / 8
+    local arrow_dir = (BOW.dir - 1) / 8
     -- 0.25 is up 
     -- 0.75 is down
-    if btnp(5) then arrows.fire_arrow(bow.x, bow.y, 5, arrow_dir) end
+    if btnp(5) then arrows.fire_arrow(BOW.x, BOW.y, 5, arrow_dir) end
 end
 
 return {
-    change_dir = function(dir) bow.dir = dir end,
+    change_dir = function(dir) BOW.dir = dir end,
     init = function()
-        bow.x = player.x
-        bow.y = player.y
+        BOW.x = PLAYER.x
+        BOW.y = PLAYER.y
     end,
     update = function()
-        bow.x = player.x
-        bow.y = player.y
+        BOW.x = PLAYER.x
+        BOW.y = PLAYER.y
 
         fire_arrow()
     end,
     draw = function()
         local srpn = 19
-        if bow.dir == 1 or bow.dir == 5 then
+        if BOW.dir == 1 or BOW.dir == 5 then
             srpn = 19
-        elseif bow.dir == 3 or bow.dir == 7 then
+        elseif BOW.dir == 3 or BOW.dir == 7 then
             srpn = 18
         else
             srpn = 20
         end
 
-        local flip_x = bow.dir == 4 or bow.dir == 5 or bow.dir == 6
-        local flip_y = bow.dir == 6 or bow.dir == 7 or bow.dir == 8
+        local flip_x = BOW.dir == 4 or BOW.dir == 5 or BOW.dir == 6
+        local flip_y = BOW.dir == 6 or BOW.dir == 7 or BOW.dir == 8
 
-        spr(srpn, bow.x, bow.y, 1, 1, flip_x, flip_y)
+        spr(srpn, BOW.x, BOW.y, 1, 1, flip_x, flip_y)
     end
 }
 end
-package._c["arrow"]=function()
+package._c["entities/arrow"]=function()
 local math = require("utils/math")
-local map = require("map")
+local map = require("src/map")
 
 --- @class Arrow:table
 --- @field public x number
@@ -314,13 +350,13 @@ local map = require("map")
 --- @field public is_stuck boolean
 
 --- @type Arrow[]
-arrows = {}
+ARROWS = {}
 
 local function fire_arrow(x, y, force, angle)
     local dx = cos(angle) * force
     local dy = sin(angle) * force
 
-    add(arrows,
+    add(ARROWS,
         {x = x, y = y, dx = dx, dy = dy, lifetime = 60, is_stuck = false})
 end
 
@@ -405,9 +441,13 @@ local function collide_with_floor_walls(a)
 end
 
 --- @param a Arrow
+local function collide_with_bullseye(a)
+end
+
+--- @param a Arrow
 local function update_arrow(a)
     if a.lifetime == 0 then
-        del(arrows, a)
+        del(ARROWS, a)
         return
     else
         a.lifetime = a.lifetime - 1
@@ -422,7 +462,7 @@ local function update_arrow(a)
     a.dy = a.dy + 0.12
 
     collide_with_floor_walls(a)
-    -- todo collide with bullseye
+    collide_with_bullseye(a)
 end
 
 --- @param a Arrow
@@ -446,158 +486,8 @@ local function draw_arrow(a)
 end
 
 return {
-    update_all = function() foreach(arrows, update_arrow) end,
-    draw_all = function() foreach(arrows, draw_arrow) end,
-    fire_arrow = fire_arrow
-}
-end
-package._c["src/arrow"]=function()
-local math = require("utils/math")
-local map = require("map")
-
---- @class Arrow:table
---- @field public x number
---- @field public y number
---- @field public dx number
---- @field public dy number
---- @field public lifetime number
---- @field public is_stuck boolean
-
---- @type Arrow[]
-arrows = {}
-
-local function fire_arrow(x, y, force, angle)
-    local dx = cos(angle) * force
-    local dy = sin(angle) * force
-
-    add(arrows,
-        {x = x, y = y, dx = dx, dy = dy, lifetime = 60, is_stuck = false})
-end
-
---- @param a Arrow
-local function get_clamped_arrow_dir(a)
-    local angle = atan2(a.dx, a.dy)
-
-    -- see quadrant in bow.lua
-    local segment = math.get_nearest(angle, 1, 0.11, 0.25, 0.38, 0.5, 0.63,
-                                     0.75, 0.86)
-    local directions_map = {
-        [1] = 1,
-        [0.11] = 2,
-        [0.25] = 3,
-        [0.38] = 4,
-        [0.5] = 5,
-        [0.63] = 6,
-        [0.75] = 7,
-        [0.86] = 8
-    }
-
-    return directions_map[segment]
-end
-
---- @param a Arrow
---- @return Vector
-local function get_collision_vec(a)
-    local arrow_dir = get_clamped_arrow_dir(a)
-
-    local collision_x
-    local collision_y
-
-    if arrow_dir == 1 then
-        collision_x = a.x + 5
-        collision_y = a.y + 4
-    elseif arrow_dir == 2 then
-        collision_x = a.x + 5
-        collision_y = a.y + 3
-    elseif arrow_dir == 3 then
-        collision_x = a.x + 4
-        collision_y = a.y + 3
-    elseif arrow_dir == 4 then
-        collision_x = a.x + 3
-        collision_y = a.y + 3
-    elseif arrow_dir == 5 then
-        collision_x = a.x + 3
-        collision_y = a.y + 4
-    elseif arrow_dir == 6 then
-        collision_x = a.x + 3
-        collision_y = a.y + 5
-    elseif arrow_dir == 7 then
-        collision_x = a.x + 4
-        collision_y = a.y + 5
-    elseif arrow_dir == 8 then
-        collision_x = a.x + 5
-        collision_y = a.y + 5
-    end
-
-    return {x = collision_x, y = collision_y}
-end
-
---- Gets the direction of the arrow clamped to one of the 8 cardinal directions
---- @param a Arrow
-local function collide_with_floor_walls(a)
-    -- we want to check if the 1/3 nearest to the sprite limit in the direction in which
-    -- the arrow is moving, is colliding with a wall or floor (a collidable sprite). If yes
-    -- then stop arrow
-    local collision_vec = get_collision_vec(a)
-
-    local is_colliding_with_solid = map.cell_has_flag(map.sprite_flags.solid,
-                                                      flr(collision_vec.x / 8),
-                                                      flr(collision_vec.y / 8))
-
-    -- if collision point lies in a "solid" map tile then stop movement
-    if is_colliding_with_solid then
-        local angle = atan2(a.dx, a.dy)
-        a.x = a.x - cos(angle) * 3
-        a.y = a.y - sin(angle) * 3
-
-        a.is_stuck = true
-    end
-end
-
---- @param a Arrow
-local function update_arrow(a)
-    if a.lifetime == 0 then
-        del(arrows, a)
-        return
-    else
-        a.lifetime = a.lifetime - 1
-    end
-
-    if a.is_stuck then return end
-
-    a.y = a.y + a.dy
-    a.x = a.x + a.dx
-
-    -- apply gravity
-    a.dy = a.dy + 0.12
-
-    collide_with_floor_walls(a)
-    -- todo collide with bullseye
-end
-
---- @param a Arrow
-local function draw_arrow(a)
-    local arrow_dir = get_clamped_arrow_dir(a)
-
-    local sprtn
-
-    if arrow_dir == 1 or arrow_dir == 5 then
-        sprtn = 35
-    elseif arrow_dir == 3 or arrow_dir == 7 then
-        sprtn = 34
-    else
-        sprtn = 36
-    end
-
-    local flip_x = arrow_dir == 4 or arrow_dir == 5 or arrow_dir == 6
-    local flip_y = arrow_dir == 6 or arrow_dir == 7 or arrow_dir == 8
-
-    spr(sprtn, a.x, a.y, 1, 1, flip_x, flip_y)
-end
-
-return {
-    update_all = function() foreach(arrows, update_arrow) end,
-    draw_all = function() foreach(arrows, draw_arrow) end,
+    update_all = function() foreach(ARROWS, update_arrow) end,
+    draw_all = function() foreach(ARROWS, draw_arrow) end,
     fire_arrow = fire_arrow
 }
 end
@@ -610,9 +500,12 @@ end
 -- Marksman
 -- by Dadum
 local map = require("src/map")
-local player = require("src/player")
-local arrow = require("src/arrow")
-local camera_utils = require("camera")
+local camera_utils = require("src/camera")
+
+local player = require("entities/player")
+local arrow = require("entities/arrow")
+local bullseye = require("entities/bullseye")
+
 
 function _init()
     player.init()
@@ -626,9 +519,10 @@ function _update()
 end
 
 function _draw()
-    cls(6)
+    cls(12)
     map.draw()
     player.draw()
+    bullseye.draw()
     arrow.draw_all()
 end
 __gfx__
@@ -795,7 +689,7 @@ __label__
 66666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
 
 __gff__
-0001010000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0001010000020200000000000000000000010000000202000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 1111111111111111111111111111111100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

@@ -1,9 +1,9 @@
-local camera_utils = require("camera")
 local math = require("utils/math")
-local map = require("map")
-local bow = require("bow")
+local map = require("src/map")
+local camera_utils = require("src/camera")
+local bow = require("entities/bow")
 
-player = {
+PLAYER = {
     x = 0,
     y = 0,
     dx = 0,
@@ -16,53 +16,53 @@ player = {
 
 local function move_player()
     local jumping_mod = 0.55
-    if not player.is_jumping then jumping_mod = 1 end
-    if not player.changing_bow_dir then
+    if not PLAYER.is_jumping then jumping_mod = 1 end
+    if not PLAYER.changing_bow_dir then
         if btn(0) then
-            player.dx = player.dx - 1 * jumping_mod
+            PLAYER.dx = PLAYER.dx - 1 * jumping_mod
         elseif btn(1) then
-            player.dx = player.dx + 1 * jumping_mod
+            PLAYER.dx = PLAYER.dx + 1 * jumping_mod
         end
 
-        if btnp(2) and not player.is_jumping then player.dy = -2 end
+        if btnp(2) and not PLAYER.is_jumping then PLAYER.dy = -2 end
     end
 
     -- cap deltas
-    player.dx = math.cap_with_sign(player.dx, 0, 2)
-    player.dy = math.cap_with_sign(player.dy, 0, 2)
+    PLAYER.dx = math.cap_with_sign(PLAYER.dx, 0, 2)
+    PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 2)
 
     -- apply velocity
-    player.dir = sgn(player.dx)
-    player.x = player.x + player.dx
-    player.y = player.y + player.dy
+    PLAYER.dir = sgn(PLAYER.dx)
+    PLAYER.x = PLAYER.x + PLAYER.dx
+    PLAYER.y = PLAYER.y + PLAYER.dy
 
     -- apply gravity
-    player.dy = player.dy + player.ddy
+    PLAYER.dy = PLAYER.dy + PLAYER.ddy
 
     -- apply friction
-    player.dx = player.dx * 0.5
+    PLAYER.dx = PLAYER.dx * 0.5
 end
 
 local function check_floor()
-    local bottom_x = flr((player.x + 4) / 8)
-    local bottom_y = flr((player.y + 8) / 8)
+    local bottom_x = flr((PLAYER.x + 4) / 8)
+    local bottom_y = flr((PLAYER.y + 8) / 8)
 
     local is_bottom_floor = map.cell_has_flag(map.sprite_flags.solid, bottom_x,
                                               bottom_y)
 
     if is_bottom_floor then
-        player.is_jumping = false
-        player.y = (bottom_y - 1) * 8
-        player.dy = 0
+        PLAYER.is_jumping = false
+        PLAYER.y = (bottom_y - 1) * 8
+        PLAYER.dy = 0
     else
-        player.is_jumping = true
+        PLAYER.is_jumping = true
     end
 end
 
 local function check_walls()
-    local pl_y = flr(player.y / 8)
-    local left_x = flr(player.x / 8)
-    local right_x = flr((player.x + 8) / 8)
+    local pl_y = flr(PLAYER.y / 8)
+    local left_x = flr(PLAYER.x / 8)
+    local right_x = flr((PLAYER.x + 8) / 8)
 
     local is_left_wall = map.cell_has_flag(map.sprite_flags.solid, left_x, pl_y)
     local is_right_wall = map.cell_has_flag(map.sprite_flags.solid, right_x,
@@ -70,17 +70,17 @@ local function check_walls()
 
     -- todo this is not working properly
     if is_left_wall then
-        player.x = ((left_x + 1) * 8)
-        player.dx = 0
+        PLAYER.x = ((left_x + 1) * 8)
+        PLAYER.dx = 0
     elseif is_right_wall then
-        player.x = ((right_x - 1) * 8)
-        player.dx = 0
+        PLAYER.x = ((right_x - 1) * 8)
+        PLAYER.dx = 0
     end
 end
 
 local function change_bow_direction()
     if btn(4) then
-        player.changing_bow_dir = true
+        PLAYER.changing_bow_dir = true
         local left = btn(0)
         local right = btn(1)
         local up = btn(2)
@@ -89,32 +89,32 @@ local function change_bow_direction()
         -- first check corners
         -- see bow.lua for map of directions
         if up and left then
-            player.dir = -1
+            PLAYER.dir = -1
             bow.change_dir(4)
         elseif up and right then
-            player.dir = 1
+            PLAYER.dir = 1
             bow.change_dir(2)
         elseif down and left then
-            player.dir = -1
+            PLAYER.dir = -1
             bow.change_dir(6)
         elseif down and right then
-            player.dir = 1
+            PLAYER.dir = 1
             bow.change_dir(8)
         elseif up then
-            player.dir = 1
+            PLAYER.dir = 1
             bow.change_dir(3)
         elseif right then
-            player.dir = 1
+            PLAYER.dir = 1
             bow.change_dir(1)
         elseif down then
-            player.dir = 1
+            PLAYER.dir = 1
             bow.change_dir(7)
         elseif left then
-            player.dir = -1
+            PLAYER.dir = -1
             bow.change_dir(5)
         end
     else
-        player.changing_bow_dir = false
+        PLAYER.changing_bow_dir = false
     end
 end
 
@@ -133,7 +133,7 @@ return {
         bow.update()
     end,
     draw = function()
-        spr(3, player.x, player.y, 1, 1, player.dir == -1)
+        spr(3, PLAYER.x, PLAYER.y, 1, 1, PLAYER.dir == -1)
         bow.draw()
     end
 }
