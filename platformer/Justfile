@@ -9,6 +9,7 @@ build:
     #!/usr/bin/env python3
     import os
     from pathlib import Path
+    from datetime import datetime
 
     dirs_in_dir = set()
     p = Path('.')
@@ -23,7 +24,7 @@ build:
 
     p8_name = "{{file_stem(justfile_directory())}}.p8"
     os.system(f"p8tool build {p8_name} --lua main.lua --lua-path='{lua_path}'")
-    print("--- finish build ---")
+    print(f"--- [{datetime.now()}] finish build ---")
 
 develop:
     watchexec -e lua just build

@@ -102,6 +102,15 @@ end
 
 --- @param a Arrow
 local function collide_with_bullseye(a)
+    -- if collission_vec is inside the bullseye hitbox then we have a collission
+    local collision_vec = get_collision_vec(a)
+
+    local bullseye_hitbox_x2 = BULLSEYE.hitbox_x + BULLSEYE.hitbox_w
+    local bullseye_hitbox_y2 = BULLSEYE.hitbox_y + BULLSEYE.hitbox_h
+
+    if collision_vec.x >= BULLSEYE.hitbox_x and collision_vec.x <=
+        bullseye_hitbox_x2 and collision_vec.y >= BULLSEYE.hitbox_y and
+        collision_vec.y <= bullseye_hitbox_y2 then a.is_stuck = true end
 end
 
 --- @param a Arrow
