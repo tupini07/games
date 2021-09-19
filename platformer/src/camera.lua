@@ -1,4 +1,5 @@
 local logger = require("utils/logger")
+local map = require("src/map")
 
 return {
     camera_center = function(x, y, map_tiles_width, map_tiles_height)
@@ -10,10 +11,9 @@ return {
 
         camera(cam_x, cam_y)
     end,
-    focus_section = function (map_x, map_y)
-        camera(
-            map_x * 8,
-            map_y * 8
-        )
+    focus_section = function(current_level)
+        local level_block_coords = map.level_to_map_coords(current_level)
+
+        camera(level_block_coords.x * 8, level_block_coords.y * 8)
     end
 }

@@ -110,7 +110,10 @@ local function collide_with_bullseye(a)
 
     if collision_vec.x >= BULLSEYE.hitbox_x and collision_vec.x <=
         bullseye_hitbox_x2 and collision_vec.y >= BULLSEYE.hitbox_y and
-        collision_vec.y <= bullseye_hitbox_y2 then a.is_stuck = true end
+        collision_vec.y <= bullseye_hitbox_y2 then 
+            a.is_stuck = true 
+            WIN_LEVEL()
+    end
 end
 
 --- @param a Arrow

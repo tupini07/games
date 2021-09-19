@@ -1,8 +1,8 @@
 -- Marksman
 -- by Dadum
 
-local save_manager = require("utils/save_manager")
-local state_manager = require("states/state_manager")
+local save_manager = require("managers/savefile")
+local state_manager = require("managers/state")
 
 function _init()
     save_manager.init()
