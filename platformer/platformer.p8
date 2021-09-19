@@ -2,6 +2,83 @@ pico-8 cartridge // http://www.pico-8.com
 version 33
 __lua__
 package={loaded={},_c={}}
+package._c["utils/save_manager"]=function()
+return {
+    init = function ()
+        cartdata("dadum_marksman")
+    end
+}
+end
+package._c["states/state_manager"]=function()
+local game_state = require("states/game_state")
+local intro_state = require("states/intro_state")
+
+GAME_STATE = {}
+GAME_STATES_ENUM = {intro_state = 1, gameplay_state = 2}
+
+function SWITCH_GAME_STATE(new_state)
+    if new_state ~= GAME_STATE.current_state then
+        GAME_STATE.current_state = new_state
+        if new_state == GAME_STATES_ENUM.intro_state then
+            intro_state.init()
+        elseif new_state == GAME_STATES_ENUM.gameplay_state then
+            game_state.init()
+        end
+    end
+end
+
+local function act_for_current_state(act_map)
+    local act_to_perform = act_map[GAME_STATE.current_state]
+    act_to_perform()
+end
+
+return {
+    GAME_STATES_ENUM = GAME_STATES_ENUM,
+    SWITCH_GAME_STATE = SWITCH_GAME_STATE,
+    init = function() SWITCH_GAME_STATE(GAME_STATES_ENUM.intro_state) end,
+    update = function()
+        act_for_current_state({
+            [GAME_STATES_ENUM.intro_state] = intro_state.update,
+            [GAME_STATES_ENUM.gameplay_state] = game_state.update
+        })
+    end,
+    draw = function()
+        act_for_current_state({
+            [GAME_STATES_ENUM.intro_state] = intro_state.draw,
+            [GAME_STATES_ENUM.gameplay_state] = game_state.draw
+        })
+    end
+}
+end
+package._c["states/game_state"]=function()
+local map = require("src/map")
+local camera_utils = require("src/camera")
+
+local player = require("entities/player")
+local arrow = require("entities/arrow")
+local bullseye = require("entities/bullseye")
+
+local function init()
+    player.init()
+    map.replace_entities()
+    camera_utils.focus_section(0, 0) -- need to move this to a level manager
+end
+
+local function update()
+    player.update()
+    arrow.update_all()
+end
+
+local function draw()
+    cls(12)
+    map.draw()
+    player.draw()
+    bullseye.draw()
+    arrow.draw_all()
+end
+
+return {init = init, update = update, draw = draw}
+end
 package._c["src/map"]=function()
 local sprite_flags = {solid = 0, bullseye = 1}
 
@@ -500,6 +577,25 @@ return {
     fire_arrow = fire_arrow
 }
 end
+package._c["states/intro_state"]=function()
+-- local state_manager = require("states/state_manager")
+local function init() end
+
+local function update()
+    if btnp(5) then
+        SWITCH_GAME_STATE(GAME_STATES_ENUM.gameplay_state)
+        -- state_manager.switch_state(state_manager.states.gameplay_state)
+    end
+end
+
+local function draw()
+    cls(2)
+    print("welcome to {game}")
+    print("Press ❎ to continue")
+end
+
+return {init = init, update = update, draw = draw}
+end
 function require(p)
 local l=package.loaded
 if (l[p]==nil) l[p]=package._c[p]()
@@ -508,31 +604,21 @@ return l[p]
 end
 -- Marksman
 -- by Dadum
-local map = require("src/map")
-local camera_utils = require("src/camera")
 
-local player = require("entities/player")
-local arrow = require("entities/arrow")
-local bullseye = require("entities/bullseye")
-
+local save_manager = require("utils/save_manager")
+local state_manager = require("states/state_manager")
 
 function _init()
-    player.init()
-    map.replace_entities()
-    camera_utils.focus_section(0, 0) -- need to move this to a level manager
+    save_manager.init()
+    state_manager.init()
 end
 
 function _update()
-    player.update()
-    arrow.update_all()
+    state_manager.update()
 end
 
 function _draw()
-    cls(12)
-    map.draw()
-    player.draw()
-    bullseye.draw()
-    arrow.draw_all()
+    state_manager.draw()
 end
 __gfx__
 00000000333333334444444400ccc000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

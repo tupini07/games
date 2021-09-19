@@ -1,28 +1,18 @@
 -- Marksman
 -- by Dadum
-local map = require("src/map")
-local camera_utils = require("src/camera")
 
-local player = require("entities/player")
-local arrow = require("entities/arrow")
-local bullseye = require("entities/bullseye")
-
+local save_manager = require("utils/save_manager")
+local state_manager = require("states/state_manager")
 
 function _init()
-    player.init()
-    map.replace_entities()
-    camera_utils.focus_section(0, 0) -- need to move this to a level manager
+    save_manager.init()
+    state_manager.init()
 end
 
 function _update()
-    player.update()
-    arrow.update_all()
+    state_manager.update()
 end
 
 function _draw()
-    cls(12)
-    map.draw()
-    player.draw()
-    bullseye.draw()
-    arrow.draw_all()
+    state_manager.draw()
 end
