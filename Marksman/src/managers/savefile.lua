@@ -9,7 +9,7 @@ end
 return {
     init = function()
         cartdata("dadum_marksman")
-        load_save_data()
+        -- load_save_data()
     end,
     load_save_data = load_save_data,
     persist_save_data = function()
