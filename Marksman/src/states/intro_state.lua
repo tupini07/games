@@ -26,6 +26,7 @@ local function draw()
     print("- more levels")
     print("- level intro / symbolizer")
     print("- build script: replace upper\n    case with symbols")
+    print("- apply clipping to arrows")
 end
 
 return {init = init, update = update, draw = draw}

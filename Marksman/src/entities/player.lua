@@ -32,7 +32,7 @@ local function move_player()
     PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 2)
 
     -- apply velocity
-    PLAYER.dir = sgn(PLAYER.dx)
+    if PLAYER.dx ~= 0 then PLAYER.dir = sgn(PLAYER.dx) end
     PLAYER.x = PLAYER.x + PLAYER.dx
     PLAYER.y = PLAYER.y + PLAYER.dy
 
@@ -41,18 +41,19 @@ local function move_player()
 
     -- apply friction
     PLAYER.dx = PLAYER.dx * 0.5
+    if abs(PLAYER.dx) < 0.1 then PLAYER.dx = 0 end
 end
 
 local function check_floor()
-    local bottom_x = flr((PLAYER.x + 4) / 8)
-    local bottom_y = flr((PLAYER.y + 8) / 8)
+    local bottom_x = flr((PLAYER.x + 8) / 8)
+    local bottom_y = flr((PLAYER.y + 16) / 8)
 
     local is_bottom_floor = map.cell_has_flag(map.sprite_flags.solid, bottom_x,
                                               bottom_y)
 
     if is_bottom_floor then
         PLAYER.is_jumping = false
-        PLAYER.y = (bottom_y - 1) * 8
+        PLAYER.y = (bottom_y - 2) * 8
         PLAYER.dy = 0
     else
         PLAYER.is_jumping = true
@@ -60,21 +61,31 @@ local function check_floor()
 end
 
 local function check_walls()
-    local pl_y = flr(PLAYER.y / 8)
-    local left_x = flr(PLAYER.x / 8)
-    local right_x = flr((PLAYER.x + 8) / 8)
+    -- check that top-{movement-dir} and bottom-{movement-dir} corners
+    -- are not colliding
+    local pl_top_left = {x = PLAYER.x + 4, y = PLAYER.y + 4}
+    local pl_top_right = {x = PLAYER.x + 12, y = PLAYER.y + 4}
+    local pl_btm_left = {x = PLAYER.x + 4, y = PLAYER.y + 12}
+    local pl_btm_right = {x = PLAYER.x + 12, y = PLAYER.y + 12}
 
-    local is_left_wall = map.cell_has_flag(map.sprite_flags.solid, left_x, pl_y)
-    local is_right_wall = map.cell_has_flag(map.sprite_flags.solid, right_x,
-                                            pl_y)
+    for corner in all({pl_top_left, pl_top_right, pl_btm_left, pl_btm_right}) do
+        local map_x = flr(corner.x / 8)
+        local map_y = flr(corner.y / 8)
 
-    -- todo this is not working properly
-    if is_left_wall then
-        PLAYER.x = ((left_x + 1) * 8)
-        PLAYER.dx = 0
-    elseif is_right_wall then
-        PLAYER.x = ((right_x - 1) * 8)
-        PLAYER.dx = 0
+        local is_colliding = map.cell_has_flag(map.sprite_flags.solid, map_x,
+                                               map_y)
+
+        if is_colliding then
+            PLAYER.dx = 0
+            local pixel_space_x = map_x * 8
+            if PLAYER.dir == -1 then
+                -- if left
+                PLAYER.x = pixel_space_x + 4
+            else
+                PLAYER.x = pixel_space_x - 12
+            end
+            return
+        end
     end
 end
 
@@ -118,6 +129,27 @@ local function change_bow_direction()
     end
 end
 
+local function draw_player()
+    local flip_x = PLAYER.dir == -1
+
+    function draw_pl_sprite(sprt_x)
+        sspr(sprt_x, 0, 16, 16, PLAYER.x, PLAYER.y, 16, 16, flip_x)
+    end
+
+    if PLAYER.is_jumping then
+        draw_pl_sprite(104)
+    elseif PLAYER.dx == 0 then
+        -- idle
+        draw_pl_sprite(56)
+    else
+        if GLOBAL_TIMER % 8 == 0 then
+            draw_pl_sprite(72)
+        else
+            draw_pl_sprite(88)
+        end
+    end
+end
+
 return {
     init = function()
         -- player = {x = 5 * 8, y = 11 * 8} 
@@ -132,7 +164,7 @@ return {
         bow.update()
     end,
     draw = function()
-        spr(3, PLAYER.x, PLAYER.y, 1, 1, PLAYER.dir == -1)
+        draw_player()
         bow.draw()
     end
 }
