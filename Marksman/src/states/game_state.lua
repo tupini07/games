@@ -4,11 +4,13 @@ local camera_utils = require("src/camera")
 local player = require("entities/player")
 local arrow = require("entities/arrow")
 local bullseye = require("entities/bullseye")
+local spring = require("entities/spring")
 
 local savefile_manager = require("managers/savefile")
 local level_win = false
 
 local function level_init()
+    spring.init()
     map.replace_entities(SAVE_DATA.current_level)
     camera_utils.focus_section(SAVE_DATA.current_level) -- need to move this to a level manager
 end
@@ -27,6 +29,7 @@ local function level_win_update()
         level_init()
     end
 end
+
 local function level_win_draw()
     local lvl_map_coords = map.level_to_map_coords(SAVE_DATA.current_level)
 
@@ -50,6 +53,7 @@ local function update()
     if not level_win then
         player.update()
         arrow.update_all()
+        spring.update()
     else
         level_win_update()
     end
@@ -62,6 +66,7 @@ local function draw()
     player.draw()
     bullseye.draw()
     arrow.draw_all()
+    spring.draw()
     if level_win then level_win_draw() end
 end
 

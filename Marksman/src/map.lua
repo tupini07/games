@@ -1,6 +1,7 @@
 local sprite_flags = {solid = 0, bullseye = 1}
 
 local bullseye = require("entities/bullseye")
+local spring = require("entities/spring")
 
 --- @return Vector
 local function level_to_map_coords(level_num)
@@ -39,6 +40,16 @@ local map = {
                 if sprt == 5 then
                     -- this means it's the top left corner of left-facing bullseye
                     bullseye.replace_in_map(x, y, bullseye.orientation.left)
+                end
+
+                if sprt == 37 then
+                    spring.replace_in_map(x, y, spring.orientations.top)
+                elseif sprt == 40 then
+                    spring.replace_in_map(x, y, spring.orientations.right)
+                elseif sprt == 43 then
+                    spring.replace_in_map(x, y, spring.orientations.bottom)
+                elseif sprt == 44 then
+                    spring.replace_in_map(x, y, spring.orientations.left)
                 end
             end
         end
