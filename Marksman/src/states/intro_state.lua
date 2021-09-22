@@ -10,16 +10,15 @@ end
 
 local function draw()
     cls(2)
-    print("welcome to marksman! [v0.2]")
+    print("welcome to marksman!")
+    print("v0.3")
     print("press ❎ to continue")
 
     print("\ntodo:")
-    print("- springs!")
     print("- lvl selection menu")
     print("  - maybe right after intro?")
     print("     (continue or choose level)") 
     print("- nicer win panel")
-    print("- nicer player sprite")
     print("- background")
     print("- sfx")
     print("- music?")
