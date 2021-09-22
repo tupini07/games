@@ -19,11 +19,11 @@ end
 return {
     change_dir = function(dir) BOW.dir = dir end,
     init = function()
-        BOW.x = PLAYER.x + 4
+        BOW.x = PLAYER.x
         BOW.y = PLAYER.y + 4
     end,
     update = function()
-        BOW.x = PLAYER.x + 4
+        BOW.x = PLAYER.x
         BOW.y = PLAYER.y + 4
 
         fire_arrow()

@@ -11,6 +11,7 @@ build:
     from pathlib import Path
     from datetime import datetime
 
+    print(f"--- [{datetime.now()}] start build ---")
     dirs_in_dir = set()
     p = Path('.')
     lua_files = list(p.glob('**/*.lua'))

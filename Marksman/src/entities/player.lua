@@ -2,6 +2,8 @@ local math = require("utils/math")
 local map = require("src/map")
 local camera_utils = require("src/camera")
 local bow = require("entities/bow")
+local physics_utils = require("utils/physics")
+local spring = require("entities/spring")
 
 PLAYER = {
     x = 0,
@@ -10,6 +12,7 @@ PLAYER = {
     dy = 0,
     ddy = 0.12,
     dir = 1,
+    collider = {x = 0, y = 0, w = 8, h = 16},
     is_jumping = false,
     changing_bow_dir = false
 }
@@ -28,11 +31,10 @@ local function move_player()
     end
 
     -- cap deltas
-    PLAYER.dx = math.cap_with_sign(PLAYER.dx, 0, 2)
-    PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 2)
+    PLAYER.dx = math.cap_with_sign(PLAYER.dx, 0, 3)
+    PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 3)
 
     -- apply velocity
-    if PLAYER.dx ~= 0 then PLAYER.dir = sgn(PLAYER.dx) end
     PLAYER.x = PLAYER.x + PLAYER.dx
     PLAYER.y = PLAYER.y + PLAYER.dy
 
@@ -40,12 +42,12 @@ local function move_player()
     PLAYER.dy = PLAYER.dy + PLAYER.ddy
 
     -- apply friction
-    PLAYER.dx = PLAYER.dx * 0.5
+    PLAYER.dx = PLAYER.dx * 0.6
     if abs(PLAYER.dx) < 0.1 then PLAYER.dx = 0 end
 end
 
 local function check_floor()
-    local bottom_x = flr((PLAYER.x + 8) / 8)
+    local bottom_x = flr((PLAYER.x + 4) / 8)
     local bottom_y = flr((PLAYER.y + 16) / 8)
 
     local is_bottom_floor = map.cell_has_flag(map.sprite_flags.solid, bottom_x,
@@ -63,10 +65,10 @@ end
 local function check_walls()
     -- check that top-{movement-dir} and bottom-{movement-dir} corners
     -- are not colliding
-    local pl_top_left = {x = PLAYER.x + 4, y = PLAYER.y + 4}
-    local pl_top_right = {x = PLAYER.x + 12, y = PLAYER.y + 4}
-    local pl_btm_left = {x = PLAYER.x + 4, y = PLAYER.y + 12}
-    local pl_btm_right = {x = PLAYER.x + 12, y = PLAYER.y + 12}
+    local pl_top_left = {x = PLAYER.x, y = PLAYER.y + 4}
+    local pl_top_right = {x = PLAYER.x + 8, y = PLAYER.y + 4}
+    local pl_btm_left = {x = PLAYER.x, y = PLAYER.y + 12}
+    local pl_btm_right = {x = PLAYER.x + 8, y = PLAYER.y + 12}
 
     for corner in all({pl_top_left, pl_top_right, pl_btm_left, pl_btm_right}) do
         local map_x = flr(corner.x / 8)
@@ -77,15 +79,19 @@ local function check_walls()
 
         if is_colliding then
             PLAYER.dx = 0
-            local pixel_space_x = map_x * 8
-            if PLAYER.dir == -1 then
-                -- if left
-                PLAYER.x = pixel_space_x + 4
-            else
-                PLAYER.x = pixel_space_x - 12
-            end
+            local is_facing_left = sgn(PLAYER.x - corner.x)
+            local pixel_space_x = (map_x + is_facing_left) * 8
+            PLAYER.x = pixel_space_x
             return
         end
+    end
+end
+
+local function check_spring_colission()
+    for s in all(SPRINGS) do
+
+        if spring.try_spring_body(s, PLAYER) then return end
+
     end
 end
 
@@ -133,19 +139,19 @@ local function draw_player()
     local flip_x = PLAYER.dir == -1
 
     function draw_pl_sprite(sprt_x)
-        sspr(sprt_x, 0, 16, 16, PLAYER.x, PLAYER.y, 16, 16, flip_x)
+        sspr(sprt_x, 0, 8, 16, PLAYER.x, PLAYER.y, 8, 16, flip_x)
     end
 
     if PLAYER.is_jumping then
-        draw_pl_sprite(104)
+        draw_pl_sprite(80)
     elseif PLAYER.dx == 0 then
         -- idle
         draw_pl_sprite(56)
     else
         if GLOBAL_TIMER % 8 == 0 then
-            draw_pl_sprite(72)
+            draw_pl_sprite(64)
         else
-            draw_pl_sprite(88)
+            draw_pl_sprite(72)
         end
     end
 end
@@ -160,6 +166,7 @@ return {
         move_player()
         check_floor()
         check_walls()
+        check_spring_colission()
 
         bow.update()
     end,

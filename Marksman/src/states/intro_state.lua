@@ -10,7 +10,7 @@ end
 
 local function draw()
     cls(2)
-    print("welcome to marksman!")
+    print("welcome to marksman! [v0.2]")
     print("press ❎ to continue")
 
     print("\ntodo:")

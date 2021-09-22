@@ -63,9 +63,9 @@ local function draw()
     cls(12)
 
     map.draw()
-    player.draw()
     bullseye.draw()
     arrow.draw_all()
+    player.draw()
     spring.draw()
     if level_win then level_win_draw() end
 end
