@@ -1,7 +1,3 @@
---- @class Vector:table
---- @field x number
---- @field y number
-
 local math = {
     cap_with_sign = function(number, low, high)
         return sgn(number) * mid(low, abs(number), high)

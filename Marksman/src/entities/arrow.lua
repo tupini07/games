@@ -1,13 +1,6 @@
 local math = require("utils/math")
 local map = require("src/map")
-
---- @class Arrow:table
---- @field public x number
---- @field public y number
---- @field public dx number
---- @field public dy number
---- @field public lifetime number
---- @field public is_stuck boolean
+local spring = require("entities/spring")
 
 --- @type Arrow[]
 ARROWS = {}
@@ -16,8 +9,21 @@ local function fire_arrow(x, y, force, angle)
     local dx = cos(angle) * force
     local dy = sin(angle) * force
 
-    add(ARROWS,
-        {x = x, y = y, dx = dx, dy = dy, lifetime = 60, is_stuck = false})
+    --- @type BoxCollider
+    local collider = {x = 0, y = 0, h = 0, w = 0}
+
+    --- @type Arrow
+    local a = {
+        x = x,
+        y = y,
+        dx = dx,
+        dy = dy,
+        lifetime = 60,
+        is_stuck = false,
+        collider = collider
+    }
+
+    add(ARROWS, a)
 end
 
 --- @param a Arrow
@@ -110,9 +116,31 @@ local function collide_with_bullseye(a)
 
     if collision_vec.x >= BULLSEYE.hitbox_x and collision_vec.x <=
         bullseye_hitbox_x2 and collision_vec.y >= BULLSEYE.hitbox_y and
-        collision_vec.y <= bullseye_hitbox_y2 then 
-            a.is_stuck = true 
-            WIN_LEVEL()
+        collision_vec.y <= bullseye_hitbox_y2 then
+        a.is_stuck = true
+        WIN_LEVEL()
+    end
+end
+
+--- @param a Arrow
+local function update_collider(a)
+    local arrow_dir = get_clamped_arrow_dir(a)
+    if arrow_dir == 1 then
+        a.collider = {x = 6, y = 3, w = 2, h = 3}
+    elseif arrow_dir == 2 then
+        a.collider = {x = 4, y = 1, w = 3, h = 3}
+    elseif arrow_dir == 3 then
+        a.collider = {x = 3, y = 0, w = 3, h = 2}
+    elseif arrow_dir == 4 then
+        a.collider = {x = 1, y = 1, w = 3, h = 3}
+    elseif arrow_dir == 5 then
+        a.collider = {x = 0, y = 3, w = 2, h = 3}
+    elseif arrow_dir == 6 then
+        a.collider = {x = 1, y = 4, w = 3, h = 3}
+    elseif arrow_dir == 7 then
+        a.collider = {x = 3, y = 6, w = 3, h = 2}
+    elseif arrow_dir == 8 then
+        a.collider = {x = 4, y = 4, w = 3, h = 3}
     end
 end
 
@@ -133,8 +161,10 @@ local function update_arrow(a)
     -- apply gravity
     a.dy = a.dy + 0.12
 
+    update_collider(a)
     collide_with_floor_walls(a)
     collide_with_bullseye(a)
+    spring.try_spring_body(a)
 end
 
 --- @param a Arrow

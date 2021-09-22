@@ -200,15 +200,6 @@ local map = {
 return map
 end
 package._c["entities/bullseye"]=function()
---- @class Bullseye:table
---- @field public x number x coordinates of top left
---- @field public y number y coordinates of top left
---- @field public sprite_x number x coords of sprite
---- @field public sprite_y number y coords of sprite
---- @field public hitbox_x number x coords of hitbox
---- @field public hitbox_y number y coords of hitbox
---- @field public hitbox_w number width of hitbox
---- @field public hitbox_h number height of hitbox
 --- @type Bullseye
 BULLSEYE = {
     x = 0,
@@ -253,13 +244,6 @@ return {
 end
 package._c["entities/spring"]=function()
 local physics_utils = require("utils/physics")
-
---- @class Spring:table
---- @field public x number
---- @field public y number
---- @field public state number 0, 1, or 2 - from less to more expanded
---- @field public orientation number
---- @field public collider BoxCollider
 
 --- @type Spring[]
 SPRINGS = {}
@@ -316,36 +300,28 @@ local function update_spring(s)
 end
 
 --- if body is colliding with spring then spring it!
---- @param s Spring
 --- @param body BoxPhysicsBody
 --- @return boolean if the body was springed or not
-local function try_spring_body(s, body)
-    local is_colliding = physics_utils.box_collision({
-        x = s.x + s.collider.x,
-        y = s.y + s.collider.y,
-        h = s.collider.h,
-        w = s.collider.w
-    }, {
-        x = body.x + body.collider.x,
-        y = body.y + body.collider.y,
-        h = body.collider.h,
-        w = body.collider.w
-    })
+local function try_spring_body(body)
+    for s in all(SPRINGS) do
+        local is_colliding = physics_utils.box_collision(
+                                 physics_utils.resolve_box_body_collider(s),
+                                 physics_utils.resolve_box_body_collider(body))
 
-    if is_colliding then
-        s.state = 2
-        if s.orientation == orientations.top then
-            body.dy = -3
-        elseif s.orientation == orientations.bottom then
-            body.dy = 3
-        elseif s.orientation == orientations.left then
-            body.dx = -3
-        elseif s.orientation == orientations.right then
-            body.dx = 3
+        if is_colliding then
+            s.state = 2
+            if s.orientation == orientations.top then
+                body.dy = -3
+            elseif s.orientation == orientations.bottom then
+                body.dy = 3
+            elseif s.orientation == orientations.left then
+                body.dx = -3
+            elseif s.orientation == orientations.right then
+                body.dx = 3
+            end
+            return
         end
     end
-
-    return is_colliding
 end
 
 return {
@@ -358,20 +334,6 @@ return {
 }
 end
 package._c["utils/physics"]=function()
---- @class PhysicsBody:table
---- @field public x number collider box x
---- @field public y number collider box y
---- @field public w number collider box w
---- @field public h number collider box h
---- @field public dx number
---- @field public dy number
---- @class BoxPhysicsBody:PhysicsBody
---- @field public collider BoxCollider
---- @class BoxCollider:table
---- @field public x number
---- @field public y number
---- @field public w number
---- @field public h number
 return {
     --- @param point Vector
     --- @param box_top_left Vector 
@@ -382,13 +344,22 @@ return {
             box_top_left.x <= point.x and point.x <= bx1 and box_top_left.y <=
                 point.y and point.y <= by1
     end,
+    --- @param box_body BoxPhysicsBody
+    --- @return BoxCollider
+    resolve_box_body_collider = function(box_body)
+        return {
+            x = box_body.x + box_body.collider.x,
+            y = box_body.y + box_body.collider.y,
+            w = box_body.collider.w,
+            h = box_body.collider.h
+        }
+    end,
     --- @param collider_1 BoxCollider
     --- @param collider_2 BoxCollider
     box_collision = function(collider_1, collider_2)
-        return collider_1.x < collider_2.x + collider_2.w and 
-                collider_2.x < collider_1.x + collider_1.w and
-                collider_1.y < collider_2.y + collider_2.h and
-                collider_2.y < collider_1.y + collider_1.h
+        return collider_1.x < collider_2.x + collider_2.w and collider_2.x <
+                   collider_1.x + collider_1.w and collider_1.y < collider_2.y +
+                   collider_2.h and collider_2.y < collider_1.y + collider_1.h
     end
 }
 end
@@ -513,14 +484,6 @@ local function check_walls()
     end
 end
 
-local function check_spring_colission()
-    for s in all(SPRINGS) do
-
-        if spring.try_spring_body(s, PLAYER) then return end
-
-    end
-end
-
 local function change_bow_direction()
     if btn(4) then
         PLAYER.changing_bow_dir = true
@@ -592,7 +555,7 @@ return {
         move_player()
         check_floor()
         check_walls()
-        check_spring_colission()
+        spring.try_spring_body(PLAYER)
 
         bow.update()
     end,
@@ -604,10 +567,6 @@ return {
 
 end
 package._c["utils/math"]=function()
---- @class Vector:table
---- @field x number
---- @field y number
-
 local math = {
     cap_with_sign = function(number, low, high)
         return sgn(number) * mid(low, abs(number), high)
@@ -686,14 +645,7 @@ end
 package._c["entities/arrow"]=function()
 local math = require("utils/math")
 local map = require("src/map")
-
---- @class Arrow:table
---- @field public x number
---- @field public y number
---- @field public dx number
---- @field public dy number
---- @field public lifetime number
---- @field public is_stuck boolean
+local spring = require("entities/spring")
 
 --- @type Arrow[]
 ARROWS = {}
@@ -702,8 +654,21 @@ local function fire_arrow(x, y, force, angle)
     local dx = cos(angle) * force
     local dy = sin(angle) * force
 
-    add(ARROWS,
-        {x = x, y = y, dx = dx, dy = dy, lifetime = 60, is_stuck = false})
+    --- @type BoxCollider
+    local collider = {x = 0, y = 0, h = 0, w = 0}
+
+    --- @type Arrow
+    local a = {
+        x = x,
+        y = y,
+        dx = dx,
+        dy = dy,
+        lifetime = 60,
+        is_stuck = false,
+        collider = collider
+    }
+
+    add(ARROWS, a)
 end
 
 --- @param a Arrow
@@ -796,9 +761,31 @@ local function collide_with_bullseye(a)
 
     if collision_vec.x >= BULLSEYE.hitbox_x and collision_vec.x <=
         bullseye_hitbox_x2 and collision_vec.y >= BULLSEYE.hitbox_y and
-        collision_vec.y <= bullseye_hitbox_y2 then 
-            a.is_stuck = true 
-            WIN_LEVEL()
+        collision_vec.y <= bullseye_hitbox_y2 then
+        a.is_stuck = true
+        WIN_LEVEL()
+    end
+end
+
+--- @param a Arrow
+local function update_collider(a)
+    local arrow_dir = get_clamped_arrow_dir(a)
+    if arrow_dir == 1 then
+        a.collider = {x = 6, y = 3, w = 2, h = 3}
+    elseif arrow_dir == 2 then
+        a.collider = {x = 4, y = 1, w = 3, h = 3}
+    elseif arrow_dir == 3 then
+        a.collider = {x = 3, y = 0, w = 3, h = 2}
+    elseif arrow_dir == 4 then
+        a.collider = {x = 1, y = 1, w = 3, h = 3}
+    elseif arrow_dir == 5 then
+        a.collider = {x = 0, y = 3, w = 2, h = 3}
+    elseif arrow_dir == 6 then
+        a.collider = {x = 1, y = 4, w = 3, h = 3}
+    elseif arrow_dir == 7 then
+        a.collider = {x = 3, y = 6, w = 3, h = 2}
+    elseif arrow_dir == 8 then
+        a.collider = {x = 4, y = 4, w = 3, h = 3}
     end
 end
 
@@ -819,8 +806,10 @@ local function update_arrow(a)
     -- apply gravity
     a.dy = a.dy + 0.12
 
+    update_collider(a)
     collide_with_floor_walls(a)
     collide_with_bullseye(a)
+    spring.try_spring_body(a)
 end
 
 --- @param a Arrow

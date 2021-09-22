@@ -1,12 +1,5 @@
 local physics_utils = require("utils/physics")
 
---- @class Spring:table
---- @field public x number
---- @field public y number
---- @field public state number 0, 1, or 2 - from less to more expanded
---- @field public orientation number
---- @field public collider BoxCollider
-
 --- @type Spring[]
 SPRINGS = {}
 
@@ -62,36 +55,28 @@ local function update_spring(s)
 end
 
 --- if body is colliding with spring then spring it!
---- @param s Spring
 --- @param body BoxPhysicsBody
 --- @return boolean if the body was springed or not
-local function try_spring_body(s, body)
-    local is_colliding = physics_utils.box_collision({
-        x = s.x + s.collider.x,
-        y = s.y + s.collider.y,
-        h = s.collider.h,
-        w = s.collider.w
-    }, {
-        x = body.x + body.collider.x,
-        y = body.y + body.collider.y,
-        h = body.collider.h,
-        w = body.collider.w
-    })
+local function try_spring_body(body)
+    for s in all(SPRINGS) do
+        local is_colliding = physics_utils.box_collision(
+                                 physics_utils.resolve_box_body_collider(s),
+                                 physics_utils.resolve_box_body_collider(body))
 
-    if is_colliding then
-        s.state = 2
-        if s.orientation == orientations.top then
-            body.dy = -3
-        elseif s.orientation == orientations.bottom then
-            body.dy = 3
-        elseif s.orientation == orientations.left then
-            body.dx = -3
-        elseif s.orientation == orientations.right then
-            body.dx = 3
+        if is_colliding then
+            s.state = 2
+            if s.orientation == orientations.top then
+                body.dy = -3
+            elseif s.orientation == orientations.bottom then
+                body.dy = 3
+            elseif s.orientation == orientations.left then
+                body.dx = -3
+            elseif s.orientation == orientations.right then
+                body.dx = 3
+            end
+            return
         end
     end
-
-    return is_colliding
 end
 
 return {

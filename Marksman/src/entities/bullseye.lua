@@ -1,12 +1,3 @@
---- @class Bullseye:table
---- @field public x number x coordinates of top left
---- @field public y number y coordinates of top left
---- @field public sprite_x number x coords of sprite
---- @field public sprite_y number y coords of sprite
---- @field public hitbox_x number x coords of hitbox
---- @field public hitbox_y number y coords of hitbox
---- @field public hitbox_w number width of hitbox
---- @field public hitbox_h number height of hitbox
 --- @type Bullseye
 BULLSEYE = {
     x = 0,

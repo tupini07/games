@@ -87,14 +87,6 @@ local function check_walls()
     end
 end
 
-local function check_spring_colission()
-    for s in all(SPRINGS) do
-
-        if spring.try_spring_body(s, PLAYER) then return end
-
-    end
-end
-
 local function change_bow_direction()
     if btn(4) then
         PLAYER.changing_bow_dir = true
@@ -166,7 +158,7 @@ return {
         move_player()
         check_floor()
         check_walls()
-        check_spring_colission()
+        spring.try_spring_body(PLAYER)
 
         bow.update()
     end,
