@@ -1,4 +1,3 @@
-local logger = require("utils/logger")
 local map = require("src/map")
 
 return {

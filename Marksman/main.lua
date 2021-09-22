@@ -2,6 +2,7 @@
 -- by Dadum
 local save_manager = require("managers/savefile")
 local state_manager = require("managers/state")
+local debug = require("utils/debug")
 
 GLOBAL_TIMER = 0
 
@@ -15,4 +16,7 @@ function _update()
     state_manager.update()
 end
 
-function _draw() state_manager.draw() end
+function _draw()
+    state_manager.draw()
+    debug.track_mouse_coordinates()
+end
