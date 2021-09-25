@@ -18,5 +18,5 @@ end
 
 function _draw()
     state_manager.draw()
-    debug.track_mouse_coordinates()
+    -- debug.track_mouse_coordinates()
 end

@@ -9,28 +9,73 @@ local spring = require("entities/spring")
 
 local savefile_manager = require("managers/savefile")
 local particles = require("managers/particles")
+local graphics_utils = require("utils/graphics")
 
 local level_win = false
+local show_win_banner = false
 
 local function level_init()
     spring.init()
     map.replace_entities(SAVE_DATA.current_level)
     camera_utils.focus_section(SAVE_DATA.current_level) -- need to move this to a level manager
+    player.reset_for_new_level()
 end
 
-function WIN_LEVEL() level_win = true end
+function WIN_LEVEL()
+    level_win = true
+    show_win_banner = true
+end
 
 function LOSE_LEVEL() end
 
-local function level_win_update()
-    if btnp(5) then
-        level_win = false
-
-        SAVE_DATA.current_level = SAVE_DATA.current_level + 1
-        savefile_manager.persist_save_data()
-
-        level_init()
+local function level_change_fadeout_proc()
+    local fader = 0
+    while fader <= 16 do
+        if GLOBAL_TIMER % 2 == 0 then
+            graphics_utils.fade(fader)
+            fader = fader + 1
+        end
+        yield()
     end
+
+    -- setup new level
+    show_win_banner = false
+    SAVE_DATA.current_level = SAVE_DATA.current_level + 1
+    savefile_manager.persist_save_data()
+
+    level_init()
+
+    while fader >= 0 do
+        if GLOBAL_TIMER % 2 == 0 then
+            graphics_utils.fade(fader)
+            fader = fader - 1
+        end
+        yield()
+    end
+
+    level_win = false
+    pal()
+end
+
+local level_change_coroutine = nil
+
+local function level_win_update()
+    local lvl_change_status
+    if level_change_coroutine == nil then
+        lvl_change_status = "dead"
+    else
+        lvl_change_status = costatus(level_change_coroutine)
+    end
+
+    if btnp(5) then
+        if lvl_change_status == "running" then
+            return
+        elseif lvl_change_status == "dead" then
+            level_change_coroutine = cocreate(level_change_fadeout_proc)
+        end
+    end
+
+    if lvl_change_status == "suspended" then coresume(level_change_coroutine) end
 end
 
 local function level_win_draw()
@@ -74,7 +119,7 @@ local function draw()
     player.draw()
     spring.draw()
     particles.draw()
-    if level_win then level_win_draw() end
+    if level_win and show_win_banner then level_win_draw() end
 end
 
 return {init = init, update = update, draw = draw}

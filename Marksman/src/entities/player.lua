@@ -164,6 +164,10 @@ return {
         -- player = {x = 5 * 8, y = 11 * 8} 
         bow.init()
     end,
+    reset_for_new_level = function()
+        PLAYER.dir = 1
+        bow.change_dir(7)
+    end,
     update = function()
         change_bow_direction()
         move_player()
