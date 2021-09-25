@@ -2,6 +2,8 @@ local math = require("utils/math")
 local map = require("src/map")
 local spring = require("entities/spring")
 
+local particles = require("managers/particles")
+
 --- @type Arrow[]
 ARROWS = {}
 
@@ -84,6 +86,17 @@ local function get_collision_vec(a)
     return {x = collision_x, y = collision_y}
 end
 
+--- @param a Arrow
+local function make_floor_walls_colission_dust(a)
+    local cv = get_collision_vec(a)
+    for _ = 1, 5 do
+        local displacement = rnd(4) - 4
+        particles.make_particle(cv.x + displacement, cv.y + displacement,
+                                -a.dx * 0.1, -a.dy * 0.1, 0, 1, rnd({5, 6, 7}),
+                                7)
+    end
+end
+
 --- Gets the direction of the arrow clamped to one of the 8 cardinal directions
 --- @param a Arrow
 local function collide_with_floor_walls(a)
@@ -103,6 +116,18 @@ local function collide_with_floor_walls(a)
         a.y = a.y - sin(angle) * 3
 
         a.is_stuck = true
+        make_floor_walls_colission_dust(a)
+    end
+end
+
+--- @param a Arrow
+local function make_bullseye_colission_dust(a)
+    local cv = get_collision_vec(a)
+    for _ = 1, 8 do
+        local displacement = rnd(4) - 4
+        particles.make_particle(cv.x + displacement, cv.y + displacement,
+                                -a.dx * 0.1, -a.dy * 0.1, 0, 1,
+                                rnd({7, 10, 11}), 7)
     end
 end
 
@@ -118,6 +143,7 @@ local function collide_with_bullseye(a)
         bullseye_hitbox_x2 and collision_vec.y >= BULLSEYE.hitbox_y and
         collision_vec.y <= bullseye_hitbox_y2 then
         a.is_stuck = true
+        make_bullseye_colission_dust(a)
         WIN_LEVEL()
     end
 end
@@ -144,6 +170,17 @@ local function update_collider(a)
     end
 end
 
+local function make_trail(a)
+    if rnd(1) < 0.8 then return end
+    local collision_vec = get_collision_vec(a)
+    local diffx = (collision_vec.x - a.x)
+    local diffy = (collision_vec.y - a.y)
+
+    local colors = {7, 8, 9}
+    particles.make_pixel_particle(a.x + diffy, a.y + diffx, 0, 0, 0.01,
+                                  rnd(colors), 7)
+end
+
 --- @param a Arrow
 local function update_arrow(a)
     if a.lifetime == 0 then
@@ -164,6 +201,7 @@ local function update_arrow(a)
     update_collider(a)
     collide_with_floor_walls(a)
     collide_with_bullseye(a)
+    make_trail(a)
     spring.try_spring_body(a)
 end
 

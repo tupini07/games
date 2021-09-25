@@ -1,9 +1,9 @@
 local math = require("utils/math")
 local map = require("src/map")
-local camera_utils = require("src/camera")
 local bow = require("entities/bow")
-local physics_utils = require("utils/physics")
 local spring = require("entities/spring")
+
+local particles = require("managers/particles")
 
 PLAYER = {
     x = 0,
@@ -54,6 +54,17 @@ local function check_floor()
                                               bottom_y)
 
     if is_bottom_floor then
+        if PLAYER.is_jumping then
+            -- we're landing
+            for _ = 1, 5 do
+                local displacement = rnd(4) - 4
+                particles.make_particle(PLAYER.x + 4 + displacement,
+                                        PLAYER.y + 16, -PLAYER.dx * 0.1,
+                                        -PLAYER.dy * 0.1, 0, 1, 7, 7)
+            end
+
+        end
+
         PLAYER.is_jumping = false
         PLAYER.y = (bottom_y - 2) * 8
         PLAYER.dy = 0

@@ -11,8 +11,8 @@ return {
         camera(cam_x, cam_y)
     end,
     focus_section = function(current_level)
-        local level_block_coords = map.level_to_map_coords(current_level)
+        local lvl_cords = map.get_game_space_coords_for_current_lvl()
 
-        camera(level_block_coords.x * 8, level_block_coords.y * 8)
+        camera(lvl_cords.x, lvl_cords.y)
     end
 }

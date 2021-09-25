@@ -17,11 +17,19 @@ local function level_to_map_coords(level_num)
     return {x = map_column * 16, y = map_row * 16}
 end
 
+--- @return Vector
+local function get_game_space_coords_for_current_lvl()
+    local lvl_map_coords = level_to_map_coords(SAVE_DATA.current_level)
+
+    return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
+end
+
 local map = {
     draw = function() map(0, 0, 0, 0, 33, 33) end,
     sprite_flags = sprite_flags,
     cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
     level_to_map_coords = level_to_map_coords,
+    get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
     replace_entities = function(current_level)
         local level_block_coords = level_to_map_coords(current_level)
 
