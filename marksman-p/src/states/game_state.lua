@@ -31,10 +31,8 @@ function LOSE_LEVEL() end
 local function level_change_fadeout_proc()
     local fader = 0
     while fader <= 16 do
-        if GLOBAL_TIMER % 2 == 0 then
-            graphics_utils.fade(fader)
-            fader = fader + 1
-        end
+        graphics_utils.fade(fader)
+        fader = fader + 1
         yield()
     end
 
@@ -46,10 +44,8 @@ local function level_change_fadeout_proc()
     level_init()
 
     while fader >= 0 do
-        if GLOBAL_TIMER % 2 == 0 then
-            graphics_utils.fade(fader)
-            fader = fader - 1
-        end
+        graphics_utils.fade(fader)
+        fader = fader - 1
         yield()
     end
 
