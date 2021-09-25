@@ -2,8 +2,7 @@ help:
     just --list
 
 
-__export-lua-path:
-
+name := "marksman"
 
 build: 
     #!/usr/bin/env python3
@@ -23,7 +22,7 @@ build:
     for dd in dirs_in_dir:
         lua_path += f"{dd}\\?;{dd}\\?.lua;"
 
-    p8_name = "{{file_stem(justfile_directory())}}.p8"
+    p8_name = "{{name}}.p8"
     os.system(f"p8tool build {p8_name} --lua main.lua --lua-path='{lua_path}'")
     print(f"--- [{datetime.now()}] finish build ---")
 
@@ -31,4 +30,4 @@ develop:
     watchexec -e lua just build
 
 minimize:
-    p8tool luamin {{file_stem(justfile_directory())}}.p8
+    p8tool luamin {{name}}.p8

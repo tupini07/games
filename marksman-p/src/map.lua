@@ -25,7 +25,10 @@ local function get_game_space_coords_for_current_lvl()
 end
 
 local map = {
-    draw = function() map(0, 0, 0, 0, 33, 33) end,
+    draw = function()
+        -- TODO use level_to_map_coords for more efficient drawing
+        map(0, 0, 0, 0, 128, 64)
+    end,
     sprite_flags = sprite_flags,
     cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
     level_to_map_coords = level_to_map_coords,
