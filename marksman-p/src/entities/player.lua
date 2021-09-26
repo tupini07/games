@@ -204,6 +204,8 @@ return {
     end,
     reset_for_new_level = function()
         PLAYER.dir = 1
+        PLAYER.dx = 0
+        PLAYER.dy = 0
         PLAYER.is_dead = false
         BOW.x = PLAYER.x
         BOW.y = PLAYER.y + 4

@@ -32,5 +32,12 @@ return {
             print("spontaneously")
             print("combust")
         end
+
+        if SAVE_DATA.current_level == 8 then
+            cursor(lvl_pos.x + 12, 14)
+            color(5)
+            print("lets test your")
+            print("reflexes")
+        end
     end
 }
