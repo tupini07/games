@@ -2,6 +2,7 @@
 BULLSEYE = {
     x = 0,
     y = 0,
+    orientation = 1,
     sprite_x = 0,
     sprite_y = 0,
     hitbox_x = 0,
@@ -10,7 +11,7 @@ BULLSEYE = {
     hitbox_w = 0
 }
 
-local orientations = {left = 1}
+local orientations = {left = 1, right = 2}
 
 return {
     orientation = orientations,
@@ -23,19 +24,27 @@ return {
         BULLSEYE.x = mapx * 8
         BULLSEYE.y = mapy * 8
 
-        if type == orientations.left then
+        BULLSEYE.orientation = type
+        if type == orientations.left or type == orientations.right then
             BULLSEYE.sprite_x = 40
             BULLSEYE.sprite_y = 0
-            BULLSEYE.hitbox_x = BULLSEYE.x + 6
-            BULLSEYE.hitbox_y = BULLSEYE.y + 7
 
             BULLSEYE.hitbox_w = 6
             BULLSEYE.hitbox_h = 6
+        end
+
+        if type == orientations.left then
+            BULLSEYE.hitbox_x = BULLSEYE.x + 6
+            BULLSEYE.hitbox_y = BULLSEYE.y + 7
+
+        elseif type == orientations.right then
+            BULLSEYE.hitbox_x = BULLSEYE.x + 4
+            BULLSEYE.hitbox_y = BULLSEYE.y + 7
         end
     end,
 
     draw = function()
         sspr(BULLSEYE.sprite_x, BULLSEYE.sprite_y, 16, 16, BULLSEYE.x,
-             BULLSEYE.y)
+             BULLSEYE.y, 16, 16, BULLSEYE.orientation == orientations.right)
     end
 }

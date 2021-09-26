@@ -48,9 +48,10 @@ local map = {
                     PLAYER.y = y * 8
                 end
 
-                if sprt == 5 then
-                    -- this means it's the top left corner of left-facing bullseye
+                if sprt == 57 then
                     bullseye.replace_in_map(x, y, bullseye.orientation.left)
+                elseif sprt == 58 then
+                    bullseye.replace_in_map(x, y, bullseye.orientation.right)
                 end
 
                 if sprt == 37 then
