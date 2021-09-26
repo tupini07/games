@@ -1,5 +1,8 @@
+local map = require("src/map")
+
 return {
     draw_current_level_text = function()
+        local lvl_pos = map.get_game_space_coords_for_current_lvl()
         if SAVE_DATA.current_level == 1 then
             print("move with ⬅️➡️⬇️⬆️", 17, 103, 5)
             print("fire arrows with ❎")
@@ -20,6 +23,14 @@ return {
         if SAVE_DATA.current_level == 4 then
             print("springs also work", 398, 14, 5)
             print("on arrows!")
+        end
+
+        if SAVE_DATA.current_level == 5 then
+            print("be careful with", lvl_pos.x + 37, 13, 5)
+            print("spikes. if you touch")
+            print("them you will")
+            print("spontaneously")
+            print("combust")
         end
     end
 }
