@@ -65,17 +65,21 @@ return {
 end
 package._c["states/game_state"]=function()
 local map = require("src/map")
-local decorations = require("managers/decorations")
 local camera_utils = require("src/camera")
+local graphics_utils = require("utils/graphics")
 
 local player = require("entities/player")
 local arrow = require("entities/arrow")
 local bullseye = require("entities/bullseye")
 local spring = require("entities/spring")
 
+local decorations = require("managers/decorations")
 local savefile_manager = require("managers/savefile")
 local particles = require("managers/particles")
-local graphics_utils = require("utils/graphics")
+local level_text = require("managers/level_text")
+
+local debug = require("utils/debug")
+
 
 local level_win = false
 local show_win_banner = false
@@ -176,12 +180,15 @@ local function draw()
 
     decorations.draw_background()
     map.draw()
+    level_text.draw_current_level_text()
     bullseye.draw()
     arrow.draw_all()
     player.draw()
     spring.draw()
     particles.draw()
     if level_win and show_win_banner then level_win_draw() end
+    debug.track_mouse_coordinates()
+
 end
 
 return {init = init, update = update, draw = draw}
@@ -432,98 +439,6 @@ return {
     end
 }
 end
-package._c["managers/decorations"]=function()
-local map = require("map")
-
-local types = {cloud1 = 1, cloud2 = 2}
-
-local function replace_in_map() end
-
-local function draw_background()
-    local lvl_cords = map.get_game_space_coords_for_current_lvl()
-
-    sspr(0, 80, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
-end
-
-return {
-    draw_background = draw_background,
-    replace_in_map = replace_in_map,
-    types = types
-}
-end
-package._c["map"]=function()
-local sprite_flags = {solid = 0, bullseye = 1}
-
-local bullseye = require("entities/bullseye")
-local spring = require("entities/spring")
-
---- @return Vector
-local function level_to_map_coords(level_num)
-    -- first we get 0 indexed coordinates for the "block" which 
-    -- is the level
-
-    -- 16 levels per row in map editor
-    local map_row = flr(level_num / 16)
-
-    --  8 levels per column in map editor
-    local map_column = (level_num % 16) - 1
-
-    return {x = map_column * 16, y = map_row * 16}
-end
-
---- @return Vector
-local function get_game_space_coords_for_current_lvl()
-    local lvl_map_coords = level_to_map_coords(SAVE_DATA.current_level)
-
-    return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
-end
-
-local map = {
-    draw = function()
-        -- TODO use level_to_map_coords for more efficient drawing
-        map(0, 0, 0, 0, 128, 64)
-    end,
-    sprite_flags = sprite_flags,
-    cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
-    level_to_map_coords = level_to_map_coords,
-    get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
-    replace_entities = function(current_level)
-        local level_block_coords = level_to_map_coords(current_level)
-
-        local level_x2 = level_block_coords.x + 16
-        local level_y2 = level_block_coords.y + 16
-
-        for x = level_block_coords.x, level_x2 do
-            for y = level_block_coords.y, level_y2 do
-                local sprt = mget(x, y)
-                if sprt == 3 then
-                    mset(x, y, 0)
-                    PLAYER.x = x * 8
-                    PLAYER.y = y * 8
-                end
-
-                if sprt == 57 then
-                    bullseye.replace_in_map(x, y, bullseye.orientation.left)
-                elseif sprt == 58 then
-                    bullseye.replace_in_map(x, y, bullseye.orientation.right)
-                end
-
-                if sprt == 37 then
-                    spring.replace_in_map(x, y, spring.orientations.top)
-                elseif sprt == 40 then
-                    spring.replace_in_map(x, y, spring.orientations.right)
-                elseif sprt == 43 then
-                    spring.replace_in_map(x, y, spring.orientations.bottom)
-                elseif sprt == 44 then
-                    spring.replace_in_map(x, y, spring.orientations.left)
-                end
-            end
-        end
-    end
-}
-
-return map
-end
 package._c["src/camera"]=function()
 local map = require("src/map")
 
@@ -543,6 +458,39 @@ return {
         camera(lvl_cords.x, lvl_cords.y)
     end
 }
+end
+package._c["utils/graphics"]=function()
+-- Node: this table was generated from http://kometbomb.net/pico8/fadegen.html
+local fadeTable = {
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {1, 1, 129, 129, 129, 129, 129, 129, 129, 129, 0, 0, 0, 0, 0},
+    {2, 2, 2, 130, 130, 130, 130, 130, 128, 128, 128, 128, 128, 0, 0},
+    {3, 3, 3, 131, 131, 131, 131, 129, 129, 129, 129, 129, 0, 0, 0},
+    {4, 4, 132, 132, 132, 132, 132, 132, 130, 128, 128, 128, 128, 0, 0},
+    {5, 5, 133, 133, 133, 133, 130, 130, 128, 128, 128, 128, 128, 0, 0},
+    {6, 6, 134, 13, 13, 13, 141, 5, 5, 5, 133, 130, 128, 128, 0},
+    {7, 6, 6, 6, 134, 134, 134, 134, 5, 5, 5, 133, 130, 128, 0},
+    {8, 8, 136, 136, 136, 136, 132, 132, 132, 130, 128, 128, 128, 128, 0},
+    {9, 9, 9, 4, 4, 4, 4, 132, 132, 132, 128, 128, 128, 128, 0},
+    {10, 10, 138, 138, 138, 4, 4, 4, 132, 132, 133, 128, 128, 128, 0},
+    {11, 139, 139, 139, 139, 3, 3, 3, 3, 129, 129, 129, 0, 0, 0},
+    {12, 12, 12, 140, 140, 140, 140, 131, 131, 131, 1, 129, 129, 129, 0},
+    {13, 13, 141, 141, 5, 5, 5, 133, 133, 130, 129, 129, 128, 128, 0},
+    {14, 14, 14, 134, 134, 141, 141, 2, 2, 133, 130, 130, 128, 128, 0},
+    {15, 143, 143, 134, 134, 134, 134, 5, 5, 5, 133, 133, 128, 128, 0}
+}
+
+local function fade(i)
+    for c = 0, 15 do
+        if flr(i + 1) >= 16 then
+            pal(c, 0, 1)
+        else
+            pal(c, fadeTable[c + 1][flr(i + 1)], 1)
+        end
+    end
+end
+
+return {fade = fade}
 end
 package._c["entities/player"]=function()
 local math = require("utils/math")
@@ -1104,38 +1052,175 @@ return {
     draw = function() for p in all(PARTICLES) do p:draw() end end
 }
 end
-package._c["utils/graphics"]=function()
--- Node: this table was generated from http://kometbomb.net/pico8/fadegen.html
-local fadeTable = {
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {1, 1, 129, 129, 129, 129, 129, 129, 129, 129, 0, 0, 0, 0, 0},
-    {2, 2, 2, 130, 130, 130, 130, 130, 128, 128, 128, 128, 128, 0, 0},
-    {3, 3, 3, 131, 131, 131, 131, 129, 129, 129, 129, 129, 0, 0, 0},
-    {4, 4, 132, 132, 132, 132, 132, 132, 130, 128, 128, 128, 128, 0, 0},
-    {5, 5, 133, 133, 133, 133, 130, 130, 128, 128, 128, 128, 128, 0, 0},
-    {6, 6, 134, 13, 13, 13, 141, 5, 5, 5, 133, 130, 128, 128, 0},
-    {7, 6, 6, 6, 134, 134, 134, 134, 5, 5, 5, 133, 130, 128, 0},
-    {8, 8, 136, 136, 136, 136, 132, 132, 132, 130, 128, 128, 128, 128, 0},
-    {9, 9, 9, 4, 4, 4, 4, 132, 132, 132, 128, 128, 128, 128, 0},
-    {10, 10, 138, 138, 138, 4, 4, 4, 132, 132, 133, 128, 128, 128, 0},
-    {11, 139, 139, 139, 139, 3, 3, 3, 3, 129, 129, 129, 0, 0, 0},
-    {12, 12, 12, 140, 140, 140, 140, 131, 131, 131, 1, 129, 129, 129, 0},
-    {13, 13, 141, 141, 5, 5, 5, 133, 133, 130, 129, 129, 128, 128, 0},
-    {14, 14, 14, 134, 134, 141, 141, 2, 2, 133, 130, 130, 128, 128, 0},
-    {15, 143, 143, 134, 134, 134, 134, 5, 5, 5, 133, 133, 128, 128, 0}
-}
+package._c["managers/decorations"]=function()
+local map = require("map")
 
-local function fade(i)
-    for c = 0, 15 do
-        if flr(i + 1) >= 16 then
-            pal(c, 0, 1)
-        else
-            pal(c, fadeTable[c + 1][flr(i + 1)], 1)
-        end
-    end
+local types = {cloud1 = 1, cloud2 = 2}
+
+local function replace_in_map() end
+
+local function draw_background()
+    local lvl_cords = map.get_game_space_coords_for_current_lvl()
+
+    sspr(0, 80, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
 end
 
-return {fade = fade}
+return {
+    draw_background = draw_background,
+    replace_in_map = replace_in_map,
+    types = types
+}
+end
+package._c["map"]=function()
+local sprite_flags = {solid = 0, bullseye = 1}
+
+local bullseye = require("entities/bullseye")
+local spring = require("entities/spring")
+
+--- @return Vector
+local function level_to_map_coords(level_num)
+    -- first we get 0 indexed coordinates for the "block" which 
+    -- is the level
+
+    -- 16 levels per row in map editor
+    local map_row = flr(level_num / 16)
+
+    --  8 levels per column in map editor
+    local map_column = (level_num % 16) - 1
+
+    return {x = map_column * 16, y = map_row * 16}
+end
+
+--- @return Vector
+local function get_game_space_coords_for_current_lvl()
+    local lvl_map_coords = level_to_map_coords(SAVE_DATA.current_level)
+
+    return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
+end
+
+local map = {
+    draw = function()
+        -- TODO use level_to_map_coords for more efficient drawing
+        map(0, 0, 0, 0, 128, 64)
+    end,
+    sprite_flags = sprite_flags,
+    cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
+    level_to_map_coords = level_to_map_coords,
+    get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
+    replace_entities = function(current_level)
+        local level_block_coords = level_to_map_coords(current_level)
+
+        local level_x2 = level_block_coords.x + 16
+        local level_y2 = level_block_coords.y + 16
+
+        for x = level_block_coords.x, level_x2 do
+            for y = level_block_coords.y, level_y2 do
+                local sprt = mget(x, y)
+                if sprt == 3 then
+                    mset(x, y, 0)
+                    PLAYER.x = x * 8
+                    PLAYER.y = y * 8
+                end
+
+                if sprt == 57 then
+                    bullseye.replace_in_map(x, y, bullseye.orientation.left)
+                elseif sprt == 58 then
+                    bullseye.replace_in_map(x, y, bullseye.orientation.right)
+                end
+
+                if sprt == 37 then
+                    spring.replace_in_map(x, y, spring.orientations.top)
+                elseif sprt == 40 then
+                    spring.replace_in_map(x, y, spring.orientations.right)
+                elseif sprt == 43 then
+                    spring.replace_in_map(x, y, spring.orientations.bottom)
+                elseif sprt == 44 then
+                    spring.replace_in_map(x, y, spring.orientations.left)
+                end
+            end
+        end
+    end
+}
+
+return map
+end
+package._c["managers/level_text"]=function()
+return {
+    draw_current_level_text = function()
+        if SAVE_DATA.current_level == 1 then
+            print("move with ⬅️➡️⬇️⬆️", 13, 93, 5)
+            print("fire arrows with ❎")
+            print("while pressing 🅾️ use\narrows to aim")
+        end
+
+    end
+}
+end
+package._c["utils/debug"]=function()
+local print_utils = require("utils/print")
+
+return {
+    log = function(msg) printh(msg, "game_log") end,
+    assert = function(condition, msg) assert(condition, msg) end,
+    track_mouse_coordinates = function()
+        poke(0x5F2D, 1)
+        local mousex = mid(0, stat(32), 127)
+        local mousey = mid(0, stat(33), 127)
+
+        line(0, mousey, mousex, mousey, 11)
+        line(mousex, 0, mousex, mousey, 11)
+        pset(mousex, mousey, 7)
+
+        local coords_text = "x:" .. mousex .. " y:" .. mousey
+        local txt_pixel_len = print_utils.get_length_of_text(coords_text)
+
+        local px = mid(0, mousex, 127 - txt_pixel_len)
+        local py = mid(0, mousey, 127 - 4)
+
+        print(coords_text, px + 1, py + 1, 0)
+        print(coords_text, px, py, 11)
+    end
+}
+end
+package._c["utils/print"]=function()
+local function get_length_of_text(text) return #text * 4 end
+
+local function print_centered_with_backdrop(text, y, text_color, backdrop_color)
+    if text_color == nil then text_color = 7 end
+    if backdrop_color == nil then backdrop_color = 0 end
+
+    local text_x = 64 - get_length_of_text(text) / 2
+
+    print(text, text_x + 1, y + 1, backdrop_color)
+    print(text, text_x, y, text_color)
+end
+
+local menu_item_bobbing = false
+
+return {
+    get_length_of_text = get_length_of_text,
+    print_centered = function(text, y, color)
+        if color == nil then color = 7 end
+        local text_x = 64 - get_length_of_text(text) / 2
+        print(text, text_x, y, color)
+    end,
+    print_menu_item = function(text, y, is_selected)
+        print_centered_with_backdrop(text, y)
+        if is_selected then
+            local selector_x = (64 - get_length_of_text(text) / 2) - 10
+
+            local extra_spacing = 0
+            if GLOBAL_TIMER % 23 == 0 then
+                menu_item_bobbing = not menu_item_bobbing
+            end
+
+            if menu_item_bobbing then selector_x = selector_x - 1 end
+
+            sspr(65, 25, 7, 6, selector_x, y)
+        end
+    end,
+    print_centered_with_backdrop = print_centered_with_backdrop
+}
 end
 package._c["states/intro_state"]=function()
 local print_utils = require("utils/print")
@@ -1240,72 +1325,6 @@ local function update() update_menu() end
 
 return {init = init, update = update, draw = draw}
 end
-package._c["utils/print"]=function()
-local function get_length_of_text(text) return #text * 4 end
-
-local function print_centered_with_backdrop(text, y, text_color, backdrop_color)
-    if text_color == nil then text_color = 7 end
-    if backdrop_color == nil then backdrop_color = 0 end
-
-    local text_x = 64 - get_length_of_text(text) / 2
-
-    print(text, text_x + 1, y + 1, backdrop_color)
-    print(text, text_x, y, text_color)
-end
-
-local menu_item_bobbing = false
-
-return {
-    get_length_of_text = get_length_of_text,
-    print_centered = function(text, y, color)
-        if color == nil then color = 7 end
-        local text_x = 64 - get_length_of_text(text) / 2
-        print(text, text_x, y, color)
-    end,
-    print_menu_item = function(text, y, is_selected)
-        print_centered_with_backdrop(text, y)
-        if is_selected then
-            local selector_x = (64 - get_length_of_text(text) / 2) - 10
-
-            local extra_spacing = 0
-            if GLOBAL_TIMER % 23 == 0 then
-                menu_item_bobbing = not menu_item_bobbing
-            end
-
-            if menu_item_bobbing then selector_x = selector_x - 1 end
-
-            sspr(65, 25, 7, 6, selector_x, y)
-        end
-    end,
-    print_centered_with_backdrop = print_centered_with_backdrop
-}
-end
-package._c["utils/debug"]=function()
-local print_utils = require("utils/print")
-
-return {
-    log = function(msg) printh(msg, "game_log") end,
-    assert = function(condition, msg) assert(condition, msg) end,
-    track_mouse_coordinates = function()
-        poke(0x5F2D, 1)
-        local mousex = mid(0, stat(32), 127)
-        local mousey = mid(0, stat(33), 127)
-
-        line(0, mousey, mousex, mousey, 11)
-        line(mousex, 0, mousex, mousey, 11)
-        pset(mousex, mousey, 7)
-
-        local coords_text = "x:" .. mousex .. " y:" .. mousey
-        local txt_pixel_len = print_utils.get_length_of_text(coords_text)
-
-        local px = mid(0, mousex, 127 - txt_pixel_len)
-        local py = mid(0, mousey, 127 - 4)
-
-        print(coords_text, px + 1, py + 1, 0)
-        print(coords_text, px, py, 11)
-    end
-}
-end
 function require(p)
 local l=package.loaded
 if (l[p]==nil) l[p]=package._c[p]()
@@ -1316,7 +1335,6 @@ end
 -- by Dadum
 local save_manager = require("managers/savefile")
 local state_manager = require("managers/state")
-local debug = require("utils/debug")
 
 GLOBAL_TIMER = 0
 
@@ -1332,7 +1350,6 @@ end
 
 function _draw()
     state_manager.draw()
-    -- debug.track_mouse_coordinates()
 end
 __gfx__
 00000000333333334444444400111000000000000000000000000000700000000000000070000000700000000000000000000000000000000000000000000000
@@ -1589,13 +1606,13 @@ __map__
 1100000000000000000000000000001111005d5e5f0000000000000000000011010101000000000000000001000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 113a000000000000000000000000001111006d6e6f0000000000000000000011110000000000000000000001000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1100000000000000000000000000001111000000000000000000000000000011110000000000000000000001000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1111110000000003000000000000001111000000000000000000000000000011110001000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1111110000000000000050515253001111000000000000000000000000000011110001000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1111111111111111110060616263001111000000000000000000000000000011110101000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1134353535353536110070717273001111000000000000000000000000000011110000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1144454545454546110100008283001111000000000000000000000000000011110000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1144454545454546110200919293001111000300000000000011390011000011110000000011110000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-1154555555555556110201020202011111000000000000000011000011000011110000111111110011111111111100110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1111115758000003000000000057581111000000000000000000000000000011110001000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1111116768000000000000000067681111000000000000000000000000000011110001000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1111110101010101010101010101011111000000000000000000000000000011110101000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1134353535353535353535353602021111000000000000000000000000000011110000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1144454545454545454545454602021111000000000000000000000000000011110000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1144454545454545454545454602021111000300000000000011390011000011110000000011110000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+1154555555555555555555555602021111000000000000000011000011000011110000111111110011111111111100110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 0002000000000310503105031050300502d0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

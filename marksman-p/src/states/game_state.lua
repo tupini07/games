@@ -1,15 +1,19 @@
 local map = require("src/map")
-local decorations = require("managers/decorations")
 local camera_utils = require("src/camera")
+local graphics_utils = require("utils/graphics")
 
 local player = require("entities/player")
 local arrow = require("entities/arrow")
 local bullseye = require("entities/bullseye")
 local spring = require("entities/spring")
 
+local decorations = require("managers/decorations")
 local savefile_manager = require("managers/savefile")
 local particles = require("managers/particles")
-local graphics_utils = require("utils/graphics")
+local level_text = require("managers/level_text")
+
+local debug = require("utils/debug")
+
 
 local level_win = false
 local show_win_banner = false
@@ -110,12 +114,15 @@ local function draw()
 
     decorations.draw_background()
     map.draw()
+    level_text.draw_current_level_text()
     bullseye.draw()
     arrow.draw_all()
     player.draw()
     spring.draw()
     particles.draw()
     if level_win and show_win_banner then level_win_draw() end
+    debug.track_mouse_coordinates()
+
 end
 
 return {init = init, update = update, draw = draw}
