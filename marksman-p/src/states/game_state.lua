@@ -1,6 +1,7 @@
 local map = require("src/map")
 local camera_utils = require("src/camera")
 local graphics_utils = require("utils/graphics")
+local print_utils = require("utils/print")
 
 local player = require("entities/player")
 local arrow = require("entities/arrow")
@@ -127,6 +128,18 @@ local function level_lost_draw()
     print("press ❎ to try again", banner_x1 + 10, banner_y1 + 20, 5)
 end
 
+local function draw_current_lvl()
+    local game_space = map.get_game_space_coords_for_current_lvl()
+
+    local base_x = (game_space.x + 128) - 20
+    local base_y = game_space.y + 1
+
+    sspr(88, 0, 16, 8, base_x, base_y, 19, 13)
+    local pos = base_x + 3 * (4 - #("" .. SAVE_DATA.current_level))
+
+    print(SAVE_DATA.current_level, pos, base_y + 4, 5)
+end
+
 local function init()
     particles.init()
     player.init()
@@ -148,14 +161,16 @@ local function draw()
     cls(12)
 
     decorations.draw_background()
-    level_text.draw_current_level_text()
     bullseye.draw()
     arrow.draw_all()
     player.draw()
     map.draw()
+    level_text.draw_current_level_text()
     spring.draw()
     spikes.draw()
     particles.draw()
+    draw_current_lvl()
+
     if level_done and show_lost_banner then level_lost_draw() end
     if level_done and show_win_banner then level_win_draw() end
 end
