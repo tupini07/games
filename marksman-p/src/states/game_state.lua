@@ -14,7 +14,6 @@ local level_text = require("managers/level_text")
 
 local debug = require("utils/debug")
 
-
 local level_win = false
 local show_win_banner = false
 
@@ -122,7 +121,6 @@ local function draw()
     particles.draw()
     if level_win and show_win_banner then level_win_draw() end
     debug.track_mouse_coordinates()
-
 end
 
 return {init = init, update = update, draw = draw}

@@ -166,7 +166,13 @@ return {
     end,
     reset_for_new_level = function()
         PLAYER.dir = 1
-        bow.change_dir(7)
+        if SAVE_DATA.current_level == 1 then
+            -- aim forward for first level
+            bow.change_dir(1)
+        else
+            bow.change_dir(7)
+        end
+
     end,
     update = function()
         change_bow_direction()

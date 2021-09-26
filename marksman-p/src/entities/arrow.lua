@@ -20,7 +20,7 @@ local function fire_arrow(x, y, force, angle)
         y = y,
         dx = dx,
         dy = dy,
-        lifetime = 60,
+        lifetime = 90,
         is_stuck = false,
         collider = collider
     }
