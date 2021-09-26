@@ -9,13 +9,17 @@ local function level_to_map_coords(level_num)
     -- first we get 0 indexed coordinates for the "block" which 
     -- is the level
 
-    -- 16 levels per row in map editor
-    local map_row = flr(level_num / 16)
+    local cell_idx = level_num - 1
+    -- 4 rows of levels in map
+    local mapy = flr(cell_idx / 8)
 
-    --  8 levels per column in map editor
-    local map_column = (level_num % 16) - 1
+    --  8 levels per row
+    local mapx = cell_idx % 8
 
-    return {x = map_column * 16, y = map_row * 16}
+    local mx = max(0, (mapx * 16))
+    local my = max(0, (mapy * 16))
+    printh("[level_to_map_coords] x:" .. mx .. " y: " .. my)
+    return {x = mx, y = my}
 end
 
 --- @return Vector
@@ -27,8 +31,9 @@ end
 
 local map = {
     draw = function()
-        -- TODO use level_to_map_coords for more efficient drawing
-        map(0, 0, 0, 0, 128, 64)
+        local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
+        local game_cords = get_game_space_coords_for_current_lvl()
+        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16)
     end,
     sprite_flags = sprite_flags,
     cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,

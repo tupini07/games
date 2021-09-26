@@ -31,7 +31,7 @@ local function new_level_init()
     spring.init()
     spikes.init()
     map.replace_entities(SAVE_DATA.current_level)
-    camera_utils.focus_section(SAVE_DATA.current_level) 
+    camera_utils.focus_section(SAVE_DATA.current_level)
     player.reset_for_new_level()
 end
 
@@ -148,20 +148,16 @@ local function draw()
     cls(12)
 
     decorations.draw_background()
-    map.draw()
     level_text.draw_current_level_text()
     bullseye.draw()
     arrow.draw_all()
     player.draw()
+    map.draw()
     spring.draw()
     spikes.draw()
     particles.draw()
     if level_done and show_lost_banner then level_lost_draw() end
     if level_done and show_win_banner then level_win_draw() end
-
-    local p = map.get_game_space_coords_for_current_lvl()
-    print(p.x, p.x, p.y)
-    print(p.y)
 end
 
 return {init = init, update = update, draw = draw}
