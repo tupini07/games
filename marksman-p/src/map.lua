@@ -18,7 +18,7 @@ local function level_to_map_coords(level_num)
 
     local mx = max(0, (mapx * 16))
     local my = max(0, (mapy * 16))
-    printh("[level_to_map_coords] x:" .. mx .. " y: " .. my)
+
     return {x = mx, y = my}
 end
 
