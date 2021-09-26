@@ -77,6 +77,19 @@ local function check_floor()
     end
 end
 
+local function check_ceiling()
+    local top_x = flr((PLAYER.x + 4) / 8)
+    local top_y = flr(PLAYER.y / 8)
+
+    local is_top_ceiling = map.cell_has_flag(map.sprite_flags.solid, top_x,
+                                             top_y)
+
+    if is_top_ceiling then
+        PLAYER.y = (top_y + 1) * 8
+        PLAYER.dy = 0
+    end
+end
+
 local function check_walls()
     -- check that top-{movement-dir} and bottom-{movement-dir} corners
     -- are not colliding
@@ -223,6 +236,7 @@ return {
         change_bow_direction()
         move_player()
         check_floor()
+        check_ceiling()
         check_walls()
         check_spikes()
         spring.try_spring_body(PLAYER)
