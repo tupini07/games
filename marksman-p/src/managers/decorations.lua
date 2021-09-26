@@ -7,7 +7,7 @@ local function replace_in_map() end
 local function draw_background()
     local lvl_cords = map.get_game_space_coords_for_current_lvl()
 
-    sspr(0, 80, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
+    sspr(0, 32, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
 end
 
 return {
