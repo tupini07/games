@@ -23,22 +23,18 @@ local function show_todo()
     rectfill(10, 32, 117, 120, 7)
     color(0)
     print("\ntodo:", 12, 34)
-    print("- background (parallax,\n  a tree?)")
     print("- nicer win panel")
     print("- sfx")
     print("- music?")
     print("- more levels")
-    print("- level intro / symbolizer")
-    print("- build script: replace\n  upper case with symbols")
     print("- apply clipping to arrows")
 end
 
 local function draw_menu()
     local starting_y = 42
     for menu_item in all(menu) do
-        local t = menu_item.text
-        if menu_item.is_selected then t = "➡️ " .. t end
-        print_utils.print_centered_with_backdrop(t, starting_y)
+        print_utils.print_menu_item(menu_item.text, starting_y,
+                                    menu_item.is_selected)
         starting_y = starting_y + 7
     end
 end
