@@ -2,6 +2,7 @@ local sprite_flags = {solid = 0, bullseye = 1}
 
 local bullseye = require("entities/bullseye")
 local spring = require("entities/spring")
+local spikes = require("entities/spikes")
 
 --- @return Vector
 local function level_to_map_coords(level_num)
@@ -46,12 +47,20 @@ local map = {
                     mset(x, y, 0)
                     PLAYER.x = x * 8
                     PLAYER.y = y * 8
+                    PLAYER_ORIGINAL_POS_IN_LVL.x = x * 8
+                    PLAYER_ORIGINAL_POS_IN_LVL.y = y * 8
                 end
 
                 if sprt == 57 then
                     bullseye.replace_in_map(x, y, bullseye.orientation.left)
                 elseif sprt == 58 then
                     bullseye.replace_in_map(x, y, bullseye.orientation.right)
+                end
+
+                if sprt == 55 then
+                    spikes.replace_in_map(x, y, spikes.orientations.down)
+                elseif sprt == 71 then
+                    spikes.replace_in_map(x, y, spikes.orientations.up)
                 end
 
                 if sprt == 37 then

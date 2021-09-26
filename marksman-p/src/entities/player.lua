@@ -1,5 +1,8 @@
-local math = require("utils/math")
 local map = require("src/map")
+
+local math = require("utils/math")
+local physics_utils = require("utils/physics")
+
 local bow = require("entities/bow")
 local spring = require("entities/spring")
 
@@ -12,6 +15,7 @@ PLAYER = {
     dy = 0,
     ddy = 0.12,
     dir = 1,
+    is_dead = false,
     collider = {x = 0, y = 0, w = 8, h = 16},
     is_jumping = false,
     changing_bow_dir = false
@@ -98,6 +102,40 @@ local function check_walls()
     end
 end
 
+local function check_spikes()
+    local resolved_player_collider = physics_utils.resolve_box_body_collider(
+                                         PLAYER)
+    for s in all(SPIKES) do
+        local spike_resolved_collider = physics_utils.resolve_box_body_collider(
+                                            s)
+        local is_colliding = physics_utils.box_collision(
+                                 resolved_player_collider,
+                                 spike_resolved_collider)
+        if is_colliding then
+            -- draw puff particles, smoke and fire
+            for _ = 1, 25 do
+                local px = PLAYER.x + flr(rnd(8))
+                local py = PLAYER.y + flr(rnd(16))
+                local xv = rnd(0) - 0.5
+                local lifetime = 10 + flr(rnd(10))
+                particles.make_particle(px, py, xv, -1, 0, 1, rnd({5, 6, 7}),
+                                        lifetime)
+            end
+
+            for _ = 1, 5 do
+                local px = PLAYER.x + flr(rnd(8))
+                local py = PLAYER.y + 10 + flr(rnd(6))
+                local xv = rnd(0) - 0.5
+                particles.make_particle(px, py, xv, -1, 0, 1, rnd({8, 9, 10}), 7)
+            end
+
+            PLAYER.is_dead = true
+            LOSE_LEVEL()
+            return
+        end
+    end
+end
+
 local function change_bow_direction()
     if btn(4) then
         PLAYER.changing_bow_dir = true
@@ -166,6 +204,9 @@ return {
     end,
     reset_for_new_level = function()
         PLAYER.dir = 1
+        PLAYER.is_dead = false
+        BOW.x = PLAYER.x
+        BOW.y = PLAYER.y + 4
         if SAVE_DATA.current_level == 1 then
             -- aim forward for first level
             bow.change_dir(1)
@@ -175,15 +216,20 @@ return {
 
     end,
     update = function()
+        if PLAYER.is_dead then return end
+
         change_bow_direction()
         move_player()
         check_floor()
         check_walls()
+        check_spikes()
         spring.try_spring_body(PLAYER)
 
         bow.update()
     end,
     draw = function()
+        if PLAYER.is_dead then return end
+
         draw_player()
         bow.draw()
     end

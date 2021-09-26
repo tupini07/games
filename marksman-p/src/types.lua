@@ -31,3 +31,8 @@
 --- @field public state number 0, 1, or 2 - from less to more expanded
 --- @field public orientation number
 --- @field public collider BoxCollider
+--- @class Spike
+--- @field public x number
+--- @field public y number
+--- @field public orientation number
+--- @field public collider BoxCollider
