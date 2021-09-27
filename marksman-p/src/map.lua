@@ -1,8 +1,8 @@
-local sprite_flags = {solid = 0, bullseye = 1}
-
 local bullseye = require("entities/bullseye")
 local spring = require("entities/spring")
 local spikes = require("entities/spikes")
+
+local sprite_flags = {solid = 0, bullseye = 1, level_text_container = 2}
 
 --- @return Vector
 local function level_to_map_coords(level_num)
@@ -30,10 +30,15 @@ local function get_game_space_coords_for_current_lvl()
 end
 
 local map = {
+    draw_level_text = function()
+        local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
+        local game_cords = get_game_space_coords_for_current_lvl()
+        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16,0x4)
+    end,
     draw = function()
         local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
         local game_cords = get_game_space_coords_for_current_lvl()
-        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16)
+        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16,0B11)
     end,
     sprite_flags = sprite_flags,
     cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
