@@ -89,7 +89,7 @@ local function draw()
     cls(2)
     color(7)
     print_utils.print_centered("marksman", 10)
-    print_utils.print_centered("v0.3", 16)
+    print_utils.print_centered("v0.4", 16)
     print_utils.print_centered("press ❎ to select", 22)
 
     draw_menu()
