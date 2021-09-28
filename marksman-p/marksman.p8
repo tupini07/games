@@ -158,12 +158,25 @@ local function level_win_draw()
     local banner_x1 = lvl_cords.x
     local banner_y1 = lvl_cords.y + 48
 
-    local banner_x2 = banner_x1 + 128
+    local banner_x2 = banner_x1 + 127
     local banner_y2 = banner_y1 + 46
 
     rectfill(banner_x1, banner_y1, banner_x2, banner_y2, 7)
-    print("good job!", banner_x1 + 10, banner_y1 + 10, 5)
-    print("press ❎ to continue...", banner_x1 + 10, banner_y1 + 20, 5)
+
+    local line_x1 = banner_x1 + 3
+    local line_y1 = banner_y1 + 3
+
+    local line_x2 = banner_x2 - 3
+    local line_y2 = banner_y2 - 3
+
+    rect(line_x1, line_y1, line_x2, line_y2, 6)
+    pset(line_x1 - 1, line_y1 - 1, 6)
+    pset(line_x2 + 1, line_y1 - 1, 6)
+    pset(line_x1 - 1, line_y2 + 1, 6)
+    pset(line_x2 + 1, line_y2 + 1, 6)
+
+    print("good job!\n", banner_x1 + 14, banner_y1 + 14, 5)
+    print("press ❎ to continue")
 end
 
 local function level_lost_draw()
