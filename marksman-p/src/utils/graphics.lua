@@ -28,4 +28,49 @@ local function fade(i)
     end
 end
 
-return {fade = fade}
+local function complete_fade_coroutine()
+    local fader = 0
+    while fader <= 16 do
+        fade(fader)
+        fader = fader + 1
+        yield()
+    end
+end
+
+local function complete_unfade_coroutine()
+    local fader = 17
+    while fader >= 0 do
+        fade(fader)
+        fader = fader - 1
+        yield()
+    end
+end
+
+local function execute_in_between_fades(fn_before, fn_in_between, fn_after)
+    return cocreate(function()
+        if fn_before ~= nil then fn_before() end
+
+        local fade_routine = cocreate(complete_fade_coroutine)
+        while costatus(fade_routine) ~= "dead" do
+            coresume(fade_routine)
+            yield()
+        end
+
+        if fn_in_between ~= nil then fn_in_between() end
+
+        local unfade_routine = cocreate(complete_unfade_coroutine)
+        while costatus(unfade_routine) ~= "dead" do
+            coresume(unfade_routine)
+            yield()
+        end
+
+        if fn_after ~= nil then fn_after() end
+    end)
+end
+
+return {
+    fade = fade,
+    complete_fade_coroutine = complete_fade_coroutine,
+    complete_unfade_coroutine = complete_unfade_coroutine,
+    execute_in_between_fades = execute_in_between_fades
+}

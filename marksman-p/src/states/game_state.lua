@@ -1,7 +1,6 @@
 local map = require("src/map")
 local camera_utils = require("src/camera")
 local graphics_utils = require("utils/graphics")
-local print_utils = require("utils/print")
 
 local player = require("entities/player")
 local arrow = require("entities/arrow")
@@ -46,37 +45,6 @@ function LOSE_LEVEL()
     show_lost_banner = true
 end
 
-local function level_change_fadeout_proc()
-    local fader = 0
-    while fader <= 16 do
-        graphics_utils.fade(fader)
-        fader = fader + 1
-        yield()
-    end
-
-    -- setup new level
-    if show_win_banner then
-        SAVE_DATA.current_level = SAVE_DATA.current_level + 1
-        new_level_init()
-    elseif show_lost_banner then
-        level_reset()
-    end
-
-    show_win_banner = false
-    show_lost_banner = false
-
-    savefile_manager.persist_save_data()
-
-    while fader >= 0 do
-        graphics_utils.fade(fader)
-        fader = fader - 1
-        yield()
-    end
-
-    level_done = false
-    pal()
-end
-
 local level_change_coroutine = nil
 local function get_lvl_change_coroutine_status()
     if level_change_coroutine == nil then
@@ -93,7 +61,23 @@ local function level_done_update()
         if lvl_change_status == "running" then
             return
         elseif lvl_change_status == "dead" then
-            level_change_coroutine = cocreate(level_change_fadeout_proc)
+            level_change_coroutine = graphics_utils.execute_in_between_fades(
+                                         nil, function()
+                    if show_win_banner then
+                        SAVE_DATA.current_level = SAVE_DATA.current_level + 1
+                        new_level_init()
+                    elseif show_lost_banner then
+                        level_reset()
+                    end
+
+                    show_win_banner = false
+                    show_lost_banner = false
+
+                    savefile_manager.persist_save_data()
+                end, function()
+                    level_done = false
+                    pal()
+                end)
         end
     end
 

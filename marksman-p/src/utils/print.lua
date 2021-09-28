@@ -20,12 +20,11 @@ return {
         print(text, text_x, y, color)
     end,
     print_menu_item = function(text, y, is_selected)
-        print_centered_with_backdrop(text, y)
+        print_centered_with_backdrop(text, y, 0, 6)
         if is_selected then
             local selector_x = (64 - get_length_of_text(text) / 2) - 10
 
-            local extra_spacing = 0
-            if GLOBAL_TIMER % 23 == 0 then
+            if GLOBAL_TIMER % 13 == 0 then
                 menu_item_bobbing = not menu_item_bobbing
             end
 
