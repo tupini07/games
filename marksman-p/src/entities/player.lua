@@ -16,10 +16,20 @@ PLAYER = {
     ddy = 0.12,
     dir = 1,
     is_dead = false,
-    collider = {x = 0, y = 0, w = 8, h = 16},
+    collider = {x = 1, y = 0, w = 4, h = 16},
     is_jumping = false,
     changing_bow_dir = false
 }
+
+local function change_pl_dir(new_dir)
+    assert(new_dir == -1 or new_dir == 1, "invalid player dir")
+    PLAYER.dir = new_dir
+    if new_dir == 1 then
+        PLAYER.collider = {x = 1, y = 0, w = 4, h = 16}
+    else
+        PLAYER.collider = {x = 2, y = 0, w = 4, h = 16}
+    end
+end
 
 local function move_player()
     local jumping_mod = 0.55
@@ -30,7 +40,6 @@ local function move_player()
         elseif btn(1) then
             PLAYER.dx = PLAYER.dx + 1 * jumping_mod
         end
-
         if btnp(2) and not PLAYER.is_jumping then PLAYER.dy = -2 end
     end
 
@@ -51,11 +60,19 @@ local function move_player()
 end
 
 local function check_floor()
-    local bottom_x = flr((PLAYER.x + 4) / 8)
-    local bottom_y = flr((PLAYER.y + 16) / 8)
+    local bottom_x0 = flr((PLAYER.x + PLAYER.collider.x) / 8)
+    local bottom_x1 =
+        flr((PLAYER.x + PLAYER.collider.x + PLAYER.collider.w) / 8)
+    local bottom_y = flr(
+                         (PLAYER.y + PLAYER.collider.x + PLAYER.collider.h - 1) /
+                             8)
 
-    local is_bottom_floor = map.cell_has_flag(map.sprite_flags.solid, bottom_x,
-                                              bottom_y)
+    local is_bottom_floor = false
+    for bx in all({bottom_x0, bottom_x1}) do
+        is_bottom_floor = is_bottom_floor or
+                              map.cell_has_flag(map.sprite_flags.solid, bx,
+                                                bottom_y)
+    end
 
     if is_bottom_floor then
         if PLAYER.is_jumping then
@@ -78,39 +95,53 @@ local function check_floor()
 end
 
 local function check_ceiling()
-    local top_x = flr((PLAYER.x + 4) / 8)
-    local top_y = flr(PLAYER.y / 8)
+    local top_x0 = flr((PLAYER.x + PLAYER.collider.x) / 8)
+    local top_x1 = flr((PLAYER.x + PLAYER.collider.x + PLAYER.collider.w) / 8)
+    local top_y = flr((PLAYER.y + PLAYER.collider.y) / 8)
 
-    local is_top_ceiling = map.cell_has_flag(map.sprite_flags.solid, top_x,
-                                             top_y)
-
-    if is_top_ceiling then
-        PLAYER.y = (top_y + 1) * 8
-        PLAYER.dy = 0
+    for t in all({top_x0, top_x1}) do
+        local is_top_ceiling = map.cell_has_flag(map.sprite_flags.solid, t,
+                                                 top_y)
+        if is_top_ceiling then
+            PLAYER.y = (top_y + 1) * 8
+            PLAYER.dy = 0
+        end
     end
 end
 
 local function check_walls()
     -- check that top-{movement-dir} and bottom-{movement-dir} corners
     -- are not colliding
-    local pl_top_left = {x = PLAYER.x, y = PLAYER.y + 4}
-    local pl_top_right = {x = PLAYER.x + 8, y = PLAYER.y + 4}
-    local pl_btm_left = {x = PLAYER.x, y = PLAYER.y + 12}
-    local pl_btm_right = {x = PLAYER.x + 8, y = PLAYER.y + 12}
+    local side_left = flr((PLAYER.x + PLAYER.collider.x) / 8)
+    local side_right = flr((PLAYER.x + PLAYER.collider.x + PLAYER.collider.w) /
+                               8)
 
-    for corner in all({pl_top_left, pl_top_right, pl_btm_left, pl_btm_right}) do
-        local map_x = flr(corner.x / 8)
-        local map_y = flr(corner.y / 8)
+    local top_y0 = flr((PLAYER.y + PLAYER.collider.y + 2) / 8)
+    local top_y1 = flr(
+                       (PLAYER.y + PLAYER.collider.y + (PLAYER.collider.h / 2)) /
+                           8)
+    local top_y2 = flr((PLAYER.y + PLAYER.collider.y + PLAYER.collider.h - 2) /
+                           8)
+    local tops = {top_y0, top_y1, top_y2}
 
-        local is_colliding = map.cell_has_flag(map.sprite_flags.solid, map_x,
-                                               map_y)
-
+    -- left side collission
+    for t in all(tops) do
+        local is_colliding = map.cell_has_flag(map.sprite_flags.solid,
+                                               side_left, t)
         if is_colliding then
             PLAYER.dx = 0
-            local is_facing_left = sgn(PLAYER.x - corner.x)
-            local pixel_space_x = (map_x + is_facing_left) * 8
-            PLAYER.x = pixel_space_x
-            return
+            PLAYER.x = (side_right * 8) - PLAYER.collider.x
+        end
+    end
+
+    -- right side collission
+    for t in all(tops) do
+        local is_colliding = map.cell_has_flag(map.sprite_flags.solid,
+                                               side_right, t)
+        if is_colliding then
+            PLAYER.dx = 0
+            PLAYER.x = (side_left * 8) +
+                           (8 - PLAYER.collider.x - PLAYER.collider.w - 1)
         end
     end
 end
@@ -160,28 +191,28 @@ local function change_bow_direction()
         -- first check corners
         -- see bow.lua for map of directions
         if up and left then
-            PLAYER.dir = -1
+            change_pl_dir(-1)
             bow.change_dir(4)
         elseif up and right then
-            PLAYER.dir = 1
+            change_pl_dir(1)
             bow.change_dir(2)
         elseif down and left then
-            PLAYER.dir = -1
+            change_pl_dir(-1)
             bow.change_dir(6)
         elseif down and right then
-            PLAYER.dir = 1
+            change_pl_dir(1)
             bow.change_dir(8)
         elseif up then
-            PLAYER.dir = 1
+            change_pl_dir(1)
             bow.change_dir(3)
         elseif right then
-            PLAYER.dir = 1
+            change_pl_dir(1)
             bow.change_dir(1)
         elseif down then
-            PLAYER.dir = 1
+            change_pl_dir(1)
             bow.change_dir(7)
         elseif left then
-            PLAYER.dir = -1
+            change_pl_dir(-1)
             bow.change_dir(5)
         end
     else
@@ -192,7 +223,7 @@ end
 local function draw_player()
     local flip_x = PLAYER.dir == -1
 
-    function draw_pl_sprite(sprt_x)
+    local function draw_pl_sprite(sprt_x)
         sspr(sprt_x, 0, 8, 16, PLAYER.x, PLAYER.y, 8, 16, flip_x)
     end
 
@@ -216,7 +247,7 @@ return {
         bow.init()
     end,
     reset_for_new_level = function()
-        PLAYER.dir = 1
+        change_pl_dir(1)
         PLAYER.dx = 0
         PLAYER.dy = 0
         PLAYER.is_dead = false
@@ -235,9 +266,9 @@ return {
 
         change_bow_direction()
         move_player()
-        check_floor()
-        check_ceiling()
         check_walls()
+        check_ceiling()
+        check_floor()
         check_spikes()
         spring.try_spring_body(PLAYER)
 
