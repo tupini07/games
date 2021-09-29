@@ -29,11 +29,24 @@ local function get_game_space_coords_for_current_lvl()
     return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
 end
 
+local function cell_has_flag(flag, x, y) return fget(mget(x, y), flag) end
+
+local function is_solid(x, y)
+    return cell_has_flag(sprite_flags.solid, flr(x / 8), flr(y / 8))
+end
+
+local function is_solid_area(x, y, w, h)
+    return is_solid(x, y) or is_solid(x + w, y) or is_solid(x, y + h) or
+               is_solid(x + w, y + h) or is_solid(x, y + h / 2) or
+               is_solid(x + w, y + h / 2)
+end
+
 local map = {
     draw_level_text = function()
         local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
         local game_cords = get_game_space_coords_for_current_lvl()
-        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16,0x4)
+        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16,
+            16, 0x4)
     end,
     draw = function()
         local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
@@ -41,7 +54,8 @@ local map = {
         map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16,0B11)
     end,
     sprite_flags = sprite_flags,
-    cell_has_flag = function(flag, x, y) return fget(mget(x, y), flag) end,
+    cell_has_flag = cell_has_flag,
+    is_solid_area = is_solid_area,
     level_to_map_coords = level_to_map_coords,
     get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
     replace_entities = function(current_level)

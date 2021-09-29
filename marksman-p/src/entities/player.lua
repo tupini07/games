@@ -16,7 +16,7 @@ PLAYER = {
     ddy = 0.12,
     dir = 1,
     is_dead = false,
-    collider = {x = 1, y = 0, w = 4, h = 16},
+    collider = {x = 1, y = 0, w = 4, h = 15},
     is_jumping = false,
     changing_bow_dir = false
 }
@@ -27,10 +27,15 @@ local function change_pl_dir(new_dir)
     assert(new_dir == -1 or new_dir == 1, "invalid player dir")
     PLAYER.dir = new_dir
     if new_dir == 1 then
-        PLAYER.collider = {x = 1, y = 0, w = 4, h = 16}
+        PLAYER.collider = {x = 1, y = 0, w = 4, h = 15}
     else
-        PLAYER.collider = {x = 2, y = 0, w = 4, h = 16}
+        PLAYER.collider = {x = 2, y = 0, w = 4, h = 15}
     end
+end
+
+local function is_player_on_ground()
+    local pl_c = physics_utils.resolve_box_body_collider(PLAYER)
+    return map.is_solid_area(pl_c.x, pl_c.y + PLAYER.dy + 1, pl_c.w, pl_c.h)
 end
 
 local function move_player()
@@ -50,8 +55,37 @@ local function move_player()
     PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 3)
 
     -- apply velocity
-    PLAYER.x = PLAYER.x + PLAYER.dx
-    PLAYER.y = PLAYER.y + PLAYER.dy
+
+    -- horizontal
+    local pl_c = physics_utils.resolve_box_body_collider(PLAYER)
+    if not map.is_solid_area(pl_c.x + PLAYER.dx, pl_c.y, pl_c.w, pl_c.h) then
+        PLAYER.x = PLAYER.x + PLAYER.dx
+    else
+        PLAYER.dx = 0
+    end
+
+    -- vertical
+    if not map.is_solid_area(pl_c.x, pl_c.y + PLAYER.dy, pl_c.w, pl_c.h) then
+        PLAYER.y = PLAYER.y + PLAYER.dy
+
+    else
+        PLAYER.dy = 0
+    end
+
+    if is_player_on_ground() then
+        if PLAYER.is_jumping then
+            -- then we're landing
+            for _ = 1, 5 do
+                local displacement = rnd(4) - 4
+                particles.make_particle(PLAYER.x + 4 + displacement,
+                                        PLAYER.y + 16, -PLAYER.dx * 0.1,
+                                        -PLAYER.dy * 0.1, 0, 1, 7, 7)
+            end
+        end
+        PLAYER.is_jumping = false
+    else
+        PLAYER.is_jumping = true
+    end
 
     -- apply gravity
     PLAYER.dy = PLAYER.dy + PLAYER.ddy
@@ -59,93 +93,6 @@ local function move_player()
     -- apply friction
     PLAYER.dx = PLAYER.dx * 0.5
     if abs(PLAYER.dx) < 0.1 then PLAYER.dx = 0 end
-end
-
-local function check_floor()
-    local bottom_x0 = flr((PLAYER.x + PLAYER.collider.x) / 8)
-    local bottom_x1 =
-        flr((PLAYER.x + PLAYER.collider.x + PLAYER.collider.w) / 8)
-    local bottom_y = flr(
-                         (PLAYER.y + PLAYER.collider.x + PLAYER.collider.h - 1) /
-                             8)
-
-    local is_bottom_floor = false
-    for bx in all({bottom_x0, bottom_x1}) do
-        is_bottom_floor = is_bottom_floor or
-                              map.cell_has_flag(map.sprite_flags.solid, bx,
-                                                bottom_y)
-    end
-
-    if is_bottom_floor then
-        if PLAYER.is_jumping then
-            -- we're landing
-            for _ = 1, 5 do
-                local displacement = rnd(4) - 4
-                particles.make_particle(PLAYER.x + 4 + displacement,
-                                        PLAYER.y + 16, -PLAYER.dx * 0.1,
-                                        -PLAYER.dy * 0.1, 0, 1, 7, 7)
-            end
-
-        end
-
-        PLAYER.is_jumping = false
-        PLAYER.y = (bottom_y - 2) * 8
-        PLAYER.dy = 0
-    else
-        PLAYER.is_jumping = true
-    end
-end
-
-local function check_ceiling()
-    local top_x0 = flr((PLAYER.x + PLAYER.collider.x) / 8)
-    local top_x1 = flr((PLAYER.x + PLAYER.collider.x + PLAYER.collider.w) / 8)
-    local top_y = flr((PLAYER.y + PLAYER.collider.y) / 8)
-
-    for t in all({top_x0, top_x1}) do
-        local is_top_ceiling = map.cell_has_flag(map.sprite_flags.solid, t,
-                                                 top_y)
-        if is_top_ceiling then
-            PLAYER.y = (top_y + 1) * 8
-            PLAYER.dy = 0
-        end
-    end
-end
-
-local function check_walls()
-    -- check that top-{movement-dir} and bottom-{movement-dir} corners
-    -- are not colliding
-    local side_left = flr((PLAYER.x + PLAYER.collider.x) / 8)
-    local side_right = flr((PLAYER.x + PLAYER.collider.x + PLAYER.collider.w) /
-                               8)
-
-    local top_y0 = flr((PLAYER.y + PLAYER.collider.y + 2) / 8)
-    local top_y1 = flr(
-                       (PLAYER.y + PLAYER.collider.y + (PLAYER.collider.h / 2)) /
-                           8)
-    local top_y2 = flr((PLAYER.y + PLAYER.collider.y + PLAYER.collider.h - 2) /
-                           8)
-    local tops = {top_y0, top_y1, top_y2}
-
-    -- left side collission
-    for t in all(tops) do
-        local is_colliding = map.cell_has_flag(map.sprite_flags.solid,
-                                               side_left, t)
-        if is_colliding then
-            PLAYER.dx = 0
-            PLAYER.x = (side_right * 8) - PLAYER.collider.x
-        end
-    end
-
-    -- right side collission
-    for t in all(tops) do
-        local is_colliding = map.cell_has_flag(map.sprite_flags.solid,
-                                               side_right, t)
-        if is_colliding then
-            PLAYER.dx = 0
-            PLAYER.x = (side_left * 8) +
-                           (8 - PLAYER.collider.x - PLAYER.collider.w - 1)
-        end
-    end
 end
 
 local function check_spikes()
@@ -271,9 +218,6 @@ return {
 
         change_bow_direction()
         move_player()
-        check_walls()
-        check_ceiling()
-        check_floor()
         check_spikes()
         spring.try_spring_body(PLAYER)
 
