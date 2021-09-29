@@ -21,6 +21,8 @@ PLAYER = {
     changing_bow_dir = false
 }
 
+local player_stepping_anim_left_foot = true
+
 local function change_pl_dir(new_dir)
     assert(new_dir == -1 or new_dir == 1, "invalid player dir")
     PLAYER.dir = new_dir
@@ -55,7 +57,7 @@ local function move_player()
     PLAYER.dy = PLAYER.dy + PLAYER.ddy
 
     -- apply friction
-    PLAYER.dx = PLAYER.dx * 0.6
+    PLAYER.dx = PLAYER.dx * 0.5
     if abs(PLAYER.dx) < 0.1 then PLAYER.dx = 0 end
 end
 
@@ -233,7 +235,10 @@ local function draw_player()
         -- idle
         draw_pl_sprite(56)
     else
-        if GLOBAL_TIMER % 8 == 0 then
+        if GLOBAL_TIMER % 6 == 0 then
+            player_stepping_anim_left_foot = not player_stepping_anim_left_foot
+        end
+        if player_stepping_anim_left_foot then
             draw_pl_sprite(64)
         else
             draw_pl_sprite(72)
