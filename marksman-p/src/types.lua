@@ -5,8 +5,7 @@
 --- @field public sprite_y number y coords of sprite
 --- @field public hitbox_x number x coords of hitbox
 --- @field public hitbox_y number y coords of hitbox
---- @field public hitbox_w number width of hitbox
---- @field public hitbox_h number height of hitbox
+--- @field public hitbox_r number radius of hitbox
 --- @class Vector
 --- @field x number
 --- @field y number

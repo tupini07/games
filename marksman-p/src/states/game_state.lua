@@ -13,6 +13,7 @@ local savefile_manager = require("managers/savefile")
 local particles = require("managers/particles")
 local level_text = require("managers/level_text")
 
+local banner_countdown = 10
 local level_done = false
 
 local show_win_banner = false
@@ -28,6 +29,7 @@ local function level_reset()
 end
 
 local function new_level_init()
+    banner_countdown = 10
     spring.init()
     spikes.init()
     map.replace_entities(SAVE_DATA.current_level)
@@ -169,8 +171,20 @@ local function draw()
     particles.draw()
     draw_current_lvl()
 
-    if level_done and show_lost_banner then level_lost_draw() end
-    if level_done and show_win_banner then level_win_draw() end
+    if level_done and show_lost_banner then
+        if banner_countdown > 0 then
+            banner_countdown = banner_countdown - 1
+        else
+            level_lost_draw()
+        end
+    end
+    if level_done and show_win_banner then
+        if banner_countdown > 0 then
+            banner_countdown = banner_countdown - 1
+        else
+            level_win_draw()
+        end
+    end
 end
 
 return {init = init, update = update, draw = draw}

@@ -1,6 +1,7 @@
 local math = require("utils/math")
 local map = require("src/map")
 local spring = require("entities/spring")
+local physics_utils = require("utils/physics")
 
 local particles = require("managers/particles")
 
@@ -133,15 +134,13 @@ end
 
 --- @param a Arrow
 local function collide_with_bullseye(a)
-    -- if collission_vec is inside the bullseye hitbox then we have a collission
-    local collision_vec = get_collision_vec(a)
+    local resolved_arrow_c = physics_utils.resolve_box_body_collider(a)
 
-    local bullseye_hitbox_x2 = BULLSEYE.hitbox_x + BULLSEYE.hitbox_w
-    local bullseye_hitbox_y2 = BULLSEYE.hitbox_y + BULLSEYE.hitbox_h
+    local is_colliding = physics_utils.is_box_collider_in_circle(
+                             resolved_arrow_c, BULLSEYE.hitbox_x,
+                             BULLSEYE.hitbox_y, BULLSEYE.hitbox_r)
 
-    if collision_vec.x >= BULLSEYE.hitbox_x and collision_vec.x <=
-        bullseye_hitbox_x2 and collision_vec.y >= BULLSEYE.hitbox_y and
-        collision_vec.y <= bullseye_hitbox_y2 then
+    if is_colliding then
         a.is_stuck = true
         make_bullseye_colission_dust(a)
         WIN_LEVEL()

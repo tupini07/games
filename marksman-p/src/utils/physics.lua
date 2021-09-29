@@ -1,3 +1,5 @@
+local math = require("utils/math")
+
 --- @param collider_1 BoxCollider
 --- @param collider_2 BoxCollider
 local function box_collision(collider_1, collider_2)
@@ -17,7 +19,30 @@ local function resolve_box_body_collider(box_body)
     }
 end
 
+---@param c BoxCollider
+---@param circx number
+---@param circy number
+---@param circr number
+local function is_box_collider_in_circle(c, circx, circy, circr)
+    local circ_center = {x = circx, y = circy}
+    local box_corners = {
+        {x = c.x, y = c.y}, {x = c.x + c.w, y = c.y}, {x = c.x, y = c.y + c.h},
+        {x = c.x + c.w, y = c.y + c.h}
+    }
+
+    for corner in all(box_corners) do
+        if math.vector_distance(corner, circ_center) <= circr then
+            return true
+        end
+    end
+
+    return false
+end
+
 return {
+    resolve_box_body_collider = resolve_box_body_collider,
+    is_box_collider_in_circle = is_box_collider_in_circle,
+    box_collision = box_collision,
     --- @param point Vector
     --- @param box_top_left Vector 
     point_in_box = function(point, box_top_left, box_h, box_w)
@@ -26,8 +51,6 @@ return {
         return box_top_left.x < point.x and point.x < bx1 and box_top_left.y <
                    point.y and point.y < by1
     end,
-    resolve_box_body_collider = resolve_box_body_collider,
-    box_collision = box_collision,
     --- @param box_body BoxPhysicsBody
     --- @param mapx number mapx cell top left x cord
     --- @param mapy number mapx cell top left y cord
