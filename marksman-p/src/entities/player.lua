@@ -75,6 +75,7 @@ local function move_player()
     if is_player_on_ground() then
         if PLAYER.is_jumping then
             -- then we're landing
+            sfx(4)
             for _ = 1, 5 do
                 local displacement = rnd(4) - 4
                 particles.make_particle(PLAYER.x + 4 + displacement,
@@ -105,6 +106,7 @@ local function check_spikes()
                                  resolved_player_collider,
                                  spike_resolved_collider)
         if is_colliding then
+            sfx(2)
             -- draw puff particles, smoke and fire
             for _ = 1, 25 do
                 local px = PLAYER.x + flr(rnd(8))
@@ -132,10 +134,14 @@ end
 local function change_bow_direction()
     if btn(4) then
         PLAYER.changing_bow_dir = true
-        local left = btn(0)
-        local right = btn(1)
-        local up = btn(2)
-        local down = btn(3)
+        local left = btnp(0)
+        local right = btnp(1)
+        local up = btnp(2)
+        local down = btnp(3)
+
+        if up or left or down or right then
+            sfx(5)
+        end
 
         -- first check corners
         -- see bow.lua for map of directions
@@ -184,6 +190,7 @@ local function draw_player()
     else
         if GLOBAL_TIMER % 6 == 0 then
             player_stepping_anim_left_foot = not player_stepping_anim_left_foot
+            sfx(3)
         end
         if player_stepping_anim_left_foot then
             draw_pl_sprite(64)

@@ -124,11 +124,12 @@ end
 --- @param a Arrow
 local function make_bullseye_colission_dust(a)
     local cv = get_collision_vec(a)
-    for _ = 1, 8 do
+    for _ = 1, 10 do
         local displacement = rnd(4) - 4
+        local x_speed = -a.dx * 0.05
+        local y_speed = -a.dy * 0.1 - rnd(0.2)
         particles.make_particle(cv.x + displacement, cv.y + displacement,
-                                -a.dx * 0.1, -a.dy * 0.1, 0, 1,
-                                rnd({7, 10, 11}), 7)
+                                x_speed, y_speed, 0, 1, rnd({7, 10, 11}), 7)
     end
 end
 
