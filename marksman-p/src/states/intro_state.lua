@@ -52,7 +52,7 @@ local function get_selected_menu_item()
 end
 
 local function update_menu()
-    if (btnp(2) or btnp(3)) and #menu > 1 then sfx(0) end
+    if (btnp(2) or btnp(3)) and #menu > 1 then sfx(17) end
 
     if btnp(2) then
         for i, item in ipairs(menu) do
@@ -83,7 +83,7 @@ local function update_menu()
     end
 
     if btnp(5) then
-        sfx(1)
+        sfx(18)
         local selected_item = get_selected_menu_item()
         if selected_item.action == "continue" then
             -- waste tokens

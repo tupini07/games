@@ -6,6 +6,7 @@ local state_manager = require("managers/state")
 GLOBAL_TIMER = 0
 
 function _init()
+    music(0)
     save_manager.init()
     state_manager.init()
 end
