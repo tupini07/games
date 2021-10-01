@@ -66,13 +66,13 @@ local function try_spring_body(body)
         if is_colliding then
             s.state = 2
             if s.orientation == orientations.top then
-                body.dy = -3
+                body.dy = -3.7
             elseif s.orientation == orientations.bottom then
-                body.dy = 3
+                body.dy = 3.7
             elseif s.orientation == orientations.left then
-                body.dx = -3
+                body.dx = -3.7
             elseif s.orientation == orientations.right then
-                body.dx = 3
+                body.dx = 3.7
             end
             return
         end

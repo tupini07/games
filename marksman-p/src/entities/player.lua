@@ -13,7 +13,7 @@ PLAYER = {
     y = 0,
     dx = 0,
     dy = 0,
-    ddy = 0.12,
+    ddy = 0.17,
     dir = 1,
     is_dead = false,
     collider = {x = 1, y = 0, w = 4, h = 15},
@@ -47,12 +47,12 @@ local function move_player()
         elseif btn(1) then
             PLAYER.dx = PLAYER.dx + 1 * jumping_mod
         end
-        if btnp(2) and not PLAYER.is_jumping then PLAYER.dy = -2 end
+        if btnp(2) and not PLAYER.is_jumping then PLAYER.dy = -2.3 end
     end
 
     -- cap deltas
     PLAYER.dx = math.cap_with_sign(PLAYER.dx, 0, 3)
-    PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 3)
+    PLAYER.dy = math.cap_with_sign(PLAYER.dy, 0, 4)
 
     -- apply velocity
 

@@ -110,7 +110,7 @@ local function level_win_draw()
     pset(line_x2 + 1, line_y2 + 1, 6)
 
     print("good job!\n", banner_x1 + 14, banner_y1 + 14, 5)
-    print("press ❎ to continue")
+    print("press ❎ to continue", banner_x1 + 10, banner_y1 + 20, 5)
 end
 
 local function level_lost_draw()
