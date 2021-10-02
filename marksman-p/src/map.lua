@@ -42,16 +42,20 @@ local function is_solid_area(x, y, w, h)
 end
 
 local map = {
-    draw_level_text = function()
+    draw_level_decorations = function()
         local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
         local game_cords = get_game_space_coords_for_current_lvl()
+        -- draw level text
         map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16,
             16, 0x4)
+        -- draw sprites without flags
+        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16,
+            16, 0x0)
     end,
     draw = function()
         local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
         local game_cords = get_game_space_coords_for_current_lvl()
-        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16,0B11)
+        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16, 0B11)
     end,
     sprite_flags = sprite_flags,
     cell_has_flag = cell_has_flag,
@@ -81,9 +85,9 @@ local map = {
                     bullseye.replace_in_map(x, y, bullseye.orientation.right)
                 end
 
-                if sprt == 55 then
+                if sprt == 13 then
                     spikes.replace_in_map(x, y, spikes.orientations.down)
-                elseif sprt == 71 then
+                elseif sprt == 14 then
                     spikes.replace_in_map(x, y, spikes.orientations.up)
                 end
 

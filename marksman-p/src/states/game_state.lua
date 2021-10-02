@@ -110,7 +110,7 @@ local function level_win_draw()
     pset(line_x2 + 1, line_y2 + 1, 6)
 
     print("good job!\n", banner_x1 + 14, banner_y1 + 14, 5)
-    print("press ❎ to continue", banner_x1 + 10, banner_y1 + 20, 5)
+    print("press ❎ to continue", banner_x1 + 14, banner_y1 + 26, 5)
 end
 
 local function level_lost_draw()
@@ -133,7 +133,9 @@ local function draw_current_lvl()
     local base_x = (game_space.x + 128) - 20
     local base_y = game_space.y + 1
 
+    -- level indicator container
     sspr(88, 0, 16, 8, base_x, base_y, 19, 13)
+
     local pos = base_x + 3 * (4 - #("" .. SAVE_DATA.current_level))
 
     print(SAVE_DATA.current_level, pos, base_y + 4, 5)
@@ -160,7 +162,7 @@ local function draw()
     cls(12)
 
     decorations.draw_background()
-    map.draw_level_text()
+    map.draw_level_decorations()
     level_text.draw_current_level_text()
     bullseye.draw()
     arrow.draw_all()

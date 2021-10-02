@@ -103,7 +103,8 @@ local function draw()
 
     draw_logo()
     draw_menu()
-    print("by dadum", 94, 122, 7)
+
+    sspr(32, 48, 80, 10, 44, 116)
 end
 
 local function update() update_menu() end

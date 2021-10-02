@@ -29,9 +29,9 @@ end
 local function draw_spike(s)
     local sprtn
     if s.orientation == orientations.down then
-        sprtn = 55
+        sprtn = 13
     elseif s.orientation == orientations.up then
-        sprtn = 71
+        sprtn = 14
     end
 
     spr(sprtn, s.x, s.y)
