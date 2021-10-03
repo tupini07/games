@@ -134,14 +134,12 @@ end
 local function change_bow_direction()
     if btn(4) then
         PLAYER.changing_bow_dir = true
-        local left = btnp(0)
-        local right = btnp(1)
-        local up = btnp(2)
-        local down = btnp(3)
+        local left = btn(0)
+        local right = btn(1)
+        local up = btn(2)
+        local down = btn(3)
 
-        if up or left or down or right then
-            sfx(22)
-        end
+        local initial_bow_dir = BOW.dir
 
         -- first check corners
         -- see bow.lua for map of directions
@@ -170,6 +168,8 @@ local function change_bow_direction()
             change_pl_dir(-1)
             bow.change_dir(5)
         end
+
+        if initial_bow_dir ~= BOW.dir then sfx(22) end
     else
         PLAYER.changing_bow_dir = false
     end

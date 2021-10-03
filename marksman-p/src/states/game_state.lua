@@ -26,6 +26,8 @@ local function level_reset()
     PLAYER.x = PLAYER_ORIGINAL_POS_IN_LVL.x
     PLAYER.y = PLAYER_ORIGINAL_POS_IN_LVL.y
     player.reset_for_new_level()
+    show_win_banner = false
+    show_lost_banner = false
 end
 
 local function new_level_init()
@@ -35,6 +37,8 @@ local function new_level_init()
     map.replace_entities(SAVE_DATA.current_level)
     camera_utils.focus_section(SAVE_DATA.current_level)
     player.reset_for_new_level()
+    show_win_banner = false
+    show_lost_banner = false
 end
 
 function WIN_LEVEL()
@@ -71,9 +75,6 @@ local function level_done_update()
                     elseif show_lost_banner then
                         level_reset()
                     end
-
-                    show_win_banner = false
-                    show_lost_banner = false
 
                     savefile_manager.persist_save_data()
                 end, function()
