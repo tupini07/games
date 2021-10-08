@@ -20,17 +20,6 @@ local function init()
     menu[1].is_selected = true
 end
 
-local function show_todo()
-    rectfill(10, 32, 117, 120, 7)
-    color(0)
-    print("\ntodo:", 12, 34)
-    print("- nicer win panel")
-    print("- sfx")
-    print("- music?")
-    print("- more levels")
-    print("- apply clipping to arrows")
-end
-
 local function draw_menu()
     print_utils.print_centered("press ❎ to select", 53, 7)
     local starting_y = 74
@@ -44,7 +33,7 @@ end
 local function draw_logo()
     sspr(0, 24, 32, 8, 10, 12, 106, 26)
     print_utils.print_centered("marksman", 24, 7)
-    print_utils.print_centered("v0.5", 30, 6)
+    print_utils.print_centered("v0.6", 30, 6)
 end
 
 local function get_selected_menu_item()
@@ -104,7 +93,8 @@ local function draw()
     draw_logo()
     draw_menu()
 
-    sspr(32, 48, 80, 10, 44, 116)
+    -- draw copyright
+    sspr(32, 48, 82, 10, 44, 116)
 end
 
 local function update() update_menu() end
