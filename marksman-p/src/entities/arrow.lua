@@ -26,6 +26,7 @@ local function fire_arrow(x, y, force, angle)
         collider = collider
     }
 
+    sfx(23)
     add(ARROWS, a)
 end
 
@@ -117,6 +118,7 @@ local function collide_with_floor_walls(a)
         a.y = a.y - sin(angle) * 3
 
         a.is_stuck = true
+        sfx(24)
         make_floor_walls_colission_dust(a)
     end
 end
@@ -143,6 +145,7 @@ local function collide_with_bullseye(a)
 
     if is_colliding then
         a.is_stuck = true
+        sfx(25)
         make_bullseye_colission_dust(a)
         WIN_LEVEL()
     end
