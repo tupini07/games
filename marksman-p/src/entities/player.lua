@@ -84,6 +84,8 @@ local function move_player()
             end
         end
         PLAYER.is_jumping = false
+
+        if abs(PLAYER.dx) > 0 and GLOBAL_TIMER % 6 == 0 then sfx(20) end
     else
         PLAYER.is_jumping = true
     end
@@ -188,10 +190,6 @@ local function draw_player()
         -- idle
         draw_pl_sprite(56)
     else
-        if GLOBAL_TIMER % 6 == 0 then
-            player_stepping_anim_left_foot = not player_stepping_anim_left_foot
-            sfx(20)
-        end
         if player_stepping_anim_left_foot then
             draw_pl_sprite(64)
         else
