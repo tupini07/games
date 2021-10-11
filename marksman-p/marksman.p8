@@ -102,6 +102,7 @@ local function new_level_init()
     banner_countdown = 10
     spring.init()
     spikes.init()
+    decorations.init()
     map.replace_entities(SAVE_DATA.current_level)
     camera_utils.focus_section(SAVE_DATA.current_level)
     player.reset_for_new_level()
@@ -156,7 +157,7 @@ local function level_done_update()
 end
 
 local function level_win_draw()
-    local lvl_cords = map.get_game_space_coords_for_current_lvl()
+    local lvl_cords = camera_utils.get_game_space_coords_for_current_lvl()
 
     local banner_x1 = lvl_cords.x
     local banner_y1 = lvl_cords.y + 48
@@ -183,7 +184,7 @@ local function level_win_draw()
 end
 
 local function level_lost_draw()
-    local lvl_cords = map.get_game_space_coords_for_current_lvl()
+    local lvl_cords = camera_utils.get_game_space_coords_for_current_lvl()
 
     local banner_x1 = lvl_cords.x
     local banner_y1 = lvl_cords.y + 48
@@ -197,7 +198,7 @@ local function level_lost_draw()
 end
 
 local function draw_current_lvl()
-    local game_space = map.get_game_space_coords_for_current_lvl()
+    local game_space = camera_utils.get_game_space_coords_for_current_lvl()
 
     local base_x = (game_space.x + 128) - 20
     local base_y = game_space.y + 1
@@ -218,6 +219,7 @@ end
 
 local function update()
     particles.update()
+    decorations.update()
     if not level_done then
         player.update()
         arrow.update_all()
@@ -230,7 +232,7 @@ end
 local function draw()
     cls(12)
 
-    decorations.draw_background()
+    decorations.draw()
     map.draw_level_decorations()
     level_text.draw_current_level_text()
     bullseye.draw()
@@ -264,33 +266,10 @@ package._c["src/map"]=function()
 local bullseye = require("entities/bullseye")
 local spring = require("entities/spring")
 local spikes = require("entities/spikes")
+local decorations = require("managers/decorations")
+local camera = require("src/camera")
 
 local sprite_flags = {solid = 0, bullseye = 1, level_text_container = 2}
-
---- @return Vector
-local function level_to_map_coords(level_num)
-    -- first we get 0 indexed coordinates for the "block" which 
-    -- is the level
-
-    local cell_idx = level_num - 1
-    -- 4 rows of levels in map
-    local mapy = flr(cell_idx / 8)
-
-    --  8 levels per row
-    local mapx = cell_idx % 8
-
-    local mx = max(0, (mapx * 16))
-    local my = max(0, (mapy * 16))
-
-    return {x = mx, y = my}
-end
-
---- @return Vector
-local function get_game_space_coords_for_current_lvl()
-    local lvl_map_coords = level_to_map_coords(SAVE_DATA.current_level)
-
-    return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
-end
 
 local function cell_has_flag(flag, x, y) return fget(mget(x, y), flag) end
 
@@ -306,8 +285,8 @@ end
 
 local map = {
     draw_level_decorations = function()
-        local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
-        local game_cords = get_game_space_coords_for_current_lvl()
+        local lvl_map_cords = camera.level_to_map_coords(SAVE_DATA.current_level)
+        local game_cords = camera.get_game_space_coords_for_current_lvl()
         -- draw level text
         map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16,
             16, 0x4)
@@ -316,8 +295,8 @@ local map = {
             16, 0x0)
     end,
     draw = function()
-        local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
-        local game_cords = get_game_space_coords_for_current_lvl()
+        local lvl_map_cords = camera.level_to_map_coords(SAVE_DATA.current_level)
+        local game_cords = camera.get_game_space_coords_for_current_lvl()
         map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16, 0B11)
     end,
     sprite_flags = sprite_flags,
@@ -326,7 +305,7 @@ local map = {
     level_to_map_coords = level_to_map_coords,
     get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
     replace_entities = function(current_level)
-        local level_block_coords = level_to_map_coords(current_level)
+        local level_block_coords = camera.level_to_map_coords(current_level)
 
         local level_x2 = level_block_coords.x + 16
         local level_y2 = level_block_coords.y + 16
@@ -363,6 +342,8 @@ local map = {
                 elseif sprt == 44 then
                     spring.replace_in_map(x, y, spring.orientations.left)
                 end
+
+                decorations.replace_in_map(x, y, sprt)
             end
         end
     end
@@ -657,10 +638,143 @@ return {
     draw = function() foreach(SPIKES, draw_spike) end
 }
 end
-package._c["src/camera"]=function()
-local map = require("src/map")
+package._c["managers/decorations"]=function()
+local camera = require("src/camera")
+
+local types = {cloud1 = 1, cloud2 = 2}
+local decoration_entities = {}
+local decoration_coroutines = {}
+
+local function check_cloud_sprites(mapx, mapy, top_left_sprite)
+    local tl = top_left_sprite
+    local tc = tl + 1
+    local tr = tc + 1
+    local bl = tl + 16
+    local bc = bl + 1
+    local br = bc + 1
+
+    return mget(mapx, mapy) == tl and mget(mapx + 1, mapy) == tc and
+               mget(mapx + 2, mapy) == tr and mget(mapx, mapy + 1) == bl and
+               mget(mapx + 1, mapy + 1) == bc and mget(mapx + 2, mapy + 1) == br
+end
+
+local function create_cloud_entity(mapx, mapy, cloud_type)
+    mset(mapx, mapy, 0)
+    mset(mapx + 1, mapy, 0)
+    mset(mapx + 2, mapy, 0)
+    mset(mapx, mapy + 1, 0)
+    mset(mapx + 1, mapy + 1, 0)
+    mset(mapx + 2, mapy + 1, 0)
+
+    local c = {x = mapx * 8, y = mapy * 8, type = cloud_type}
+
+    add(decoration_coroutines, cocreate(function()
+        local has_moved = false
+        local last_x_move = 0
+        local last_y_move = 0
+        local frames_to_wait = 34 + flr(rnd(10))
+        while true do
+            ::top_loop::
+            while GLOBAL_TIMER % frames_to_wait ~= 0 do yield() end
+
+            if has_moved then
+                c.x = c.x - last_x_move
+                c.y = c.y - last_y_move
+                has_moved = false
+                goto top_loop
+            end
+
+            last_x_move = flr(rnd(2)) - 1
+            last_y_move = flr(rnd(2)) - 1
+
+            c.x = c.x + last_x_move
+            c.y = c.y + last_y_move
+            has_moved = true
+
+            yield()
+        end
+    end))
+
+    function c:update() end
+
+    function c:draw()
+        if self.type == types.cloud1 then
+            sspr(72, 32, 24, 16, self.x, self.y)
+        else
+            sspr(96, 32, 24, 16, self.x, self.y)
+        end
+    end
+
+    add(decoration_entities, c)
+end
+
+local function replace_in_map(mapx, mapy, sprtn)
+    if check_cloud_sprites(mapx, mapy, 73) then
+        create_cloud_entity(mapx, mapy, types.cloud1)
+    end
+
+    if check_cloud_sprites(mapx, mapy, 76) then
+        create_cloud_entity(mapx, mapy, types.cloud2)
+    end
+end
+
+local function draw()
+    local lvl_cords = camera.get_game_space_coords_for_current_lvl()
+
+    sspr(0, 32, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
+
+    for e in all(decoration_entities) do e:draw() end
+end
+
+local function update()
+    for e in all(decoration_entities) do e:update() end
+
+    for c in all(decoration_coroutines) do
+        local status = costatus(c)
+        if status == "suspended" then
+            coresume(c)
+        elseif status == "dead" then
+            del(decoration_coroutines, c)
+        end
+    end
+end
 
 return {
+    init = function() decoration_entities = {} end,
+    update = update,
+    draw = draw,
+    replace_in_map = replace_in_map
+}
+end
+package._c["src/camera"]=function()
+--- @return Vector
+local function level_to_map_coords(level_num)
+    -- first we get 0 indexed coordinates for the "block" which 
+    -- is the level
+
+    local cell_idx = level_num - 1
+    -- 4 rows of levels in map
+    local mapy = flr(cell_idx / 8)
+
+    --  8 levels per row
+    local mapx = cell_idx % 8
+
+    local mx = max(0, (mapx * 16))
+    local my = max(0, (mapy * 16))
+
+    return {x = mx, y = my}
+end
+
+--- @return Vector
+local function get_game_space_coords_for_current_lvl()
+    local lvl_map_coords = level_to_map_coords(SAVE_DATA.current_level)
+
+    return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
+end
+
+return {
+    level_to_map_coords = level_to_map_coords,
+    get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
     camera_center = function(x, y, map_tiles_width, map_tiles_height)
         local cam_x = x - 60
         local cam_y = y - 60
@@ -671,7 +785,7 @@ return {
         camera(cam_x, cam_y)
     end,
     focus_section = function(current_level)
-        local lvl_cords = map.get_game_space_coords_for_current_lvl()
+        local lvl_cords = get_game_space_coords_for_current_lvl()
 
         camera(lvl_cords.x, lvl_cords.y)
     end
@@ -1343,141 +1457,12 @@ return {
     draw = function() for p in all(PARTICLES) do p:draw() end end
 }
 end
-package._c["managers/decorations"]=function()
-local map = require("map")
-
-local types = {cloud1 = 1, cloud2 = 2}
-
-local function replace_in_map() end
-
-local function draw_background()
-    local lvl_cords = map.get_game_space_coords_for_current_lvl()
-
-    sspr(0, 32, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
-end
-
-return {
-    draw_background = draw_background,
-    replace_in_map = replace_in_map,
-    types = types
-}
-end
-package._c["map"]=function()
-local bullseye = require("entities/bullseye")
-local spring = require("entities/spring")
-local spikes = require("entities/spikes")
-
-local sprite_flags = {solid = 0, bullseye = 1, level_text_container = 2}
-
---- @return Vector
-local function level_to_map_coords(level_num)
-    -- first we get 0 indexed coordinates for the "block" which 
-    -- is the level
-
-    local cell_idx = level_num - 1
-    -- 4 rows of levels in map
-    local mapy = flr(cell_idx / 8)
-
-    --  8 levels per row
-    local mapx = cell_idx % 8
-
-    local mx = max(0, (mapx * 16))
-    local my = max(0, (mapy * 16))
-
-    return {x = mx, y = my}
-end
-
---- @return Vector
-local function get_game_space_coords_for_current_lvl()
-    local lvl_map_coords = level_to_map_coords(SAVE_DATA.current_level)
-
-    return {x = lvl_map_coords.x * 8, y = lvl_map_coords.y * 8}
-end
-
-local function cell_has_flag(flag, x, y) return fget(mget(x, y), flag) end
-
-local function is_solid(x, y)
-    return cell_has_flag(sprite_flags.solid, flr(x / 8), flr(y / 8))
-end
-
-local function is_solid_area(x, y, w, h)
-    return is_solid(x, y) or is_solid(x + w, y) or is_solid(x, y + h) or
-               is_solid(x + w, y + h) or is_solid(x, y + h / 2) or
-               is_solid(x + w, y + h / 2)
-end
-
-local map = {
-    draw_level_decorations = function()
-        local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
-        local game_cords = get_game_space_coords_for_current_lvl()
-        -- draw level text
-        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16,
-            16, 0x4)
-        -- draw sprites without flags
-        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16,
-            16, 0x0)
-    end,
-    draw = function()
-        local lvl_map_cords = level_to_map_coords(SAVE_DATA.current_level)
-        local game_cords = get_game_space_coords_for_current_lvl()
-        map(lvl_map_cords.x, lvl_map_cords.y, game_cords.x, game_cords.y, 16, 16, 0B11)
-    end,
-    sprite_flags = sprite_flags,
-    cell_has_flag = cell_has_flag,
-    is_solid_area = is_solid_area,
-    level_to_map_coords = level_to_map_coords,
-    get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
-    replace_entities = function(current_level)
-        local level_block_coords = level_to_map_coords(current_level)
-
-        local level_x2 = level_block_coords.x + 16
-        local level_y2 = level_block_coords.y + 16
-
-        for x = level_block_coords.x, level_x2 do
-            for y = level_block_coords.y, level_y2 do
-                local sprt = mget(x, y)
-                if sprt == 3 then
-                    mset(x, y, 0)
-                    PLAYER.x = x * 8
-                    PLAYER.y = y * 8
-                    PLAYER_ORIGINAL_POS_IN_LVL.x = x * 8
-                    PLAYER_ORIGINAL_POS_IN_LVL.y = y * 8
-                end
-
-                if sprt == 57 then
-                    bullseye.replace_in_map(x, y, bullseye.orientation.left)
-                elseif sprt == 58 then
-                    bullseye.replace_in_map(x, y, bullseye.orientation.right)
-                end
-
-                if sprt == 13 then
-                    spikes.replace_in_map(x, y, spikes.orientations.down)
-                elseif sprt == 14 then
-                    spikes.replace_in_map(x, y, spikes.orientations.up)
-                end
-
-                if sprt == 37 then
-                    spring.replace_in_map(x, y, spring.orientations.top)
-                elseif sprt == 40 then
-                    spring.replace_in_map(x, y, spring.orientations.right)
-                elseif sprt == 43 then
-                    spring.replace_in_map(x, y, spring.orientations.bottom)
-                elseif sprt == 44 then
-                    spring.replace_in_map(x, y, spring.orientations.left)
-                end
-            end
-        end
-    end
-}
-
-return map
-end
 package._c["managers/level_text"]=function()
-local map = require("src/map")
+local camera = require("src/camera")
 
 return {
     draw_current_level_text = function()
-        local lvl_pos = map.get_game_space_coords_for_current_lvl()
+        local lvl_pos = camera.get_game_space_coords_for_current_lvl()
         if SAVE_DATA.current_level == 1 then
             print("move with ⬅️➡️⬇️⬆️", 17, 103, 5)
             print("fire arrows with ❎")

@@ -34,6 +34,7 @@ local function new_level_init()
     banner_countdown = 10
     spring.init()
     spikes.init()
+    decorations.init()
     map.replace_entities(SAVE_DATA.current_level)
     camera_utils.focus_section(SAVE_DATA.current_level)
     player.reset_for_new_level()
@@ -88,7 +89,7 @@ local function level_done_update()
 end
 
 local function level_win_draw()
-    local lvl_cords = map.get_game_space_coords_for_current_lvl()
+    local lvl_cords = camera_utils.get_game_space_coords_for_current_lvl()
 
     local banner_x1 = lvl_cords.x
     local banner_y1 = lvl_cords.y + 48
@@ -115,7 +116,7 @@ local function level_win_draw()
 end
 
 local function level_lost_draw()
-    local lvl_cords = map.get_game_space_coords_for_current_lvl()
+    local lvl_cords = camera_utils.get_game_space_coords_for_current_lvl()
 
     local banner_x1 = lvl_cords.x
     local banner_y1 = lvl_cords.y + 48
@@ -129,7 +130,7 @@ local function level_lost_draw()
 end
 
 local function draw_current_lvl()
-    local game_space = map.get_game_space_coords_for_current_lvl()
+    local game_space = camera_utils.get_game_space_coords_for_current_lvl()
 
     local base_x = (game_space.x + 128) - 20
     local base_y = game_space.y + 1
@@ -150,6 +151,7 @@ end
 
 local function update()
     particles.update()
+    decorations.update()
     if not level_done then
         player.update()
         arrow.update_all()
@@ -162,7 +164,7 @@ end
 local function draw()
     cls(12)
 
-    decorations.draw_background()
+    decorations.draw()
     map.draw_level_decorations()
     level_text.draw_current_level_text()
     bullseye.draw()

@@ -1,8 +1,8 @@
-local map = require("src/map")
+local camera = require("src/camera")
 
 return {
     draw_current_level_text = function()
-        local lvl_pos = map.get_game_space_coords_for_current_lvl()
+        local lvl_pos = camera.get_game_space_coords_for_current_lvl()
         if SAVE_DATA.current_level == 1 then
             print("move with ⬅️➡️⬇️⬆️", 17, 103, 5)
             print("fire arrows with ❎")
