@@ -232,7 +232,7 @@ end
 local function draw()
     cls(12)
 
-    decorations.draw()
+    decorations.draw_background()
     map.draw_level_decorations()
     level_text.draw_current_level_text()
     bullseye.draw()
@@ -241,6 +241,7 @@ local function draw()
     map.draw()
     spring.draw()
     spikes.draw()
+    decorations.draw_decorations()
     particles.draw()
     draw_current_lvl()
 
@@ -708,6 +709,18 @@ local function create_cloud_entity(mapx, mapy, cloud_type)
     add(decoration_entities, c)
 end
 
+local function add_grass(mapx, mapy)
+    local g = {x = mapx * 8, y = (mapy - 1) * 8, state = 0}
+
+    function g:update()
+        if GLOBAL_TIMER % 35 == 0 then self.state = (self.state + 1) % 3 end
+    end
+
+    function g:draw() spr(27 + self.state, self.x, self.y) end
+
+    add(decoration_entities, g)
+end
+
 local function replace_in_map(mapx, mapy, sprtn)
     if check_cloud_sprites(mapx, mapy, 73) then
         create_cloud_entity(mapx, mapy, types.cloud1)
@@ -716,13 +729,17 @@ local function replace_in_map(mapx, mapy, sprtn)
     if check_cloud_sprites(mapx, mapy, 76) then
         create_cloud_entity(mapx, mapy, types.cloud2)
     end
+
+    if sprtn == 1 then add_grass(mapx, mapy) end
 end
 
-local function draw()
+local function draw_background()
     local lvl_cords = camera.get_game_space_coords_for_current_lvl()
 
     sspr(0, 32, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
+end
 
+local function draw_decorations()
     for e in all(decoration_entities) do e:draw() end
 end
 
@@ -742,7 +759,8 @@ end
 return {
     init = function() decoration_entities = {} end,
     update = update,
-    draw = draw,
+    draw_decorations = draw_decorations,
+    draw_background = draw_background,
     replace_in_map = replace_in_map
 }
 end
@@ -1688,7 +1706,7 @@ __gfx__
 00000000ddd5d5d5000000000000333d00033004000778878877876003b4b0000344b00003b44000034440000000000000000000000000000000000000000000
 000000005d5d55dd00000000000000440000000400007787778874000b4040000b4040000b4040000b4050000000000000000000000000000000000000000000
 00000000ddddddd50000000000000440000000000000077888876540004040000050400000405000005000000000000000000000000000000000000000000000
-000000005d5d5d5d0000000000000400000000000000007777764004005050000000500000500000000000000000000000000000000000000000000000000000
+000000005d5d5d5d000000000000040000000000000000777776400400505000000050000050000000000000030b030000300b00003030b00000000000000000
 00000000000000000000500000000000000000000000000000000000000000000070000000070000000007000060060000000700000000000000000000000000
 00000000000000000005550000000000000055500000000000000000000000000040000000040000000004000006600000000400000000000000000000000000
 00000000000000000000400000000000000004500000000000000000744444476040000006040000060604007444444700000406008888000000800000008000

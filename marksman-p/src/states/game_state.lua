@@ -164,7 +164,7 @@ end
 local function draw()
     cls(12)
 
-    decorations.draw()
+    decorations.draw_background()
     map.draw_level_decorations()
     level_text.draw_current_level_text()
     bullseye.draw()
@@ -173,6 +173,7 @@ local function draw()
     map.draw()
     spring.draw()
     spikes.draw()
+    decorations.draw_decorations()
     particles.draw()
     draw_current_lvl()
 

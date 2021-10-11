@@ -67,6 +67,18 @@ local function create_cloud_entity(mapx, mapy, cloud_type)
     add(decoration_entities, c)
 end
 
+local function add_grass(mapx, mapy)
+    local g = {x = mapx * 8, y = (mapy - 1) * 8, state = 0}
+
+    function g:update()
+        if GLOBAL_TIMER % 35 == 0 then self.state = (self.state + 1) % 3 end
+    end
+
+    function g:draw() spr(27 + self.state, self.x, self.y) end
+
+    add(decoration_entities, g)
+end
+
 local function replace_in_map(mapx, mapy, sprtn)
     if check_cloud_sprites(mapx, mapy, 73) then
         create_cloud_entity(mapx, mapy, types.cloud1)
@@ -75,13 +87,17 @@ local function replace_in_map(mapx, mapy, sprtn)
     if check_cloud_sprites(mapx, mapy, 76) then
         create_cloud_entity(mapx, mapy, types.cloud2)
     end
+
+    if sprtn == 1 then add_grass(mapx, mapy) end
 end
 
-local function draw()
+local function draw_background()
     local lvl_cords = camera.get_game_space_coords_for_current_lvl()
 
     sspr(0, 32, 31, 31, lvl_cords.x + 8, lvl_cords.y + 8, 112, 112)
+end
 
+local function draw_decorations()
     for e in all(decoration_entities) do e:draw() end
 end
 
@@ -101,6 +117,7 @@ end
 return {
     init = function() decoration_entities = {} end,
     update = update,
-    draw = draw,
+    draw_decorations = draw_decorations,
+    draw_background = draw_background,
     replace_in_map = replace_in_map
 }
