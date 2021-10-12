@@ -75,13 +75,13 @@ local function update_menu()
         sfx(18)
         local selected_item = get_selected_menu_item()
         if selected_item.action == "continue" then
-            -- waste tokens
+            SWITCH_GAME_STATE(GAME_STATES_ENUM.gameplay_state)
         elseif selected_item.action == "new_game" then
             SAVE_DATA.current_level = 1
             savefile.persist_save_data()
+            SWITCH_GAME_STATE(GAME_STATES_ENUM.intro_state)
         end
 
-        SWITCH_GAME_STATE(GAME_STATES_ENUM.gameplay_state)
     end
 end
 
