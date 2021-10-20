@@ -1,37 +1,37 @@
-local decorations = require("managers/decorations")
 local print_utils = require("utils/print")
+local savefile = require("managers/savefile")
+local graphics_utils = require("utils/graphics")
 
-local is_start_text_on = false
-
-local function init() end
+local function init()
+    camera()
+    add(COROUTINES, cocreate(graphics_utils.complete_unfade_coroutine))
+end
 
 local function update()
-    if GLOBAL_TIMER % 30 == 0 then is_start_text_on = not is_start_text_on end
-
-    if btnp(5) then SWITCH_GAME_STATE(GAME_STATES_ENUM.gameplay_state) end
+    if btnp(5) then
+        SAVE_DATA.current_level = 1
+        savefile.persist_save_data()
+        SWITCH_GAME_STATE(GAME_STATES_ENUM.title_state)
+    end
 end
 
 local function draw_text()
     color(5)
-    print("hear ye! hear ye!", 32, 16)
 
     local wrapped_text = print_utils.wrap_text_at_size(
-                             "the most prestigious archery competition is now open to all that can string a bow. He who completes every stage will have an assured place among the king's own marksmen",
+                             "glory to you! for your exceptional skill and dexterity, you've been named the princess'  personal marksman.",
                              11 * 8)
-    cursor(19, 22)
+    cursor(18, 16)
     print(wrapped_text)
 
     -- for off text
     local start_fg_c = 7
     local start_bg_c = 5
 
-    if is_start_text_on then
-        start_fg_c = 5
-        start_bg_c = 7
-    end
-
-    print_utils.print_centered_text_with_outline("press ❎ to start", 89,
-                                                 start_fg_c, start_bg_c)
+    print_utils.print_text_with_outline("thanks for playing ♥", 5 * 8,
+                                        13.5 * 8, start_fg_c, start_bg_c)
+    print_utils.print_text_with_outline("press ❎ to restart", 5 * 8, 14.5 * 8,
+                                        start_fg_c, start_bg_c)
 end
 
 local function draw()

@@ -1,10 +1,11 @@
 local print_utils = require("utils/print")
 local savefile = require("managers/savefile")
-local decorations = require("managers/decorations")
+local graphics_utils = require("utils/graphics")
 
 local menu = {}
 
 local function init()
+    menu = {}
     local is_there_progress = SAVE_DATA.current_level ~= 1
 
     if is_there_progress then
@@ -82,6 +83,8 @@ local function update_menu()
             SWITCH_GAME_STATE(GAME_STATES_ENUM.intro_state)
         end
 
+        graphics_utils.fade_all_immediately()
+        add(COROUTINES, cocreate(graphics_utils.complete_unfade_coroutine))
     end
 end
 

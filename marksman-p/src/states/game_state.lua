@@ -1,7 +1,6 @@
 local map = require("src/map")
 local camera_utils = require("src/camera")
 local graphics_utils = require("utils/graphics")
-local savefile = require("managers/savefile")
 
 local player = require("entities/player")
 local arrow = require("entities/arrow")
@@ -43,6 +42,11 @@ local function new_level_init()
     show_lost_banner = false
 end
 
+local function finish_game()
+    graphics_utils.fade_all_immediately()
+    SWITCH_GAME_STATE(GAME_STATES_ENUM.end_game_state)
+end
+
 function WIN_LEVEL()
     level_done = true
     show_win_banner = true
@@ -53,36 +57,22 @@ function LOSE_LEVEL()
     show_lost_banner = true
 end
 
-local level_change_coroutine = nil
-local function get_lvl_change_coroutine_status()
-    if level_change_coroutine == nil then
-        return "dead"
-    else
-        return costatus(level_change_coroutine)
-    end
-end
+local level_change_coroutine_registered = false
 
 local function level_done_update()
-    local lvl_change_status = get_lvl_change_coroutine_status()
-
     if btnp(5) then
-        if lvl_change_status == "running" then
-            return
-        elseif lvl_change_status == "dead" then
-            level_change_coroutine = graphics_utils.execute_in_between_fades(
-                                         nil, function()
+        if show_win_banner and SAVE_DATA.current_level == 23 then
+            -- player has just completed last elevel
+            finish_game()
+        else
+            if not level_change_coroutine_registered then
+                level_change_coroutine_registered = true
+                add(COROUTINES,
+                    graphics_utils.execute_in_between_fades(nil, function()
                     if show_win_banner then
                         SAVE_DATA.current_level = SAVE_DATA.current_level + 1
-
-                        if SAVE_DATA.current_level == 24 then
-                            -- player has finished game
-                            SAVE_DATA.current_level = 1
-                            savefile.persist_save_data()
-                            SWITCH_GAME_STATE(GAME_STATES_ENUM.end_game_state)
-                        else
-                            -- go to new level
-                            new_level_init()
-                        end
+                        -- go to new level
+                        new_level_init()
                     elseif show_lost_banner then
                         level_reset()
                     end
@@ -90,12 +80,12 @@ local function level_done_update()
                     savefile_manager.persist_save_data()
                 end, function()
                     level_done = false
+                    level_change_coroutine_registered = false
                     pal()
-                end)
+                end))
+            end
         end
     end
-
-    if lvl_change_status == "suspended" then coresume(level_change_coroutine) end
 end
 
 local function level_win_draw()

@@ -27,7 +27,7 @@ function SWITCH_GAME_STATE(new_state)
 end
 
 local function act_for_current_state(act_map)
-    local act_to_perform = act_map[GAME_STATES_ENUM.end_game_state]
+    local act_to_perform = act_map[GAME_STATE.current_state]
     act_to_perform()
 end
 
@@ -40,7 +40,7 @@ return {
             [GAME_STATES_ENUM.title_state] = title_state.update,
             [GAME_STATES_ENUM.intro_state] = intro_state.update,
             [GAME_STATES_ENUM.gameplay_state] = game_state.update,
-            [GAME_STATES_ENUM.end_game_state] = game_state.update
+            [GAME_STATES_ENUM.end_game_state] = end_game_state.update
         })
     end,
     draw = function()

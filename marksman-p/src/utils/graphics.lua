@@ -28,6 +28,8 @@ local function fade(i)
     end
 end
 
+local function fade_all_immediately() fade(16) end
+
 local function complete_fade_coroutine()
     local fader = 0
     while fader <= 16 do
@@ -70,6 +72,7 @@ end
 
 return {
     fade = fade,
+    fade_all_immediately = fade_all_immediately,
     complete_fade_coroutine = complete_fade_coroutine,
     complete_unfade_coroutine = complete_unfade_coroutine,
     execute_in_between_fades = execute_in_between_fades
