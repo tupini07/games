@@ -2,7 +2,6 @@ local camera = require("src/camera")
 
 local types = {cloud1 = 1, cloud2 = 2}
 local decoration_entities = {}
-local decoration_coroutines = {}
 
 local function check_cloud_sprites(mapx, mapy, top_left_sprite)
     local tl = top_left_sprite
@@ -27,7 +26,7 @@ local function create_cloud_entity(mapx, mapy, cloud_type)
 
     local c = {x = mapx * 8, y = mapy * 8, type = cloud_type}
 
-    add(decoration_coroutines, cocreate(function()
+    add(COROUTINES, cocreate(function()
         local has_moved = false
         local last_x_move = 0
         local last_y_move = 0
@@ -101,18 +100,7 @@ local function draw_decorations()
     for e in all(decoration_entities) do e:draw() end
 end
 
-local function update()
-    for e in all(decoration_entities) do e:update() end
-
-    for c in all(decoration_coroutines) do
-        local status = costatus(c)
-        if status == "suspended" then
-            coresume(c)
-        elseif status == "dead" then
-            del(decoration_coroutines, c)
-        end
-    end
-end
+local function update() for e in all(decoration_entities) do e:update() end end
 
 return {
     init = function() decoration_entities = {} end,

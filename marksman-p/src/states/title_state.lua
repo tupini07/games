@@ -34,7 +34,7 @@ end
 local function draw_logo()
     sspr(0, 24, 32, 8, 10, 12, 106, 26)
     print_utils.print_centered("marksman", 24, 7)
-    print_utils.print_centered("v0.6", 30, 6)
+    print_utils.print_centered("v1.0", 30, 6)
 end
 
 local function get_selected_menu_item()

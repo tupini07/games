@@ -206,12 +206,25 @@ local function level_lost_draw()
     local banner_x1 = lvl_cords.x
     local banner_y1 = lvl_cords.y + 48
 
-    local banner_x2 = banner_x1 + 128
+    local banner_x2 = banner_x1 + 127
     local banner_y2 = banner_y1 + 46
 
     rectfill(banner_x1, banner_y1, banner_x2, banner_y2, 7)
-    print("you died!", banner_x1 + 10, banner_y1 + 10, 5)
-    print("press ❎ to try again", banner_x1 + 10, banner_y1 + 20, 5)
+
+    local line_x1 = banner_x1 + 3
+    local line_y1 = banner_y1 + 3
+
+    local line_x2 = banner_x2 - 3
+    local line_y2 = banner_y2 - 3
+
+    rect(line_x1, line_y1, line_x2, line_y2, 6)
+    pset(line_x1 - 1, line_y1 - 1, 6)
+    pset(line_x2 + 1, line_y1 - 1, 6)
+    pset(line_x1 - 1, line_y2 + 1, 6)
+    pset(line_x2 + 1, line_y2 + 1, 6)
+
+    print("you died!\n", banner_x1 + 14, banner_y1 + 14, 8)
+    print("press ❎ to try again", banner_x1 + 14, banner_y1 + 26, 5)
 end
 
 local function draw_current_lvl()
@@ -659,7 +672,6 @@ local camera = require("src/camera")
 
 local types = {cloud1 = 1, cloud2 = 2}
 local decoration_entities = {}
-local decoration_coroutines = {}
 
 local function check_cloud_sprites(mapx, mapy, top_left_sprite)
     local tl = top_left_sprite
@@ -684,7 +696,7 @@ local function create_cloud_entity(mapx, mapy, cloud_type)
 
     local c = {x = mapx * 8, y = mapy * 8, type = cloud_type}
 
-    add(decoration_coroutines, cocreate(function()
+    add(COROUTINES, cocreate(function()
         local has_moved = false
         local last_x_move = 0
         local last_y_move = 0
@@ -758,18 +770,7 @@ local function draw_decorations()
     for e in all(decoration_entities) do e:draw() end
 end
 
-local function update()
-    for e in all(decoration_entities) do e:update() end
-
-    for c in all(decoration_coroutines) do
-        local status = costatus(c)
-        if status == "suspended" then
-            coresume(c)
-        elseif status == "dead" then
-            del(decoration_coroutines, c)
-        end
-    end
-end
+local function update() for e in all(decoration_entities) do e:update() end end
 
 return {
     init = function() decoration_entities = {} end,
@@ -1575,7 +1576,7 @@ end
 local function draw_logo()
     sspr(0, 24, 32, 8, 10, 12, 106, 26)
     print_utils.print_centered("marksman", 24, 7)
-    print_utils.print_centered("v0.6", 30, 6)
+    print_utils.print_centered("v1.0", 30, 6)
 end
 
 local function get_selected_menu_item()
