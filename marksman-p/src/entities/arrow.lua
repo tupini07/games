@@ -229,6 +229,7 @@ local function draw_arrow(a)
 end
 
 return {
+    clear = function() ARROWS = {} end,
     update_all = function() foreach(ARROWS, update_arrow) end,
     draw_all = function() foreach(ARROWS, draw_arrow) end,
     fire_arrow = fire_arrow

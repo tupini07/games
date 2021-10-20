@@ -22,7 +22,7 @@ local show_lost_banner = false
 PLAYER_ORIGINAL_POS_IN_LVL = {x = 0, y = 0}
 
 local function level_reset()
-    ARROWS = {}
+    arrow.clear()
     PLAYER.x = PLAYER_ORIGINAL_POS_IN_LVL.x
     PLAYER.y = PLAYER_ORIGINAL_POS_IN_LVL.y
     player.reset_for_new_level()
@@ -31,6 +31,7 @@ local function level_reset()
 end
 
 local function new_level_init()
+    arrow.clear()
     banner_countdown = 10
     spring.init()
     spikes.init()
@@ -45,6 +46,9 @@ end
 local function finish_game()
     graphics_utils.fade_all_immediately()
     SWITCH_GAME_STATE(GAME_STATES_ENUM.end_game_state)
+    level_done = false
+    show_win_banner = false
+    show_lost_banner = false
 end
 
 function WIN_LEVEL()
