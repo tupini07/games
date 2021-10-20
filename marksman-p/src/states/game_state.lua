@@ -1,6 +1,7 @@
 local map = require("src/map")
 local camera_utils = require("src/camera")
 local graphics_utils = require("utils/graphics")
+local savefile = require("managers/savefile")
 
 local player = require("entities/player")
 local arrow = require("entities/arrow")
@@ -72,7 +73,16 @@ local function level_done_update()
                                          nil, function()
                     if show_win_banner then
                         SAVE_DATA.current_level = SAVE_DATA.current_level + 1
-                        new_level_init()
+
+                        if SAVE_DATA.current_level == 24 then
+                            -- player has finished game
+                            SAVE_DATA.current_level = 1
+                            savefile.persist_save_data()
+                            SWITCH_GAME_STATE(GAME_STATES_ENUM.end_game_state)
+                        else
+                            -- go to new level
+                            new_level_init()
+                        end
                     elseif show_lost_banner then
                         level_reset()
                     end

@@ -37,8 +37,6 @@ local map = {
     sprite_flags = sprite_flags,
     cell_has_flag = cell_has_flag,
     is_solid_area = is_solid_area,
-    level_to_map_coords = level_to_map_coords,
-    get_game_space_coords_for_current_lvl = get_game_space_coords_for_current_lvl,
     replace_entities = function(current_level)
         local level_block_coords = camera.level_to_map_coords(current_level)
 
@@ -48,7 +46,7 @@ local map = {
         for x = level_block_coords.x, level_x2 do
             for y = level_block_coords.y, level_y2 do
                 local sprt = mget(x, y)
-                if sprt == 3 then
+                if sprt == 3 or sprt == 4 then
                     mset(x, y, 0)
                     PLAYER.x = x * 8
                     PLAYER.y = y * 8
