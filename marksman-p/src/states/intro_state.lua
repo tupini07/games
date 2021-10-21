@@ -16,7 +16,7 @@ local function draw_intro_text()
     print("hear ye! hear ye!", 32, 16)
 
     local wrapped_text = print_utils.wrap_text_at_size(
-                             "the most prestigious archery competition is now open to all that can string a bow. He who completes every stage will have an assured place among the king's own marksmen",
+                             "the most prestigious archery competition is now open to all that can string a bow. he who completes every stage will have an assured place among the queen's own marksmen",
                              11 * 8)
     cursor(19, 22)
     print(wrapped_text)

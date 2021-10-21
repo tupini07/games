@@ -19,7 +19,7 @@ local function draw_text()
     color(5)
 
     local wrapped_text = print_utils.wrap_text_at_size(
-                             "glory to you! for your exceptional skill and dexterity, you've been named the princess'  personal marksman.",
+                             "what an honor! for your exceptional skill and dexterity, you've been named the princess' personal marksman.",
                              11 * 8)
     cursor(18, 16)
     print(wrapped_text)
@@ -30,7 +30,7 @@ local function draw_text()
 
     print_utils.print_text_with_outline("thanks for playing ♥", 5 * 8,
                                         13.5 * 8, start_fg_c, start_bg_c)
-    print_utils.print_text_with_outline("press ❎ to restart", 5 * 8, 14.5 * 8,
+    print_utils.print_text_with_outline("press ❎ to restart", 5.5 * 8, 14.5 * 8,
                                         start_fg_c, start_bg_c)
 end
 

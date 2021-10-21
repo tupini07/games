@@ -27,7 +27,6 @@ build:
     print(f"--- [{datetime.now()}] finish build ---")
 
 develop:
-    pico8 "{{name}}.p8"
     watchexec -e lua just build
 
 minimize:
