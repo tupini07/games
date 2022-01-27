@@ -6,17 +6,23 @@ Making breakfast
 
 PAL 0
 NAME blueprint
-204,193,121
+228,203,181
 255,105,94
 255,255,255
+
+PAL 1
+NAME dream
+51,44,255
+152,94,255
+227,233,251
 
 ROOM 0
 a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
 a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
+a,a,0,0,0,0,b,0,0,0,0,0,0,0,a,a
+a,a,0,0,0,0,b,0,0,0,0,0,0,0,a,a
 a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
+a,a,b,b,b,b,b,0,0,0,0,0,0,0,a,a
 a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,a
 a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,a
@@ -52,6 +58,27 @@ NAME kitchen
 EXT 13,13 0 15,7 FX fade_w
 PAL 0
 
+ROOM 2
+c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c
+c,c,c,c,c,c,c,0,0,c,c,c,c,c,c,c
+c,c,0,0,c,c,0,0,c,c,c,0,0,c,c,c
+c,0,c,c,c,c,c,c,c,c,c,0,0,0,c,c
+c,0,0,c,c,c,0,c,c,c,c,0,0,0,c,c
+c,c,c,c,c,c,c,c,0,c,c,c,c,0,c,c
+c,0,0,c,c,0,0,0,0,c,0,c,c,c,c,c
+c,0,c,c,c,c,0,0,0,c,c,c,c,c,c,c
+c,c,c,c,c,c,c,c,c,c,0,0,0,0,c,c
+c,c,0,0,c,c,c,c,c,c,c,c,0,0,c,c
+c,c,0,0,c,0,c,c,0,c,c,c,c,c,c,c
+c,c,c,0,c,0,0,c,c,c,0,0,c,c,c,c
+c,0,c,c,c,c,0,c,c,0,0,0,c,c,0,c
+c,0,0,c,c,c,0,c,c,c,0,0,c,c,0,c
+c,c,0,c,c,c,c,c,0,c,c,c,c,0,0,c
+c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c
+NAME start room
+EXT 7,6 0 2,3 FX fade_b DLG 5
+PAL 1
+
 TIL a
 11111111
 10000001
@@ -64,6 +91,30 @@ TIL a
 NAME block
 WAL true
 
+TIL b
+11111111
+10000001
+11111111
+10000001
+11111111
+10000001
+11111111
+11111111
+NAME wall
+WAL true
+
+TIL c
+11101110
+01000100
+01110111
+00100010
+10111011
+00010001
+11011101
+00000000
+NAME dream tile
+WAL true
+
 SPR A
 00011000
 00011000
@@ -73,7 +124,7 @@ SPR A
 10111101
 00100100
 00100100
-POS 0 4,4
+POS 2 7,7
 
 SPR a
 00000000
@@ -87,6 +138,31 @@ SPR a
 NAME cat
 DLG 0
 POS 0 8,12
+
+SPR b
+00000000
+01111111
+01000111
+01010011
+01010011
+01000001
+01111111
+00000000
+NAME bed-top
+DLG 4
+POS 0 2,2
+
+SPR c
+00000000
+11111100
+11111100
+11111100
+11101100
+11000100
+11111100
+00000000
+NAME bed-bottom
+POS 0 3,2
 
 ITM 0
 00000000
@@ -137,6 +213,22 @@ DLG 3
 """
 NAME locked exit 1
 
+DLG 4
+"""
+{
+  - explained_bed == 0 ?
+     This is my bed. It smells funny.{explained_bed = 1}
+}{pg}It was {shk}hard enough{shk} to get up, I should probably not lie down again.
+"""
+NAME bed-top dialog
+
+DLG 5
+Wake up!
+NAME exit narration 1
+
 VAR a
 42
+
+VAR explained_bed
+0
 
