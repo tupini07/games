@@ -1,10 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
+	"os"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"golang.org/x/image/colornames"
 	"golang.org/x/image/math/f64"
 )
@@ -20,23 +25,34 @@ const (
 )
 
 type Game struct {
-	camera       Camera
-	world        *ebiten.Image
-	currentBlock *StackBlock
-	allBlocks    []*StackBlock
+	camera    Camera
+	world     *ebiten.Image
+	allBlocks []*StackBlock
+	player    Player
 }
 
 func (g *Game) Update() error {
-	if g.currentBlock == nil {
+	if g.player.block == nil {
 		newBlock := MakeRandomBlock()
-		g.currentBlock = &newBlock
+		newBlock.pos.y = ScreenHeight / 7
+
+		g.player.block = &newBlock
 	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyQ) {
+		os.Exit(0)
+	}
+
+	g.player.UpdatePlayer()
 
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Hello, World!")
+	g.world.Clear()
+
+	cb := g.player.block
+	ebitenutil.DebugPrint(screen, fmt.Sprintf("%#v", cb))
 
 	const baseWidth = 100
 	const baseHeight = 40
@@ -47,7 +63,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		baseHeight,
 		colornames.Cornflowerblue)
 
-	g.DrawPlayer(g.world)
+	g.player.DrawPlayer(g.world)
+
+	for _, block := range g.allBlocks {
+		block.DrawBlock(g.world)
+	}
 
 	g.camera.Render(g.world, screen)
 }
@@ -57,14 +77,18 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
+
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("Hello, World!")
 
 	game := &Game{
-		currentBlock: nil,
-		allBlocks:    make([]*StackBlock, 0),
-		camera:       Camera{ViewPort: f64.Vec2{ScreenWidth, ScreenWidth}},
-		world:        ebiten.NewImage(worldWidth, worldHeight),
+		allBlocks: make([]*StackBlock, 0),
+		camera:    Camera{ViewPort: f64.Vec2{ScreenWidth, ScreenWidth}},
+		world:     ebiten.NewImage(worldWidth, worldHeight),
+		player: Player{
+			movingRight: true,
+		},
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
