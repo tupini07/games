@@ -1,6 +1,8 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 const playerMarginSide = 20
 const playerMoveSpeed = 2
@@ -10,25 +12,29 @@ type Player struct {
 	movingRight bool
 }
 
-func (p *Player) UpdatePlayer() {
+func (p *Player) UpdatePlayer(allBlocks *[]*StackBlock) {
 
-	if p.movingRight {
-		marginRight := ScreenWidth - (p.block.pos.x + p.block.shape.width)
-		if marginRight <= playerMarginSide {
-			p.movingRight = false
-			return
-		}
+	// if p.movingRight {
+	// 	marginRight := ScreenWidth - (p.block.pos.x + p.block.shape.width)
+	// 	if marginRight <= playerMarginSide {
+	// 		p.movingRight = false
+	// 		return
+	// 	}
 
-		p.block.pos.x += playerMoveSpeed
-	} else {
-		marginLeft := p.block.pos.x
-		if marginLeft <= playerMarginSide {
-			p.movingRight = true
-			return
-		}
+	// 	p.block.pos.x += playerMoveSpeed
+	// } else {
+	// 	marginLeft := p.block.pos.x
+	// 	if marginLeft <= playerMarginSide {
+	// 		p.movingRight = true
+	// 		return
+	// 	}
 
-		p.block.pos.x -= playerMoveSpeed
-	}
+	// 	p.block.pos.x -= playerMoveSpeed
+	// }
+
+	// if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+
+	// }
 }
 
 func (p *Player) DrawPlayer(screen *ebiten.Image) {

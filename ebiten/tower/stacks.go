@@ -1,44 +1,59 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/jakecoffman/cp"
 	"golang.org/x/image/colornames"
 )
 
-type Position struct {
-	x, y int
-}
-
 type RectShape struct {
-	width, height int
+	width, height float64
 }
 
 type StackBlock struct {
-	pos   Position
-	shape RectShape
+	body   *cp.Body
+	shape  *cp.Shape
+	rShape RectShape
 }
 
 func (s *StackBlock) DrawBlock(screen *ebiten.Image) {
+	pos := s.body.Position()
+	shape := s.rShape
+
+	fmt.Printf("%#v\n", pos)
+
 	ebitenutil.DrawRect(screen,
-		float64(s.pos.x),
-		float64(s.pos.y),
-		float64(s.shape.width),
-		float64(s.shape.height),
-		colornames.Purple)
+		pos.X, pos.Y,
+		shape.width,
+		shape.height,
+		colornames.Navajowhite)
 }
 
-func MakeRandomBlock() StackBlock {
+func MakeRandomBlock(space *cp.Space) StackBlock {
+	boxWidth := float64(5 + rand.Intn(ScreenWidth/5))
+	boxHeights := float64(5 + rand.Intn(ScreenWidth/5))
+
+	boxBody := space.AddBody(cp.NewBody(10, cp.INFINITY))
+	boxBody.SetPosition(cp.Vector{
+		X: float64(rand.Intn(ScreenWidth)),
+		Y: float64(rand.Intn(ScreenHeight)),
+	})
+	boxBody.SetVelocity(0, 0)
+
+	boxShape := space.AddShape(cp.NewBox(boxBody, boxWidth, boxHeights, 0))
+	boxShape.SetElasticity(1)
+	boxShape.SetFriction(cp.INFINITY)
+
 	return StackBlock{
-		pos: Position{
-			x: rand.Intn(ScreenWidth),
-			y: rand.Intn(ScreenHeight),
-		},
-		shape: RectShape{
-			width:  5 + rand.Intn(ScreenWidth/5),
-			height: 5 + rand.Intn(ScreenWidth/5),
+		body:  boxBody,
+		shape: boxShape,
+		rShape: RectShape{
+			width:  boxWidth,
+			height: boxHeights,
 		},
 	}
 }
