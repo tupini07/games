@@ -1,0 +1,33 @@
+help:
+    just --list
+
+
+name := "marksman"
+
+build: 
+    #!/usr/bin/env python3
+    import os
+    from pathlib import Path
+    from datetime import datetime
+
+    print(f"--- [{datetime.now()}] start build ---")
+    dirs_in_dir = set()
+    p = Path('.')
+    lua_files = list(p.glob('**/*.lua'))
+
+    for lf in lua_files:
+        dirs_in_dir.add(str(lf.parent.resolve()))
+   
+    lua_path = ""
+    for dd in dirs_in_dir:
+        lua_path += f"{dd}\\?;{dd}\\?.lua;"
+
+    p8_name = "{{name}}.p8"
+    os.system(f"p8tool build {p8_name} --lua main.lua --lua-path='{lua_path}'")
+    print(f"--- [{datetime.now()}] finish build ---")
+
+develop:
+    watchexec -e lua just build
+
+minimize:
+    p8tool luamin {{name}}.p8
