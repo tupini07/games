@@ -21,10 +21,11 @@ const (
 	worldHeight = 10_000
 )
 
+var renderer *ebitenrenderer.EbitenRenderer
+var ldtkProject *ldtkgo.Project
+
 type Game struct {
-	world    *ebiten.Image
-	ldtk     *ldtkgo.Project
-	renderer *ebitenrenderer.EbitenRenderer
+	world *ebiten.Image
 }
 
 func (g *Game) Update() error {
@@ -38,10 +39,10 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Clear()
 
-	lvl := g.ldtk.Levels[0]
-	g.renderer.Render(lvl)
+	lvl := ldtkProject.Levels[0]
+	renderer.Render(lvl)
 
-	for _, layer := range g.renderer.RenderedLayers {
+	for _, layer := range renderer.RenderedLayers {
 		screen.DrawImage(layer.Image, &ebiten.DrawImageOptions{})
 	}
 
@@ -52,10 +53,14 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func main() {
-	ldtkProject, err := ldtkgo.Open("assets/levels.ldtk")
+	ldtk_Project, err := ldtkgo.Open("assets/levels.ldtk")
 	if err != nil {
 		panic(err)
 	}
+
+	ldtkProject = ldtk_Project
+
+	renderer = ebitenrenderer.NewEbitenRenderer(ebitenrenderer.NewDiskLoader("assets"))
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -63,9 +68,7 @@ func main() {
 	ebiten.SetWindowTitle("Hello, World!")
 
 	game := &Game{
-		world:    ebiten.NewImage(worldWidth, worldHeight),
-		ldtk:     ldtkProject,
-		renderer: ebitenrenderer.NewEbitenRenderer(ebitenrenderer.NewDiskLoader("assets")),
+		world: ebiten.NewImage(worldWidth, worldHeight),
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
