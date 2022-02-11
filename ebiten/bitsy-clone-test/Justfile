@@ -1,0 +1,15 @@
+help:
+    just --list
+
+build-release:
+    go build -ldflags "-s -w"
+
+build-wasm-release:
+    rm -rf out || true
+    mkdir -p out
+    GOOS=js GOARCH=wasm go build -ldflags "-s -w" -o out/game.wasm github.com/tupini07/tower/m2
+    cp $(go env GOROOT)/misc/wasm/wasm_exec.js ./out/
+    cp index.html ./out/
+
+wasmserve:
+    wasmserve .
