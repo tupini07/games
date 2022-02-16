@@ -1,0 +1,30 @@
+help:
+	@just --list
+
+build-with-config config:
+	@mkdir -p build 
+	@cd build && cmake ..
+	@cmake --build ./build --config {{config}} --target my_raylib_game -j 10 --
+
+build-debug:
+	@just build-with-config Debug
+
+build-release:
+	@just build-with-config Release
+
+clean:
+	@rm -rf build || true
+	@rm -rf out || true
+
+build-web:
+	#!powershell
+	emsdk activate latest
+	New-Item build-emc -ItemType Directory -ErrorAction SilentlyContinue
+	
+	# Ensure asset folder is copied
+	Remove-Item build-emc/assets -Recurse -ErrorAction Ignore
+	Copy-Item "assets" -Recurse -Destination "build-emc/assets"
+
+	cd build-emc
+	emcmake cmake .. -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS="-s USE_GLFW=3" -DCMAKE_EXECUTABLE_SUFFIX=".html"
+	emmake make
