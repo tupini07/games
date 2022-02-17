@@ -4,7 +4,7 @@
 
 #include "Player.hpp"
 
-Player::Player(/* args */)
+Player::Player()
 {
 	this->pos_x = 10;
 	this->pos_y = 10;
