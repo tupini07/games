@@ -1,20 +1,26 @@
 #include "raylib.h"
 
 #include "TitleScreen.hpp"
-#include "ScreenManager.hpp"
+#include "Screens.hpp"
 
 void TitleScreen::draw()
 {
     ClearBackground(RAYWHITE);
-    DrawText("press 'c' to play!", 10, 10, 10, GREEN);
+    DrawText("press 'c' to play!", 10, 10, 50, BLACK);
+    if (IsKeyPressed(KEY_C))
+    {
+        ClearBackground(RAYWHITE);
+    }
 }
 
-void TitleScreen::update(float dt)
+Screens TitleScreen::update(float dt)
 {
     if (IsKeyPressed(KEY_C))
     {
-        ScreenManager::set_current_screen(Screen::GAME);
+        return Screens::GAME;
     }
+
+    return Screens::NONE;
 }
 
 TitleScreen::TitleScreen()

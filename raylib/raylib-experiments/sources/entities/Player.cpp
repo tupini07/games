@@ -8,7 +8,7 @@ Player::Player(/* args */)
 {
 	this->pos_x = 10;
 	this->pos_y = 10;
-	this->radius = 100;
+	this->radius = 20;
 	this->radius_timer = 0.0f;
 }
 

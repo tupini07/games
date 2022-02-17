@@ -1,4 +1,5 @@
 #include "GameScreen.hpp"
+#include "Screens.hpp"
 
 GameScreen::GameScreen()
 {
@@ -14,6 +15,8 @@ void GameScreen::draw() {
     player->draw();
 }
 
-void GameScreen::update(float dt) {
+Screens GameScreen::update(float dt) {
     player->update(dt);
+    
+    return NONE;
 }

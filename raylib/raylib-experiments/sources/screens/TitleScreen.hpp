@@ -10,5 +10,5 @@ public:
 	~TitleScreen();
 
 	void draw();
-	void update(float dt);
+	Screens update(float dt);
 };

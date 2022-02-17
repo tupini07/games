@@ -1,6 +1,8 @@
 #pragma once
 
 #include "BaseScreen.hpp"
+#include "Screens.hpp"
+
 #include "../entities/Player.hpp"
 
 class GameScreen : public BaseScreen
@@ -13,5 +15,5 @@ public:
     ~GameScreen();
 
     void draw();
-    void update(float dt);
+    Screens update(float dt);
 };

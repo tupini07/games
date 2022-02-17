@@ -8,6 +8,7 @@
 
 #include "./entities/Player.hpp"
 #include "./screens/ScreenManager.hpp"
+#include "./screens/Screens.hpp"
 
 #define SCREEN_WIDTH (800)
 #define SCREEN_HEIGHT (450)
@@ -23,7 +24,7 @@ static Texture2D texture;
 int main()
 {
 	ScreenManager::initialize();
-	ScreenManager::set_current_screen(Screen::TITLE);
+	ScreenManager::set_current_screen(Screens::TITLE);
 
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 	SetTargetFPS(60);

@@ -5,13 +5,7 @@
 #include "BaseScreen.hpp"
 #include "TitleScreen.hpp"
 #include "GameScreen.hpp"
-
-enum Screen
-{
-	UNSET,
-	TITLE,
-	GAME,
-};
+#include "Screens.hpp"
 
 class ScreenManager
 {
@@ -20,7 +14,7 @@ private:
 	static ldtk::World *ldtkWorld;
 
 public:
-	static void set_current_screen(Screen screen);
+	static void set_current_screen(Screens screen);
 	static void initialize();
 
 	static void update(float dt);
@@ -38,7 +32,7 @@ void ScreenManager::initialize()
 	ScreenManager::set_current_screen(UNSET);
 }
 
-void ScreenManager::set_current_screen(Screen screen)
+void ScreenManager::set_current_screen(Screens screen)
 {
 	if (ScreenManager::current_screen != nullptr)
 	{
@@ -50,7 +44,6 @@ void ScreenManager::set_current_screen(Screen screen)
 	case UNSET:
 		ScreenManager::current_screen = nullptr;
 		break;
-
 	case TITLE:
 		ScreenManager::current_screen = new TitleScreen();
 		break;
@@ -64,7 +57,10 @@ void ScreenManager::update(float dt)
 {
 	if (ScreenManager::current_screen != nullptr)
 	{
-		ScreenManager::current_screen->update(dt);
+		Screens result = ScreenManager::current_screen->update(dt);
+		if (result != NONE) {
+			ScreenManager::set_current_screen(result);
+		}
 	}
 }
 

@@ -1,8 +1,12 @@
 #pragma once
 
+#include "Screens.hpp"
+
 class BaseScreen
 {
 public:
-    virtual void update(float dt);
-    virtual void draw();
+    BaseScreen() = default;
+    virtual ~BaseScreen() = default;
+    virtual void draw() = 0;
+    virtual Screens update(float dt) = 0;
 };
