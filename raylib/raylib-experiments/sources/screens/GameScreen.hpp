@@ -1,5 +1,7 @@
 #pragma once
 
+#include <LDtkLoader/World.hpp>
+
 #include "BaseScreen.hpp"
 #include "Screens.hpp"
 
@@ -8,7 +10,10 @@
 class GameScreen : public BaseScreen
 {
 private:
+    int current_level;
     Player *player;
+    ldtk::World *ldtkWorld;
+    const ldtk::Level *currentLdtkLevel;
 
 public:
     GameScreen();

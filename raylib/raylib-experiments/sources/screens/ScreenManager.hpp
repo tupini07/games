@@ -1,7 +1,5 @@
 #pragma once
 
-#include "LDtkLoader/World.hpp"
-
 #include "BaseScreen.hpp"
 #include "TitleScreen.hpp"
 #include "GameScreen.hpp"
@@ -11,7 +9,6 @@ class ScreenManager
 {
 private:
 	static BaseScreen *current_screen;
-	static ldtk::World *ldtkWorld;
 
 public:
 	static void set_current_screen(Screens screen);
@@ -22,18 +19,19 @@ public:
 };
 
 BaseScreen *ScreenManager::current_screen;
-ldtk::World *ScreenManager::ldtkWorld;
 
 void ScreenManager::initialize()
 {
-	ScreenManager::ldtkWorld = new ldtk::World();
-
-	ScreenManager::ldtkWorld->loadFromFile(ASSETS_PATH "world.ldtk");
 	ScreenManager::set_current_screen(UNSET);
 }
 
 void ScreenManager::set_current_screen(Screens screen)
 {
+	if (screen == NONE)
+	{
+		return;
+	}
+
 	if (ScreenManager::current_screen != nullptr)
 	{
 		delete ScreenManager::current_screen;
@@ -50,6 +48,9 @@ void ScreenManager::set_current_screen(Screens screen)
 	case GAME:
 		ScreenManager::current_screen = new GameScreen();
 		break;
+	case NONE:
+		std::cerr << "Landed in NONE case for switch. This should never happen!" << std::endl;
+		exit(1);
 	}
 }
 
@@ -58,7 +59,8 @@ void ScreenManager::update(float dt)
 	if (ScreenManager::current_screen != nullptr)
 	{
 		Screens result = ScreenManager::current_screen->update(dt);
-		if (result != NONE) {
+		if (result != NONE)
+		{
 			ScreenManager::set_current_screen(result);
 		}
 	}

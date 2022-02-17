@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "raylib.h"
+#include <raylib.h>
 
 #include "Player.hpp"
 
