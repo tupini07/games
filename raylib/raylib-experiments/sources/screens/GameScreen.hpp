@@ -14,6 +14,6 @@ public:
     GameScreen();
     ~GameScreen();
 
-    void draw();
-    Screens update(float dt);
+    void draw() override;
+    Screens update(float dt) override;
 };
