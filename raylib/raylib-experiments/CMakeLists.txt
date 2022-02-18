@@ -36,7 +36,8 @@ else()
 endif()
 
 # Set common compiler flags
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wswitch")
+# SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wswitch")
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
 
 if (${PLATFORM} STREQUAL "Web")
     # Tell Emscripten to build an .html file.

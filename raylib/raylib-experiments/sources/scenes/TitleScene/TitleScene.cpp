@@ -17,7 +17,7 @@ void TitleScene::draw()
 	const int texture_y = AppConstants::ScreenHeight / 2.5 - texture.height / 2;
 	DrawTexture(texture, texture_x, texture_y, WHITE);
 
-	const string text = "I would like some potatoes please! Thank you";
+	const string text = "I would like some potatoes please!";
 	const Vector2 text_size = MeasureTextEx(GetFontDefault(), text.c_str(), 20, 1);
 	DrawText(text.c_str(), AppConstants::ScreenWidth / 2 - text_size.x / 2, texture_y + texture.height + text_size.y + 10, 20, BLACK);
 
