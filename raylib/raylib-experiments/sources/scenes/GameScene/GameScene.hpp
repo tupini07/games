@@ -1,5 +1,6 @@
 #pragma once
 
+#include <raylib.h>
 #include <LDtkLoader/World.hpp>
 
 #include "../BaseScene.hpp"
@@ -14,6 +15,7 @@ private:
     Player *player;
     ldtk::World *ldtkWorld;
     const ldtk::Level *currentLdtkLevel;
+    Texture2D renderedLevelTexture;
 
 public:
     GameScene();
@@ -21,4 +23,6 @@ public:
 
     void draw() override;
     Scenes update(float dt) override;
+
+    void set_selected_level();
 };
