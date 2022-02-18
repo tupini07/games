@@ -25,8 +25,9 @@ GameScene::~GameScene()
 void GameScene::draw()
 {
     ClearBackground(RAYWHITE);
-    DrawTextureEx(renderedLevelTexture, {0, 0}, 0, 1.5, WHITE);
-    // DrawTexture(renderedLevelTexture, 0, 0, WHITE);
+
+    // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
+    DrawTextureRec(renderedLevelTexture, (Rectangle){0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height}, (Vector2){0.0f, 0.0f}, WHITE);
     player->draw();
 }
 
@@ -73,7 +74,6 @@ void GameScene::set_selected_level()
                     .height = tile_size};
 
                 DrawTextureRec(tilemapTexture, source_rect, {float(target_pos.x), float(target_pos.y)}, WHITE);
-                cout << "writing tile on - x:" << tile.position.x << " y:" << tile.position.y << " type:" << tile.tileId << endl;
             }
         }
     }
