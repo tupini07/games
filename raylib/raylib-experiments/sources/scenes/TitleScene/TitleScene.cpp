@@ -5,7 +5,7 @@
 
 #include <Constants.hpp>
 #include "TitleScene.hpp"
-#include "Scenes.hpp"
+#include "../Scenes.hpp"
 
 using namespace std;
 

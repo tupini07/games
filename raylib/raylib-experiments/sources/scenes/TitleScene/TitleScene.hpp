@@ -1,7 +1,7 @@
 #pragma once
 #include <raylib.h>
 
-#include "BaseScene.hpp"
+#include "../BaseScene.hpp"
 
 class TitleScene : public BaseScene
 {

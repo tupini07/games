@@ -2,10 +2,10 @@
 
 #include <LDtkLoader/World.hpp>
 
-#include "BaseScene.hpp"
-#include "Scenes.hpp"
+#include "../BaseScene.hpp"
+#include "../Scenes.hpp"
 
-#include "../entities/Player.hpp"
+#include "../../entities/Player.hpp"
 
 class GameScene : public BaseScene
 {

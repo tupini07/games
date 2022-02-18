@@ -1,8 +1,8 @@
 #pragma once
 
 #include "BaseScene.hpp"
-#include "TitleScene.hpp"
-#include "GameScene.hpp"
+#include "TitleScene/TitleScene.hpp"
+#include "GameScene/GameScene.hpp"
 #include "Scenes.hpp"
 
 class SceneManager

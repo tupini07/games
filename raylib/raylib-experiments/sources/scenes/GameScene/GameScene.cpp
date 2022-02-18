@@ -2,7 +2,7 @@
 
 #include <Constants.hpp>
 #include "GameScene.hpp"
-#include "Scenes.hpp"
+#include "../Scenes.hpp"
 
 GameScene::GameScene()
 {
