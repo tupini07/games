@@ -6,8 +6,8 @@
 #include <Constants.hpp>
 
 #include "entities/Player.hpp"
-#include "screens/ScreenManager.hpp"
-#include "screens/Screens.hpp"
+#include "scenes/SceneManager.hpp"
+#include "scenes/Scenes.hpp"
 
 void UpdateDrawFrame();
 
@@ -18,8 +18,8 @@ int main()
 		AppConstants::ScreenHeight,
 		AppConstants::WindowTitle.c_str());
 
-	ScreenManager::initialize();
-	ScreenManager::set_current_screen(Screens::TITLE);
+	SceneManager::initialize();
+	SceneManager::set_current_screen(Scenes::TITLE);
 
 #if defined(PLATFORM_WEB)
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -41,7 +41,7 @@ int main()
 void UpdateDrawFrame()
 {
 	float dt = GetFrameTime();
-	ScreenManager::update(dt);
+	SceneManager::update(dt);
 
 	BeginDrawing();
 
@@ -51,7 +51,7 @@ void UpdateDrawFrame()
 		return;
 	}
 
-	ScreenManager::draw();
+	SceneManager::draw();
 
 	EndDrawing();
 }

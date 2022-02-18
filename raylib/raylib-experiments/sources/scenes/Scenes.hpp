@@ -1,6 +1,6 @@
 #pragma once
 
-enum Screens
+enum Scenes
 {
     NONE,
     UNSET,

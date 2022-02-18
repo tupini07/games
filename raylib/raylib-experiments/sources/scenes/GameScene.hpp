@@ -2,12 +2,12 @@
 
 #include <LDtkLoader/World.hpp>
 
-#include "BaseScreen.hpp"
-#include "Screens.hpp"
+#include "BaseScene.hpp"
+#include "Scenes.hpp"
 
 #include "../entities/Player.hpp"
 
-class GameScreen : public BaseScreen
+class GameScene : public BaseScene
 {
 private:
     int current_level;
@@ -16,9 +16,9 @@ private:
     const ldtk::Level *currentLdtkLevel;
 
 public:
-    GameScreen();
-    ~GameScreen();
+    GameScene();
+    ~GameScene();
 
     void draw() override;
-    Screens update(float dt) override;
+    Scenes update(float dt) override;
 };

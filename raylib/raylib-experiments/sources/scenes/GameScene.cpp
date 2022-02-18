@@ -1,10 +1,10 @@
 #include <iostream>
 
 #include <Constants.hpp>
-#include "GameScreen.hpp"
-#include "Screens.hpp"
+#include "GameScene.hpp"
+#include "Scenes.hpp"
 
-GameScreen::GameScreen()
+GameScene::GameScene()
 {
     ldtkWorld = new ldtk::World();
     ldtkWorld->loadFromFile(AppConstants::GetAssetPath("world.ldtk"));
@@ -23,18 +23,18 @@ GameScreen::GameScreen()
     player = new Player();
 }
 
-GameScreen::~GameScreen()
+GameScene::~GameScene()
 {
     delete ldtkWorld;
     delete player;
 }
 
-void GameScreen::draw()
+void GameScene::draw()
 {
     player->draw();
 }
 
-Screens GameScreen::update(float dt)
+Scenes GameScene::update(float dt)
 {
     player->update(dt);
 

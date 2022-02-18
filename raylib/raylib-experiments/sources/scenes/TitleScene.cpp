@@ -4,12 +4,12 @@
 #include <raylib.h>
 
 #include <Constants.hpp>
-#include "TitleScreen.hpp"
-#include "Screens.hpp"
+#include "TitleScene.hpp"
+#include "Scenes.hpp"
 
 using namespace std;
 
-void TitleScreen::draw()
+void TitleScene::draw()
 {
 	ClearBackground(RAYWHITE);
 
@@ -33,21 +33,21 @@ void TitleScreen::draw()
 	DrawText("press 'c' to play!", 10, 10, 50, BLACK);
 }
 
-Screens TitleScreen::update(float dt)
+Scenes TitleScene::update(float dt)
 {
 	if (IsKeyPressed(KEY_C))
 	{
-		return Screens::GAME;
+		return Scenes::GAME;
 	}
 
-	return Screens::NONE;
+	return Scenes::NONE;
 }
 
-TitleScreen::TitleScreen()
+TitleScene::TitleScene()
 {
 	texture = LoadTexture(AppConstants::GetAssetPath("test.png").c_str());
 }
 
-TitleScreen::~TitleScreen()
+TitleScene::~TitleScene()
 {
 }
