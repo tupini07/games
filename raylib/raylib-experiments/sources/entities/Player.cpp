@@ -25,7 +25,7 @@ Player::~Player()
 
 void Player::update(float dt)
 {
-	auto effective_speed = 35;
+	auto effective_speed = 35.0f;
 
 	radius_timer += dt;
 
@@ -38,24 +38,24 @@ void Player::update(float dt)
 	// TODO Cap velocities
 	if (IsKeyDown(KEY_LEFT))
 	{
-		body->force.x -= effective_speed;
+		PhysicsAddForce(body, {-effective_speed, 0});
 	}
 
 	if (IsKeyDown(KEY_RIGHT))
 	{
-		body->force.x += effective_speed;
+		PhysicsAddForce(body, {effective_speed, 0});
 	}
 
 	if (IsKeyPressed(KEY_UP))
 	{
-		body->force.y -= 300;
+		PhysicsAddForce(body, {0, -300});
 	}
 }
 
 void Player::draw()
 {
-	DrawCircle(body->position.x, body->position.y, this->radius, GREEN);
-	DrawTexture(sprite, body->position.x, body->position.y, WHITE);
+	// DrawCircle(body->position.x, body->position.y, this->radius, GREEN);
+	DrawTexture(sprite, body->position.x - 0.7f * GameConstants::CellSize, body->position.y - 1 * GameConstants::CellSize, WHITE);
 }
 
 void Player::init_for_level(const ldtk::Entity *entity)
@@ -65,4 +65,6 @@ void Player::init_for_level(const ldtk::Entity *entity)
 	cout << "DEBUG: Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
 
 	this->body = CreatePhysicsBodyRectangle({(float)pos.x, (float)pos.y}, 10, 10, 10);
+	body->freezeOrient = true;
+	body->dynamicFriction = 0.4f;
 }

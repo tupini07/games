@@ -7,6 +7,7 @@
 #include <Constants.hpp>
 #include "GameScene.hpp"
 #include "../Scenes.hpp"
+#include "LevelDefinitions.hpp"
 
 using namespace std;
 
@@ -41,6 +42,25 @@ void GameScene::draw()
 				   {0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height},
 				   {0, 0}, WHITE);
 	player->draw();
+
+	// DEBUG stuff
+
+	// Show outline of physic bodies. This is taken directly from https://www.raylib.com/examples/physics/loader.html?name=physics_demo
+	auto bc = GetPhysicsBodiesCount();
+	for (int i = 0; i < bc; i++)
+	{
+		auto b = GetPhysicsBody(i);
+		int vertexCount = GetPhysicsShapeVerticesCount(i);
+		for (int j = 0; j < vertexCount; j++)
+		{
+			Vector2 vertexA = GetPhysicsShapeVertex(b, j);
+
+			int jj = (((j + 1) < vertexCount) ? (j + 1) : 0); // Get next vertex or first to close the shape
+			Vector2 vertexB = GetPhysicsShapeVertex(b, jj);
+
+			DrawLineV(vertexA, vertexB, GREEN); // Draw a line between two vertex positions
+		}
+	}
 }
 
 Scenes GameScene::update(float dt)
@@ -117,21 +137,31 @@ void GameScene::set_selected_level(int lvl)
 
 				DrawTextureRec(currentTilesetTexture, source_rect, target_pos, WHITE);
 
+				/**
+				 * Note for self: below is how we would add physcis entities for
+				 * every solid block. But it seem that the physac library
+				 * doesn't work very well when there are many bodies in the scene.
+				 *
+				 */
 				// if tile is solid then create physics
-				auto gx = tile.position.x / tile_size;
-				auto gy = tile.position.y / tile_size;
-				auto intGridInfo = layer.getIntGridVal(gx, gy);
+				// auto gx = tile.position.x / tile_size;
+				// auto gy = tile.position.y / tile_size;
+				// auto intGridInfo = currentLdtkLevel->getLayer("PhysicsLayer").getIntGridVal(gx, gy);
 
-				if (intGridInfo.name == "Floor")
-				{
-					// auto body = CreatePhysicsBodyRectangle({target_pos.x + 1, target_pos.y + 1}, tile_size - 1, tile_size - 1, 10);
+				// if (intGridInfo.name == "HasColission")
+				// {
+				// 	auto body = CreatePhysicsBodyRectangle(target_pos, 16, 16, 10);
+				// 	cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << endl;
 
-					// this makes it a static body
-					// body->enabled = false;
-				}
+				// 	// this makes it a static body
+				// 	body->enabled = false;
+				// }
 			}
 		}
 	}
+
+	EndTextureMode();
+	renderedLevelTexture = renderTexture.texture;
 
 	// get entity positions
 	cout << "Entities in level:" << endl;
@@ -145,9 +175,19 @@ void GameScene::set_selected_level(int lvl)
 		}
 	}
 
-	// create physics?
+	// create physics
+	auto collidersInLevel = LevelDefinitions::LevelColliders[current_level];
+	for (auto &&colliderRect : collidersInLevel)
+	{
+		auto body = CreatePhysicsBodyRectangle({(colliderRect.x + 1.5) * GameConstants::CellSize,
+												(colliderRect.y + 0.5) * GameConstants::CellSize},
+											   colliderRect.width * GameConstants::CellSize,
+											   colliderRect.height * GameConstants::CellSize,
+											   10);
+		cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << endl;
 
-	EndTextureMode();
-
-	renderedLevelTexture = renderTexture.texture;
+		// this makes it a static body
+		body->enabled = false;
+		body->freezeOrient = true;
+	}
 }

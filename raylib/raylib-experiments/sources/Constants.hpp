@@ -8,6 +8,7 @@ namespace GameConstants
 {
     const int WorldWidth = 400;
     const int WorldHeight = 400;
+    const int CellSize = 16;
 }
 
 namespace AppConstants
