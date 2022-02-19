@@ -10,6 +10,8 @@
 #include "scenes/Scenes.hpp"
 
 void UpdateDrawFrame();
+RenderTexture2D frameBuffer;
+
 
 int main()
 {
@@ -17,6 +19,8 @@ int main()
 		AppConstants::ScreenWidth,
 		AppConstants::ScreenHeight,
 		AppConstants::WindowTitle.c_str());
+
+	frameBuffer = LoadRenderTexture(GameConstants::WorldWidth, GameConstants::WorldHeight);
 
 	SceneManager::initialize();
 	SceneManager::set_current_screen(Scenes::TITLE);
@@ -43,15 +47,24 @@ void UpdateDrawFrame()
 	float dt = GetFrameTime();
 	SceneManager::update(dt);
 
-	BeginDrawing();
-
 	if (IsKeyDown(KEY_Q))
 	{
 		CloseWindow();
 		return;
 	}
 
-	SceneManager::draw();
+	BeginTextureMode(frameBuffer);
+	ClearBackground(WHITE);
 
+	SceneManager::draw();
+	EndTextureMode();
+
+
+	BeginDrawing();
+	// NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
+	DrawTexturePro(frameBuffer.texture,
+				   {0, 0, (float)frameBuffer.texture.width, -(float)frameBuffer.texture.height},
+				   {0, 0, AppConstants::ScreenWidth, AppConstants::ScreenHeight},
+				   {0, 0}, 0, WHITE);
 	EndDrawing();
 }

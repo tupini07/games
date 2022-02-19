@@ -30,21 +30,10 @@ GameScene::~GameScene()
 void GameScene::draw()
 {
 	ClearBackground(RAYWHITE);
-
-	auto renderTexture = LoadRenderTexture(GameConstants::WorldWidth, GameConstants::WorldHeight);
-
-	BeginTextureMode(renderTexture);
 	DrawTextureRec(renderedLevelTexture,
 				   {0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height},
 				   {0, 0}, WHITE);
 	player->draw();
-	EndTextureMode();
-
-	// NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-	DrawTexturePro(renderTexture.texture,
-				   {0, 0, (float)renderTexture.texture.width, -(float)renderTexture.texture.height},
-				   {0, 0, AppConstants::ScreenWidth, AppConstants::ScreenHeight},
-				   {0, 0}, 0, WHITE);
 }
 
 Scenes GameScene::update(float dt)
@@ -83,6 +72,16 @@ void GameScene::set_selected_level(int lvl)
 	auto renderTexture = LoadRenderTexture(levelSize.x, levelSize.y);
 
 	BeginTextureMode(renderTexture);
+
+	if (currentLdtkLevel->hasBgImage())
+	{
+		auto img = currentLdtkLevel->getBgImage();
+		auto imgTex = LoadTexture(AppConstants::GetAssetPath(img.path.c_str()).c_str());
+		// DrawTexture(imgTex, 0, 0, WHITE);
+		DrawTextureTiled(imgTex, {0, 0, (float)imgTex.width, (float)imgTex.height},
+						 {0, 0, GameConstants::WorldWidth, GameConstants::WorldHeight}, {0, 0}, 0, 0, WHITE);
+	}
+
 	// draw all tileset layers
 	for (auto &&layer : currentLdtkLevel->allLayers())
 	{
@@ -92,6 +91,9 @@ void GameScene::set_selected_level(int lvl)
 			// if it is a tile layer then draw every tile to the frame buffer
 			for (auto &&tile : layer.allTiles())
 			{
+
+				// var intGridInfo = layer.getIntGridVal(t);
+
 				auto source_pos = tile.texture_position;
 				auto target_pos = tile.position;
 				auto tile_size = float(layer.getTileset().tile_size);
