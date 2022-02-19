@@ -1,20 +1,12 @@
-# Simple and portable CMake template for raylib
+# Raylib experiments
 
-This is a basic project template for raylib using CMake and has been tested with Visual Studio, Visual Studio Code and CLion.
+For the moment this is just a project where I play around with Raylib and try out weird stuff.
 
-The master branch of the raylib source code is downloaded using CMake FetchContent from github and compiled from source as it is much easier than including prebuilt binaries for every platform and configuration.
 
-Building from the cmake file will build both raylib and `src/main.c` which includes a basic example of a raylib program.
+# Assets
 
-## Asset handling
+Some of the assets I'm using have their own license, different from the overrall license of this repo and/or this project.
 
-The example in `src/main.c` uses an example image located in the `assets` folder.
-To load it we use `ASSETS_PATH`, which is a string macro with the *absolute* path "assets" directory.
-This macro is defined in the `CMakeLists.txt` file on line `23`.
- 
-If you plan on releasing or sharing your game consider manually setting the value of the `ASSETS_PATH` macro.
-
-In C you can concatenate string literals by putting them next to each other, 
-eg: `"A" "B"` is `"AB"`. So ASSETS_PATH `"test.png"` becomes `"/path/to/your/assets/test.png"`
-
-If you wanna share your game with others you should set ASSETS_PATH to be a *relative* path like "./assets/". You can do this in the CMakeLists.txt file. 
+- [Dino Characters](https://arks.itch.io/dino-characters) - Creative Commons Attribution v4.0 International
+- [Pixel Adventure 1](https://pixelfrog-assets.itch.io/pixel-adventure-1) - CC0 1.0 Universal (CC0 1.0)
+Public Domain Dedication

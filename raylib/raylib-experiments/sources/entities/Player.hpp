@@ -1,5 +1,8 @@
 #pragma once
 
+#include <raylib.h>
+#include <LDtkLoader/Entity.hpp>
+
 class Player
 {
 private:
@@ -11,10 +14,14 @@ private:
     int radius;
     float radius_timer;
 
+    Texture2D sprite;
+
 public:
     Player(/* args */);
     ~Player();
 
     void update(float dt);
     void draw();
+
+    void init_for_level(const ldtk::Entity *entity);
 };

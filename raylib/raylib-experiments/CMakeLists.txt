@@ -30,6 +30,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE LDtkLoader)
 
 # Setting ASSETS_PATH
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0")
     target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/") # Set the asset path macro to the absolute path on the dev machine
 else()
     target_compile_definitions(${PROJECT_NAME} PUBLIC ASSETS_PATH="./assets/") # Set the asset path macro in release mode to a relative path that assumes the assets folder is in the same directory as the game executable

@@ -1,5 +1,7 @@
-#include <raylib.h>
 #include <iostream>
+
+#include <raylib.h>
+#include <LDtkLoader/World.hpp>
 
 #include <Constants.hpp>
 #include "GameScene.hpp"
@@ -7,13 +9,13 @@
 
 GameScene::GameScene()
 {
+	player = new Player();
+
 	ldtkWorld = new ldtk::World();
 	ldtkWorld->loadFromFile(AppConstants::GetAssetPath("world.ldtk"));
 
 	current_level = 0;
 	set_selected_level();
-
-	player = new Player();
 }
 
 GameScene::~GameScene()
@@ -28,11 +30,11 @@ void GameScene::draw()
 
 	// NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
 	DrawTexturePro(renderedLevelTexture,
-		{ 0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height },
-		{ 0, 0, (float)AppConstants::ScreenWidth, (float)AppConstants::ScreenHeight },
-		{ 0, 0 },
-		0,
-		WHITE);
+				   {0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height},
+				   {0, 0, (float)AppConstants::ScreenWidth, (float)AppConstants::ScreenHeight},
+				   {0, 0},
+				   0,
+				   WHITE);
 
 	player->draw();
 }
@@ -52,7 +54,12 @@ void GameScene::set_selected_level()
 	cout << "----------------------------------------------" << endl;
 	cout << "Loaded LDTK map with " << ldtkWorld->allLevels().size() << " levels in it" << endl;
 	cout << "The loaded level is " << current_level << " and it has " << currentLdtkLevel->allLayers().size() << " layers" << endl;
-	auto testTileLayerTileset = currentLdtkLevel->getLayer("Tiles").getTileset();
+	for (auto &&layer : currentLdtkLevel->allLayers())
+	{
+		cout << "  - " << layer.getName() << endl;
+	}
+
+	auto testTileLayerTileset = currentLdtkLevel->getLayer("TileLayer").getTileset();
 	cout << "The path to the tile layer tileset is: " << testTileLayerTileset.path << endl;
 	cout << "----------------------------------------------" << endl;
 
@@ -61,13 +68,13 @@ void GameScene::set_selected_level()
 
 	BeginTextureMode(renderTexture);
 	// draw all tileset layers
-	for (auto&& layer : currentLdtkLevel->allLayers())
+	for (auto &&layer : currentLdtkLevel->allLayers())
 	{
 		if (layer.hasTileset())
 		{
 			auto tilemapTexture = LoadTexture(AppConstants::GetAssetPath(layer.getTileset().path).c_str());
 			// if it is a tile layer then draw every tile to the frame buffer
-			for (auto&& tile : layer.allTiles())
+			for (auto &&tile : layer.allTiles())
 			{
 				auto source_pos = tile.texture_position;
 				auto target_pos = tile.position;
@@ -80,10 +87,24 @@ void GameScene::set_selected_level()
 					.height = tile.flipY ? -tile_size : tile_size,
 				};
 
-				DrawTextureRec(tilemapTexture, source_rect, { float(target_pos.x), float(target_pos.y) }, WHITE);
+				DrawTextureRec(tilemapTexture, source_rect, {float(target_pos.x), float(target_pos.y)}, WHITE);
 			}
 		}
 	}
+
+	// get entity positions
+	cout << "Entities in level:" << endl;
+	for (auto &&entity : currentLdtkLevel->getLayer("Entities").allEntities())
+	{
+		cout << "  - " << entity.getName() << endl;
+
+		if (entity.getName() == "Player")
+		{
+			player->init_for_level(&entity);
+		}
+	}
+
+	// create physics?
 
 	EndTextureMode();
 
