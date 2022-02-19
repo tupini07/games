@@ -75,11 +75,13 @@ void GameScene::set_selected_level(int lvl)
 
 	if (currentLdtkLevel->hasBgImage())
 	{
+		cout << "Drawing background image" << endl;
 		auto img = currentLdtkLevel->getBgImage();
 		auto imgTex = LoadTexture(AppConstants::GetAssetPath(img.path.c_str()).c_str());
-		// DrawTexture(imgTex, 0, 0, WHITE);
-		DrawTextureTiled(imgTex, {0, 0, (float)imgTex.width, (float)imgTex.height},
-						 {0, 0, GameConstants::WorldWidth, GameConstants::WorldHeight}, {0, 0}, 0, 0, WHITE);
+		SetTextureFilter(imgTex, TEXTURE_FILTER_TRILINEAR);
+
+		// Draw texture and repeat it 5x5 times withing the specified rect
+		DrawTextureQuad(imgTex, {5, 5}, {0, 0}, {0, 0, GameConstants::WorldWidth, GameConstants::WorldHeight}, WHITE);
 	}
 
 	// draw all tileset layers
