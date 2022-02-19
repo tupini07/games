@@ -2,15 +2,16 @@
 #include <iostream>
 
 #include <raylib.h>
+#include <extras/physac.h>
 #include <LDtkLoader/World.hpp>
 
 #include <Constants.hpp>
 #include "Player.hpp"
 
+using namespace std;
+
 Player::Player()
 {
-	this->pos_x = 10;
-	this->pos_y = 10;
 	this->radius = 8;
 	this->radius_timer = 0.0f;
 
@@ -24,7 +25,7 @@ Player::~Player()
 
 void Player::update(float dt)
 {
-	auto effective_speed = floor(MOVE_SPEED * dt);
+	auto effective_speed = 35;
 
 	radius_timer += dt;
 
@@ -34,40 +35,34 @@ void Player::update(float dt)
 		radius_timer *= 0;
 	}
 
+	// TODO Cap velocities
 	if (IsKeyDown(KEY_LEFT))
 	{
-		this->pos_x -= effective_speed;
+		body->force.x -= effective_speed;
 	}
 
 	if (IsKeyDown(KEY_RIGHT))
 	{
-		this->pos_x += effective_speed;
+		body->force.x += effective_speed;
 	}
 
-	if (IsKeyDown(KEY_UP))
+	if (IsKeyPressed(KEY_UP))
 	{
-		this->pos_y -= effective_speed;
-	}
-
-	if (IsKeyDown(KEY_DOWN))
-	{
-		this->pos_y += effective_speed;
+		body->force.y -= 300;
 	}
 }
 
 void Player::draw()
 {
-	DrawCircle(this->pos_x, this->pos_y, this->radius, GREEN);
-	DrawTexture(sprite, pos_x, pos_y, WHITE);
+	DrawCircle(body->position.x, body->position.y, this->radius, GREEN);
+	DrawTexture(sprite, body->position.x, body->position.y, WHITE);
 }
 
 void Player::init_for_level(const ldtk::Entity *entity)
 {
-	using namespace std;
 	auto pos = entity->getPosition();
 
 	cout << "DEBUG: Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
 
-	this->pos_x = pos.x;
-	this->pos_y = pos.y;
+	this->body = CreatePhysicsBodyRectangle({(float)pos.x, (float)pos.y}, 10, 10, 10);
 }

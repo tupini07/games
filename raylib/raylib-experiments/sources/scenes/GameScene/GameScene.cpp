@@ -1,14 +1,20 @@
 #include <iostream>
 
 #include <raylib.h>
+#include <extras/physac.h>
 #include <LDtkLoader/World.hpp>
 
 #include <Constants.hpp>
 #include "GameScene.hpp"
 #include "../Scenes.hpp"
 
+using namespace std;
+
 GameScene::GameScene()
 {
+	InitPhysics();
+	SetPhysicsGravity(0, 2);
+
 	player = new Player();
 
 	ldtkWorld = new ldtk::World();
@@ -25,6 +31,7 @@ GameScene::~GameScene()
 
 	UnloadTexture(renderedLevelTexture);
 	UnloadTexture(currentTilesetTexture);
+	ClosePhysics();
 }
 
 void GameScene::draw()
@@ -38,6 +45,7 @@ void GameScene::draw()
 
 Scenes GameScene::update(float dt)
 {
+	UpdatePhysics();
 	player->update(dt);
 
 	return Scenes::NONE;
@@ -55,7 +63,6 @@ void GameScene::set_selected_level(int lvl)
 
 	currentLdtkLevel = &ldtkWorld->getLevel(current_level);
 
-	using namespace std;
 	cout << "----------------------------------------------" << endl;
 	cout << "Loaded LDTK map with " << ldtkWorld->allLevels().size() << " levels in it" << endl;
 	cout << "The loaded level is " << current_level << " and it has " << currentLdtkLevel->allLayers().size() << " layers" << endl;
@@ -93,11 +100,7 @@ void GameScene::set_selected_level(int lvl)
 			// if it is a tile layer then draw every tile to the frame buffer
 			for (auto &&tile : layer.allTiles())
 			{
-
-				// var intGridInfo = layer.getIntGridVal(t);
-
 				auto source_pos = tile.texture_position;
-				auto target_pos = tile.position;
 				auto tile_size = float(layer.getTileset().tile_size);
 
 				Rectangle source_rect = {
@@ -107,7 +110,25 @@ void GameScene::set_selected_level(int lvl)
 					.height = tile.flipY ? -tile_size : tile_size,
 				};
 
-				DrawTextureRec(currentTilesetTexture, source_rect, {float(target_pos.x), float(target_pos.y)}, WHITE);
+				Vector2 target_pos = {
+					(float)tile.position.x,
+					(float)tile.position.y,
+				};
+
+				DrawTextureRec(currentTilesetTexture, source_rect, target_pos, WHITE);
+
+				// if tile is solid then create physics
+				auto gx = tile.position.x / tile_size;
+				auto gy = tile.position.y / tile_size;
+				auto intGridInfo = layer.getIntGridVal(gx, gy);
+
+				if (intGridInfo.name == "Floor")
+				{
+					// auto body = CreatePhysicsBodyRectangle({target_pos.x + 1, target_pos.y + 1}, tile_size - 1, tile_size - 1, 10);
+
+					// this makes it a static body
+					// body->enabled = false;
+				}
 			}
 		}
 	}

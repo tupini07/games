@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <extras/physac.h>
 #include <LDtkLoader/Entity.hpp>
 
 class Player
@@ -9,12 +10,11 @@ private:
     static const int MOVE_SPEED = 300;
     static const int MIN_RADIUS = 10;
 
-    int pos_x;
-    int pos_y;
     int radius;
     float radius_timer;
 
     Texture2D sprite;
+    PhysicsBody body;
 
 public:
     Player(/* args */);
