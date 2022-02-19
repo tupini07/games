@@ -15,6 +15,8 @@ private:
     Player *player;
     ldtk::World *ldtkWorld;
     const ldtk::Level *currentLdtkLevel;
+
+    Texture2D currentTilesetTexture;
     Texture2D renderedLevelTexture;
 
 public:
@@ -24,5 +26,5 @@ public:
     void draw() override;
     Scenes update(float dt) override;
 
-    void set_selected_level();
+    void set_selected_level(int lvl);
 };

@@ -14,29 +14,37 @@ GameScene::GameScene()
 	ldtkWorld = new ldtk::World();
 	ldtkWorld->loadFromFile(AppConstants::GetAssetPath("world.ldtk"));
 
-	current_level = 0;
-	set_selected_level();
+	current_level = -1;
+	set_selected_level(0);
 }
 
 GameScene::~GameScene()
 {
 	delete ldtkWorld;
 	delete player;
+
+	UnloadTexture(renderedLevelTexture);
+	UnloadTexture(currentTilesetTexture);
 }
 
 void GameScene::draw()
 {
 	ClearBackground(RAYWHITE);
 
-	// NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-	DrawTexturePro(renderedLevelTexture,
-				   {0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height},
-				   {0, 0, (float)AppConstants::ScreenWidth, (float)AppConstants::ScreenHeight},
-				   {0, 0},
-				   0,
-				   WHITE);
+	auto renderTexture = LoadRenderTexture(GameConstants::WorldWidth, GameConstants::WorldHeight);
 
+	BeginTextureMode(renderTexture);
+	DrawTextureRec(renderedLevelTexture,
+				   {0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height},
+				   {0, 0}, WHITE);
 	player->draw();
+	EndTextureMode();
+
+	// NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
+	DrawTexturePro(renderTexture.texture,
+				   {0, 0, (float)renderTexture.texture.width, -(float)renderTexture.texture.height},
+				   {0, 0, AppConstants::ScreenWidth, AppConstants::ScreenHeight},
+				   {0, 0}, 0, WHITE);
 }
 
 Scenes GameScene::update(float dt)
@@ -46,8 +54,16 @@ Scenes GameScene::update(float dt)
 	return Scenes::NONE;
 }
 
-void GameScene::set_selected_level()
+void GameScene::set_selected_level(int lvl)
 {
+	// unload current tileset texture if necessary
+	if (current_level >= 0)
+	{
+		UnloadTexture(currentTilesetTexture);
+	}
+
+	current_level = lvl;
+
 	currentLdtkLevel = &ldtkWorld->getLevel(current_level);
 
 	using namespace std;
@@ -72,7 +88,7 @@ void GameScene::set_selected_level()
 	{
 		if (layer.hasTileset())
 		{
-			auto tilemapTexture = LoadTexture(AppConstants::GetAssetPath(layer.getTileset().path).c_str());
+			currentTilesetTexture = LoadTexture(AppConstants::GetAssetPath(layer.getTileset().path).c_str());
 			// if it is a tile layer then draw every tile to the frame buffer
 			for (auto &&tile : layer.allTiles())
 			{
@@ -87,7 +103,7 @@ void GameScene::set_selected_level()
 					.height = tile.flipY ? -tile_size : tile_size,
 				};
 
-				DrawTextureRec(tilemapTexture, source_rect, {float(target_pos.x), float(target_pos.y)}, WHITE);
+				DrawTextureRec(currentTilesetTexture, source_rect, {float(target_pos.x), float(target_pos.y)}, WHITE);
 			}
 		}
 	}

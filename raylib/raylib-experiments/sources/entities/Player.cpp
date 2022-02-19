@@ -19,6 +19,7 @@ Player::Player()
 
 Player::~Player()
 {
+	UnloadTexture(sprite);
 }
 
 void Player::update(float dt)

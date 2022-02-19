@@ -4,12 +4,20 @@
 
 using namespace std;
 
-namespace AppConstants {
-    const string WindowTitle = "Window Title";
-    const int ScreenWidth = 600;
-    const int ScreenHeight = 600;
+namespace GameConstants
+{
+    const int WorldWidth = 400;
+    const int WorldHeight = 400;
+}
 
-    inline string GetAssetPath(string assetName) {
-        return ASSETS_PATH"" + assetName;
+namespace AppConstants
+{
+    const string WindowTitle = "Window Title";
+    const int ScreenWidth = GameConstants::WorldWidth * 2;
+    const int ScreenHeight = GameConstants::WorldHeight * 2;
+
+    inline string GetAssetPath(string assetName)
+    {
+        return ASSETS_PATH "" + assetName;
     }
 }

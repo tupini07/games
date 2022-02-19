@@ -50,4 +50,5 @@ TitleScene::TitleScene()
 
 TitleScene::~TitleScene()
 {
+	UnloadTexture(texture);
 }
