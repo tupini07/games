@@ -50,6 +50,16 @@ void GameScene::draw()
 	for (int i = 0; i < bc; i++)
 	{
 		auto b = GetPhysicsBody(i);
+		DrawCircle(b->position.x, b->position.y, 2, BLUE);
+
+		// this methos of forcing precision on string is horrible
+		string posx_str = to_string(b->position.x);
+		string posy_str = to_string(b->position.y);
+		string debugPosStr = "(x:" + posx_str.substr(0, posx_str.find(".")) + " y:" + posx_str.substr(0, posx_str.find(".")) + ")";
+		auto textWidth = MeasureText(debugPosStr.c_str(), 8);
+		DrawRectangle(b->position.x, b->position.y, textWidth, 8, {130, 130, 130, 200});
+		DrawText(debugPosStr.c_str(), b->position.x, b->position.y, 9, WHITE);
+
 		int vertexCount = GetPhysicsShapeVerticesCount(i);
 		for (int j = 0; j < vertexCount; j++)
 		{
@@ -179,12 +189,20 @@ void GameScene::set_selected_level(int lvl)
 	auto collidersInLevel = LevelDefinitions::LevelColliders[current_level];
 	for (auto &&colliderRect : collidersInLevel)
 	{
-		auto body = CreatePhysicsBodyRectangle({(colliderRect.x + 1.5) * GameConstants::CellSize,
-												(colliderRect.y + 0.5) * GameConstants::CellSize},
-											   colliderRect.width * GameConstants::CellSize,
-											   colliderRect.height * GameConstants::CellSize,
-											   10);
-		cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << endl;
+		// Origin of physics body is center, so we need to translate from our own coordinates
+		// float colx = (colliderRect.x + 1.5) * GameConstants::CellSize;
+		// float coly = (colliderRect.y + 0.5) * GameConstants::CellSize;
+
+		float wanted_colx = colliderRect.x * GameConstants::CellSize;
+		float wanted_coly = colliderRect.y * GameConstants::CellSize;
+		float colw = colliderRect.width * GameConstants::CellSize;
+		float colh = colliderRect.height * GameConstants::CellSize;
+
+		float transformed_colx = wanted_colx + colw / 2;
+		float tramsformed_coly = wanted_coly + colh / 2;
+
+		auto body = CreatePhysicsBodyRectangle({transformed_colx, tramsformed_coly}, colw, colh, 10);
+		cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << " w:" << colw << " h:" << colh << endl;
 
 		// this makes it a static body
 		body->enabled = false;
