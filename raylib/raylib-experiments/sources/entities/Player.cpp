@@ -1,11 +1,13 @@
 #include <math.h>
-#include <iostream>
+#include <sstream>
 
 #include <raylib.h>
 #include <extras/physac.h>
 #include <LDtkLoader/World.hpp>
 
 #include <Constants.hpp>
+#include <utils/DebugUtils.hpp>
+
 #include "Player.hpp"
 
 using namespace std;
@@ -62,7 +64,9 @@ void Player::init_for_level(const ldtk::Entity *entity)
 {
 	auto pos = entity->getPosition();
 
-	cout << "DEBUG: Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
+	// stringstream stream;
+	// stream << "Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
+	// DebugUtils::println(stream.str());
 
 	this->body = CreatePhysicsBodyRectangle({(float)pos.x, (float)pos.y}, 10, 10, 10);
 	body->freezeOrient = true;

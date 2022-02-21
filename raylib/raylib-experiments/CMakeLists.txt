@@ -1,10 +1,14 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.22)
 project(my_raylib_game CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(FetchContent)
+
+##########################################################################################
+# Add dependencies with FetchContent
+##########################################################################################
 
 # Adding Raylib
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
@@ -15,6 +19,14 @@ FetchContent_MakeAvailable(raylib)
 # Add LDtkLoader
 FetchContent_Declare(LDtkLoader GIT_REPOSITORY https://github.com/Madour/LDtkLoader GIT_TAG master)
 FetchContent_MakeAvailable(LDtkLoader)
+
+# Add {fmt} library
+FetchContent_Declare(fmt GIT_REPOSITORY https://github.com/fmtlib/fmt.git GIT_TAG master)
+FetchContent_MakeAvailable(fmt)
+
+##########################################################################################
+# Project setup
+##########################################################################################
 
 # Adding our source files
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_LIST_DIR}/sources/*.cpp") # Define PROJECT_SOURCES as a list of all source files
@@ -27,6 +39,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 target_link_libraries(${PROJECT_NAME} PRIVATE LDtkLoader)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt)
+
+add_definitions( -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} )
 
 # Setting ASSETS_PATH
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -38,7 +53,7 @@ endif()
 
 # Set common compiler flags
 # SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wswitch")
-SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -std=c++20")
 
 if (${PLATFORM} STREQUAL "Web")
     # Tell Emscripten to build an .html file.

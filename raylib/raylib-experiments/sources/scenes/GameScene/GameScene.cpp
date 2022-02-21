@@ -1,10 +1,13 @@
-#include <iostream>
+#include <sstream>
 
 #include <raylib.h>
 #include <extras/physac.h>
 #include <LDtkLoader/World.hpp>
+#include <fmt/core.h>
 
 #include <Constants.hpp>
+#include <utils/DebugUtils.hpp>
+
 #include "GameScene.hpp"
 #include "../Scenes.hpp"
 #include "LevelDefinitions.hpp"
@@ -44,33 +47,7 @@ void GameScene::draw()
 	player->draw();
 
 	// DEBUG stuff
-
-	// Show outline of physic bodies. This is taken directly from https://www.raylib.com/examples/physics/loader.html?name=physics_demo
-	auto bc = GetPhysicsBodiesCount();
-	for (int i = 0; i < bc; i++)
-	{
-		auto b = GetPhysicsBody(i);
-		DrawCircle(b->position.x, b->position.y, 2, BLUE);
-
-		// this methos of forcing precision on string is horrible
-		string posx_str = to_string(b->position.x);
-		string posy_str = to_string(b->position.y);
-		string debugPosStr = "(x:" + posx_str.substr(0, posx_str.find(".")) + " y:" + posx_str.substr(0, posx_str.find(".")) + ")";
-		auto textWidth = MeasureText(debugPosStr.c_str(), 8);
-		DrawRectangle(b->position.x, b->position.y, textWidth, 8, {130, 130, 130, 200});
-		DrawText(debugPosStr.c_str(), b->position.x, b->position.y, 9, WHITE);
-
-		int vertexCount = GetPhysicsShapeVerticesCount(i);
-		for (int j = 0; j < vertexCount; j++)
-		{
-			Vector2 vertexA = GetPhysicsShapeVertex(b, j);
-
-			int jj = (((j + 1) < vertexCount) ? (j + 1) : 0); // Get next vertex or first to close the shape
-			Vector2 vertexB = GetPhysicsShapeVertex(b, jj);
-
-			DrawLineV(vertexA, vertexB, GREEN); // Draw a line between two vertex positions
-		}
-	}
+	DebugUtils::draw_physics_objects_bounding_boxes();
 }
 
 Scenes GameScene::update(float dt)
@@ -93,17 +70,18 @@ void GameScene::set_selected_level(int lvl)
 
 	currentLdtkLevel = &ldtkWorld->getLevel(current_level);
 
-	cout << "----------------------------------------------" << endl;
-	cout << "Loaded LDTK map with " << ldtkWorld->allLevels().size() << " levels in it" << endl;
-	cout << "The loaded level is " << current_level << " and it has " << currentLdtkLevel->allLayers().size() << " layers" << endl;
-	for (auto &&layer : currentLdtkLevel->allLayers())
-	{
-		cout << "  - " << layer.getName() << endl;
-	}
+	// DebugUtils::print("hi I {} want", 123);
+	// DebugUtils::print("----------------------------------------------");
+	// DebugUtils::print("Loaded LDTK map with {}  levels in it", ldtkWorld->allLevels().size());
+	// DebugUtils::print("The loaded level is {} and it has {} layers", current_level, currentLdtkLevel->allLayers().size());
+	// for (auto &&layer : currentLdtkLevel->allLayers())
+	// {
+	// 	DebugUtils::print("  - {}", layer.getName());
+	// }
 
 	auto testTileLayerTileset = currentLdtkLevel->getLayer("TileLayer").getTileset();
-	cout << "The path to the tile layer tileset is: " << testTileLayerTileset.path << endl;
-	cout << "----------------------------------------------" << endl;
+	// stream << "The path to the tile layer tileset is: " << testTileLayerTileset.path << endl;
+	// stream << "----------------------------------------------" << endl;
 
 	auto levelSize = currentLdtkLevel->size;
 	auto renderTexture = LoadRenderTexture(levelSize.x, levelSize.y);

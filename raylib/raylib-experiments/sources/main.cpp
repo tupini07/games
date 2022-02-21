@@ -4,6 +4,7 @@
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
+
 #include <Constants.hpp>
 
 #include "entities/Player.hpp"
@@ -12,7 +13,6 @@
 
 void UpdateDrawFrame();
 RenderTexture2D frameBuffer;
-
 
 int main()
 {
@@ -59,7 +59,6 @@ void UpdateDrawFrame()
 
 	SceneManager::draw();
 	EndTextureMode();
-
 
 	BeginDrawing();
 	// NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
