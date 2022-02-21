@@ -1,0 +1,16 @@
+{
+    "here": "is",
+    "some": {
+        "complex": [
+            "data",
+            "that",
+            "might"
+        ]
+    },
+    "not": [
+        "get",
+        "loaded"
+    ],
+    "on": 1,
+    "wasm": true
+}

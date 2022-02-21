@@ -1,6 +1,10 @@
 package main
 
 import (
+	"bufio"
+	_ "embed"
+	"errors"
+	"io"
 	"log"
 	"math/rand"
 	"os"
@@ -19,6 +23,7 @@ const (
 
 type Game struct {
 	player *Player
+	txt    string
 }
 
 func (g *Game) Update() error {
@@ -41,6 +46,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		colornames.Cornflowerblue)
 
 	g.player.DrawPlayer(screen)
+
+	ebitenutil.DebugPrint(screen, g.txt)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -53,8 +60,23 @@ func main() {
 	ebiten.SetWindowSize(ScreenWidth, ScreenHeight)
 	ebiten.SetWindowTitle("High Five Simulator")
 
+	file, err := ebitenutil.OpenFile("assets/a-test-file.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer file.Close()
+
+	reader := bufio.NewReader(file)
+
+	str, err := reader.ReadString(byte(0))
+	if err != nil && !errors.Is(err, io.EOF) {
+		log.Fatal(err)
+	}
+
 	game := &Game{
 		player: NewPlayer(),
+		txt:    str,
 	}
 
 	if err := ebiten.RunGame(game); err != nil {

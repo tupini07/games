@@ -1,0 +1,19 @@
+help:
+    just --list
+
+update-deps:
+    go get -u
+    go mod tidy
+
+
+run:
+    go run .
+
+# Run dev server for wasm and open browser window
+dev-web:
+    firefox http://localhost:8080/
+    wasmserve ./
+
+build-web:
+    GOOS=js GOARCH=wasm go build -o high-fiver.wasm github.com/tupini07/high-fiver/m2
+    cp $(go env GOROOT)/misc/wasm/wasm_exec.js .
