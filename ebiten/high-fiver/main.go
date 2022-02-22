@@ -3,8 +3,7 @@ package main
 import (
 	"bufio"
 	_ "embed"
-	"errors"
-	"io"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
@@ -13,7 +12,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"golang.org/x/image/colornames"
 )
 
 const (
@@ -26,26 +24,29 @@ type Game struct {
 	txt    string
 }
 
+var lastUpdateTime = time.Now()
+
 func (g *Game) Update() error {
+	dt := time.Since(lastUpdateTime).Seconds()
+	lastUpdateTime = time.Now()
+
 	if inpututil.IsKeyJustPressed(ebiten.KeyQ) {
 		os.Exit(0)
+	}
+
+	for _, proc := range allProcesses {
+		proc.update(dt)
 	}
 
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	// TODO we might be able to remove it
 	screen.Clear()
 
-	ebitenutil.DrawRect(screen,
-		10,
-		10,
-		100,
-		200,
-		colornames.Cornflowerblue)
-
-	g.player.DrawPlayer(screen)
+	for _, proc := range allProcesses {
+		proc.draw(screen)
+	}
 
 	ebitenutil.DebugPrint(screen, g.txt)
 }
@@ -68,15 +69,14 @@ func main() {
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
-
-	str, err := reader.ReadString(byte(0))
-	if err != nil && !errors.Is(err, io.EOF) {
+	data, err := ioutil.ReadAll(reader)
+	if err != nil {
 		log.Fatal(err)
 	}
 
 	game := &Game{
 		player: NewPlayer(),
-		txt:    str,
+		txt:    string(data),
 	}
 
 	if err := ebiten.RunGame(game); err != nil {

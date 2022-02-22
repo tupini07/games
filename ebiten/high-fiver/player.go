@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 const playerMarginSide = 20
@@ -29,15 +30,25 @@ func NewPlayer() *Player {
 	geo.Scale(2, 2)
 	geo.Translate(float64(ScreenWidth/2-iw/2), (ScreenHeight/3*2)-float64(ih))
 
-	return &Player{
+	pl := &Player{
 		playerImg: playerImg,
 		drawOps: &ebiten.DrawImageOptions{
 			GeoM: geo,
 		},
 	}
+
+	addProcess(pl)
+
+	return pl
 }
 
-func (p *Player) UpdatePlayer() {
+func (p *Player) update(dt float64) {
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyLeft) {
+		shootArrow(DIR_LEFT, ALTITUDE_HIGH)
+	} else if inpututil.IsKeyJustPressed(ebiten.KeyRight) {
+		shootArrow(DIR_RIGHT, ALTITUDE_LOW)
+	}
 
 	// if p.movingRight {
 	// 	marginRight := ScreenWidth - (p.block.pos.x + p.block.shape.width)
@@ -62,6 +73,6 @@ func (p *Player) UpdatePlayer() {
 	// }
 }
 
-func (p *Player) DrawPlayer(screen *ebiten.Image) {
+func (p *Player) draw(screen *ebiten.Image) {
 	screen.DrawImage(p.playerImg, p.drawOps)
 }
