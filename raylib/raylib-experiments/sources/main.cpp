@@ -1,9 +1,9 @@
-#include <raylib.h>
-
-#define PHYSAC_IMPLEMENTATION
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
+
+#include <raylib.h>
+#define PHYSAC_IMPLEMENTATION
 
 #include <Constants.hpp>
 

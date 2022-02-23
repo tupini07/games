@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(my_raylib_game CXX)
+project(raylib-experiments CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,19 +13,45 @@ include(FetchContent)
 # Adding Raylib
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
 set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # don't build the supplied example games
-FetchContent_Declare(raylib GIT_REPOSITORY https://github.com/raysan5/raylib.git GIT_TAG master)
+FetchContent_Declare(raylib 
+    GIT_REPOSITORY https://github.com/raysan5/raylib.git 
+    GIT_TAG        296b57e1f55f27b5d1f71a5cc8d623a2fbbde20b
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
+)
 FetchContent_MakeAvailable(raylib)
 
 # Add LDtkLoader
-FetchContent_Declare(LDtkLoader GIT_REPOSITORY https://github.com/Madour/LDtkLoader GIT_TAG master)
+FetchContent_Declare(LDtkLoader 
+    GIT_REPOSITORY https://github.com/Madour/LDtkLoader.git
+    GIT_TAG        cefc73dd6f72e6285b92e7cb459e4a16d1b9f52c
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
+)
 FetchContent_MakeAvailable(LDtkLoader)
 
+# Add Box2d
+set(BOX2D_BUILD_DOCS    ON  CACHE BOOL "" FORCE)
+set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(box2d 
+    GIT_REPOSITORY https://github.com/erincatto/box2d.git 
+    GIT_TAG        9dc24a6fd4f32442c4bcf80791de47a0a7d25afb
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
+)
+FetchContent_MakeAvailable(box2d)
+
 # Add {fmt} library
-FetchContent_Declare(fmt GIT_REPOSITORY https://github.com/fmtlib/fmt.git GIT_TAG master)
+FetchContent_Declare(fmt 
+    GIT_REPOSITORY https://github.com/fmtlib/fmt.git 
+    GIT_TAG        86477f7ecc1606e15abae1ff784e6b0c55d99619
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
+)
 FetchContent_MakeAvailable(fmt)
 
 ##########################################################################################
-# Project setup
+# Project executable setup
 ##########################################################################################
 
 # Adding our source files
@@ -39,7 +65,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 target_link_libraries(${PROJECT_NAME} PRIVATE LDtkLoader)
+target_link_libraries(${PROJECT_NAME} PRIVATE box2d)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt)
+
+##########################################################################################
+# Project build settings
+##########################################################################################
 
 add_definitions( -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} )
 

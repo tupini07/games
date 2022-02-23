@@ -18,7 +18,7 @@ public:
 	static void draw();
 };
 
-BaseScene *SceneManager::current_screen;
+BaseScene *SceneManager::current_screen = nullptr;
 
 void SceneManager::initialize()
 {
