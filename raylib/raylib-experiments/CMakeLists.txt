@@ -10,45 +10,47 @@ include(FetchContent)
 # Add dependencies with FetchContent
 ##########################################################################################
 
+function(add_git_dependency libName gitURL gitHash)
+    FetchContent_Declare(${libName}
+        GIT_REPOSITORY ${gitURL}
+        GIT_TAG        ${gitHash}
+        GIT_SHALLOW    TRUE
+        GIT_PROGRESS   TRUE
+    )
+    FetchContent_MakeAvailable(${libName})
+    target_compile_options(${libName} PRIVATE "-w")
+endfunction()
+
 # Adding Raylib
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
 set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # don't build the supplied example games
-FetchContent_Declare(raylib 
-    GIT_REPOSITORY https://github.com/raysan5/raylib.git 
-    GIT_TAG        296b57e1f55f27b5d1f71a5cc8d623a2fbbde20b
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+add_git_dependency(
+    raylib 
+    https://github.com/raysan5/raylib.git
+    296b57e1f55f27b5d1f71a5cc8d623a2fbbde20b
 )
-FetchContent_MakeAvailable(raylib)
 
 # Add LDtkLoader
-FetchContent_Declare(LDtkLoader 
-    GIT_REPOSITORY https://github.com/Madour/LDtkLoader.git
-    GIT_TAG        cefc73dd6f72e6285b92e7cb459e4a16d1b9f52c
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+add_git_dependency(
+    LDtkLoader
+    https://github.com/Madour/LDtkLoader.git
+    cefc73dd6f72e6285b92e7cb459e4a16d1b9f52c
 )
-FetchContent_MakeAvailable(LDtkLoader)
 
 # Add Box2d
-set(BOX2D_BUILD_DOCS    ON  CACHE BOOL "" FORCE)
 set(BOX2D_BUILD_TESTBED OFF CACHE BOOL "" FORCE)
-FetchContent_Declare(box2d 
-    GIT_REPOSITORY https://github.com/erincatto/box2d.git 
-    GIT_TAG        9dc24a6fd4f32442c4bcf80791de47a0a7d25afb
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+add_git_dependency(
+    box2d
+    https://github.com/erincatto/box2d.git
+    9dc24a6fd4f32442c4bcf80791de47a0a7d25afb
 )
-FetchContent_MakeAvailable(box2d)
 
 # Add {fmt} library
-FetchContent_Declare(fmt 
-    GIT_REPOSITORY https://github.com/fmtlib/fmt.git 
-    GIT_TAG        86477f7ecc1606e15abae1ff784e6b0c55d99619
-    GIT_SHALLOW    TRUE
-    GIT_PROGRESS   TRUE
+add_git_dependency(
+    fmt
+    https://github.com/fmtlib/fmt.git
+    86477f7ecc1606e15abae1ff784e6b0c55d99619
 )
-FetchContent_MakeAvailable(fmt)
 
 ##########################################################################################
 # Project executable setup
