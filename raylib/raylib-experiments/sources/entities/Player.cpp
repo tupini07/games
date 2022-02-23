@@ -2,6 +2,8 @@
 #include <sstream>
 
 #include <raylib.h>
+#include <box2d/box2d.h>
+
 #include <LDtkLoader/World.hpp>
 
 #include <Constants.hpp>
@@ -26,7 +28,7 @@ Player::~Player()
 
 void Player::update(float dt)
 {
-	// auto effective_speed = 35.0f;
+	auto effective_speed = 35.0f;
 
 	radius_timer += dt;
 
@@ -39,35 +41,53 @@ void Player::update(float dt)
 	// TODO Cap velocities
 	if (IsKeyDown(KEY_LEFT))
 	{
-		// PhysicsAddForce(body, {-effective_speed, 0});
+		body->ApplyForceToCenter({-effective_speed, 0}, true);
 	}
 
 	if (IsKeyDown(KEY_RIGHT))
 	{
-		// PhysicsAddForce(body, {effective_speed, 0});
+		body->ApplyForceToCenter({effective_speed, 0}, true);
 	}
 
+	// TODO only jump if touching ground
 	if (IsKeyPressed(KEY_UP))
 	{
-		// PhysicsAddForce(body, {0, -300});
+		body->ApplyForceToCenter({0, -300}, true);
 	}
 }
 
 void Player::draw()
 {
 	// DrawCircle(body->position.x, body->position.y, this->radius, GREEN);
-	// DrawTexture(sprite, body->position.x - 0.7f * GameConstants::CellSize, body->position.y - 1 * GameConstants::CellSize, WHITE);
+	DrawTexture(sprite,
+				(body->GetPosition().x * GameConstants::PhysicsWorldScale) - 12,
+				(body->GetPosition().y * GameConstants::PhysicsWorldScale) - 12,
+				WHITE);
 }
 
-void Player::init_for_level(const ldtk::Entity *entity)
+void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 {
-	// auto pos = entity->getPosition();
+	auto pos = entity->getPosition();
 
-	// stringstream stream;
-	// stream << "Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
-	// DebugUtils::println(stream.str());
+	stringstream stream;
+	stream << "Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
+	DebugUtils::println(stream.str());
 
-	// this->body = CreatePhysicsBodyRectangle({(float)pos.x, (float)pos.y}, 10, 10, 10);
-	// body->freezeOrient = true;
-	// body->dynamicFriction = 0.4f;
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set((float)pos.x / GameConstants::PhysicsWorldScale,
+						 (float)pos.y / GameConstants::PhysicsWorldScale);
+	bodyDef.fixedRotation = true;
+
+	this->body = physicsWorld->CreateBody(&bodyDef);
+
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(1, 1);
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.4f;
+
+	body->CreateFixture(&fixtureDef);
 }

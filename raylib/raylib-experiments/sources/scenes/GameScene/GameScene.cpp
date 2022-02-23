@@ -10,15 +10,11 @@
 
 #include "GameScene.hpp"
 #include "../Scenes.hpp"
-#include "LevelDefinitions.hpp"
 
 using namespace std;
 
 GameScene::GameScene()
 {
-	b2Vec2 gravity(0.0f, -10.0f);
-	world = new b2World(gravity);
-
 	player = new Player();
 
 	ldtkWorld = new ldtk::World();
@@ -32,6 +28,7 @@ GameScene::~GameScene()
 {
 	delete ldtkWorld;
 	delete player;
+	delete world;
 
 	UnloadTexture(renderedLevelTexture);
 	UnloadTexture(currentTilesetTexture);
@@ -43,14 +40,21 @@ void GameScene::draw()
 	DrawTextureRec(renderedLevelTexture,
 				   {0, 0, (float)renderedLevelTexture.width, (float)-renderedLevelTexture.height},
 				   {0, 0}, WHITE);
+
 	player->draw();
 
 	// DEBUG stuff
-	DebugUtils::draw_physics_objects_bounding_boxes();
+	DebugUtils::draw_physics_objects_bounding_boxes(world);
 }
 
 Scenes GameScene::update(float dt)
 {
+	const float timeStep = 1.0f / 60.0f;
+	const int32 velocityIterations = 6;
+	const int32 positionIterations = 2;
+
+	world->Step(timeStep, velocityIterations, positionIterations);
+
 	player->update(dt);
 
 	return Scenes::NONE;
@@ -63,6 +67,16 @@ void GameScene::set_selected_level(int lvl)
 	{
 		UnloadTexture(currentTilesetTexture);
 	}
+
+	if (world != nullptr)
+	{
+		// if we had an old world then delete it and recreate
+		// a new one for the new level
+		delete world;
+	}
+
+	b2Vec2 gravity(0.0f, 10.0f);
+	world = new b2World(gravity);
 
 	current_level = lvl;
 
@@ -136,27 +150,19 @@ void GameScene::set_selected_level(int lvl)
 
 				if (intGridInfo.name == "HasColission")
 				{
+					auto halfGridSize = GameConstants::CellSize / 2;
+
 					b2BodyDef bodyDef;
-					bodyDef.type = b2_dynamicBody;
-					bodyDef.position.Set(target_pos.x, target_pos.y);
+					bodyDef.position.Set((target_pos.x + halfGridSize) / GameConstants::PhysicsWorldScale,
+										 (target_pos.y + halfGridSize) / GameConstants::PhysicsWorldScale);
 
 					b2Body *body = world->CreateBody(&bodyDef);
 
-					b2PolygonShape dynamicBox;
-					dynamicBox.SetAsBox(1.0f, 1.0f);
+					b2PolygonShape groundBox;
+					groundBox.SetAsBox(1, 1);
 
-					b2FixtureDef fixtureDef;
-					fixtureDef.shape = &dynamicBox;
-					fixtureDef.density = 1.0f;
-					fixtureDef.friction = 0.3f;
-
-					body->CreateFixture(&fixtureDef);
-					
-					// auto body = CreatePhysicsBodyRectangle(target_pos, 16, 16, 10);
-					// cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << endl;
-
-					// this makes it a static body
-					// body->enabled = false;
+					body->CreateFixture(&groundBox, 0.0f);
+					cout << "Created physic body at x:" << body->GetPosition().x * GameConstants::PhysicsWorldScale << " y:" << body->GetPosition().y * GameConstants::PhysicsWorldScale << endl;
 				}
 			}
 		}
@@ -173,31 +179,7 @@ void GameScene::set_selected_level(int lvl)
 
 		if (entity.getName() == "Player")
 		{
-			player->init_for_level(&entity);
+			player->init_for_level(&entity, world);
 		}
-	}
-
-	// create physics
-	auto collidersInLevel = LevelDefinitions::LevelColliders[current_level];
-	for (auto &&colliderRect : collidersInLevel)
-	{
-		// Origin of physics body is center, so we need to translate from our own coordinates
-		// float colx = (colliderRect.x + 1.5) * GameConstants::CellSize;
-		// float coly = (colliderRect.y + 0.5) * GameConstants::CellSize;
-
-		// float wanted_colx = colliderRect.x * GameConstants::CellSize;
-		// float wanted_coly = colliderRect.y * GameConstants::CellSize;
-		// float colw = colliderRect.width * GameConstants::CellSize;
-		// float colh = colliderRect.height * GameConstants::CellSize;
-
-		// float transformed_colx = wanted_colx + colw / 2;
-		// float tramsformed_coly = wanted_coly + colh / 2;
-
-		// auto body = CreatePhysicsBodyRectangle({transformed_colx, tramsformed_coly}, colw, colh, 10);
-		// cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << " w:" << colw << " h:" << colh << endl;
-
-		// this makes it a static body
-		// body->enabled = false;
-		// body->freezeOrient = true;
 	}
 }

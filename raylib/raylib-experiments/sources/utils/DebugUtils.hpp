@@ -5,41 +5,53 @@
 #include <string>
 
 #include <raylib.h>
+#include <box2d/box2d.h>
 #include <fmt/core.h>
+
+#include <Constants.hpp>
 
 using namespace std;
 
 namespace DebugUtils
 {
-    inline void draw_physics_objects_bounding_boxes()
+    inline void draw_physics_objects_bounding_boxes(b2World *const world)
     {
 #ifdef SHOW_DEBUG
-        // Show outline of physic bodies. This is taken directly from https://www.raylib.com/examples/physics/loader.html?name=physics_demo
-        // auto bc = GetPhysicsBodiesCount();
-        // for (int i = 0; i < bc; i++)
-        // {
-        //     auto b = GetPhysicsBody(i);
-        //     DrawCircle(b->position.x, b->position.y, 2, BLUE);
+        auto currentBody = world->GetBodyList();
+        while (currentBody != nullptr)
+        {
+            auto pos = currentBody->GetPosition();
+            DrawCircle(pos.x * GameConstants::PhysicsWorldScale,
+                       pos.y * GameConstants::PhysicsWorldScale,
+                       2,
+                       PURPLE);
 
-        //     // this methos of forcing precision on string is horrible
-        //     string posx_str = to_string(b->position.x);
-        //     string posy_str = to_string(b->position.y);
-        //     string debugPosStr = "(x:" + posx_str.substr(0, posx_str.find(".")) + " y:" + posx_str.substr(0, posx_str.find(".")) + ")";
-        //     auto textWidth = MeasureText(debugPosStr.c_str(), 8);
-        //     DrawRectangle(b->position.x, b->position.y, textWidth, 8, {130, 130, 130, 200});
-        //     DrawText(debugPosStr.c_str(), b->position.x, b->position.y, 9, WHITE);
+            auto fixture = currentBody->GetFixtureList();
+            while (fixture != nullptr)
+            {
+                auto shape = fixture->GetShape();
+                // Note, right now supposing all shapes are polygons, use to determine shape->GetType();
 
-        //     int vertexCount = GetPhysicsShapeVerticesCount(i);
-        //     for (int j = 0; j < vertexCount; j++)
-        //     {
-        //         Vector2 vertexA = GetPhysicsShapeVertex(b, j);
+                auto polygonShape = (b2PolygonShape *)shape;
+                int vertexCount = 4; // since we're assuming they're squares
+                for (int j = 0; j < vertexCount; j++)
+                {
+                    b2Vec2 vertexA = polygonShape->m_vertices[j];
 
-        //         int jj = (((j + 1) < vertexCount) ? (j + 1) : 0); // Get next vertex or first to close the shape
-        //         Vector2 vertexB = GetPhysicsShapeVertex(b, jj);
+                    int jj = (((j + 1) < vertexCount) ? (j + 1) : 0); // Get next vertex or first to close the shape
+                    b2Vec2 vertexB = polygonShape->m_vertices[jj];
 
-        //         DrawLineV(vertexA, vertexB, GREEN); // Draw a line between two vertex positions
-        //     }
-        // }
+                    DrawLineV({(pos.x + vertexA.x) * GameConstants::PhysicsWorldScale, (pos.y + vertexA.y) * GameConstants::PhysicsWorldScale},
+                              {(pos.x + vertexB.x) * GameConstants::PhysicsWorldScale, (pos.y + vertexB.y) * GameConstants::PhysicsWorldScale},
+                              GREEN); // Draw a line between two vertex positions
+                }
+
+                fixture = fixture->GetNext();
+            }
+
+            currentBody = currentBody->GetNext();
+        }
+
 #endif
     }
 

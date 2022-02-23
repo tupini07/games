@@ -13,12 +13,12 @@ class GameScene : public BaseScene
 {
 private:
     int current_level;
-    
-    ldtk::World *ldtkWorld;
-    const ldtk::Level *currentLdtkLevel;
 
-    b2World *world;
-    Player *player;
+    ldtk::World *ldtkWorld{};
+    const ldtk::Level *currentLdtkLevel{};
+
+    b2World *world{};
+    Player *player{};
 
     Texture2D currentTilesetTexture;
     Texture2D renderedLevelTexture;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <raylib.h>
+#include <box2d/box2d.h>
 #include <LDtkLoader/Entity.hpp>
 
 class Player
@@ -13,14 +14,14 @@ private:
     float radius_timer;
 
     Texture2D sprite;
-    // PhysicsBody body;
+    b2Body *body{};
 
 public:
-    Player(/* args */);
+    Player();
     ~Player();
 
     void update(float dt);
     void draw();
 
-    void init_for_level(const ldtk::Entity *entity);
+    void init_for_level(const ldtk::Entity *entity, b2World *physicsWorld);
 };
