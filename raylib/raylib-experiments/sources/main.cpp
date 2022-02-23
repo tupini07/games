@@ -3,8 +3,6 @@
 #endif
 
 #include <raylib.h>
-#define PHYSAC_IMPLEMENTATION
-
 #include <Constants.hpp>
 
 #include "entities/Player.hpp"

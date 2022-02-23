@@ -1,7 +1,6 @@
 #pragma once
 
 #include <raylib.h>
-#include <extras/physac.h>
 #include <LDtkLoader/Entity.hpp>
 
 class Player
@@ -14,7 +13,7 @@ private:
     float radius_timer;
 
     Texture2D sprite;
-    PhysicsBody body;
+    // PhysicsBody body;
 
 public:
     Player(/* args */);

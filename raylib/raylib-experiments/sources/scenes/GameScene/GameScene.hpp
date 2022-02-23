@@ -1,5 +1,6 @@
 #pragma once
 
+#include <box2d/box2d.h>
 #include <raylib.h>
 #include <LDtkLoader/World.hpp>
 
@@ -12,9 +13,12 @@ class GameScene : public BaseScene
 {
 private:
     int current_level;
-    Player *player;
+    
     ldtk::World *ldtkWorld;
     const ldtk::Level *currentLdtkLevel;
+
+    b2World *world;
+    Player *player;
 
     Texture2D currentTilesetTexture;
     Texture2D renderedLevelTexture;

@@ -1,7 +1,7 @@
 #include <sstream>
 
 #include <raylib.h>
-#include <extras/physac.h>
+#include <box2d/box2d.h>
 #include <LDtkLoader/World.hpp>
 #include <fmt/core.h>
 
@@ -16,8 +16,8 @@ using namespace std;
 
 GameScene::GameScene()
 {
-	InitPhysics();
-	SetPhysicsGravity(0, 2);
+	b2Vec2 gravity(0.0f, -10.0f);
+	world = new b2World(gravity);
 
 	player = new Player();
 
@@ -35,7 +35,6 @@ GameScene::~GameScene()
 
 	UnloadTexture(renderedLevelTexture);
 	UnloadTexture(currentTilesetTexture);
-	ClosePhysics();
 }
 
 void GameScene::draw()
@@ -52,7 +51,6 @@ void GameScene::draw()
 
 Scenes GameScene::update(float dt)
 {
-	UpdatePhysics();
 	player->update(dt);
 
 	return Scenes::NONE;
@@ -132,18 +130,34 @@ void GameScene::set_selected_level(int lvl)
 				 *
 				 */
 				// if tile is solid then create physics
-				// auto gx = tile.position.x / tile_size;
-				// auto gy = tile.position.y / tile_size;
-				// auto intGridInfo = currentLdtkLevel->getLayer("PhysicsLayer").getIntGridVal(gx, gy);
+				auto gx = tile.position.x / tile_size;
+				auto gy = tile.position.y / tile_size;
+				auto intGridInfo = currentLdtkLevel->getLayer("PhysicsLayer").getIntGridVal(gx, gy);
 
-				// if (intGridInfo.name == "HasColission")
-				// {
-				// 	auto body = CreatePhysicsBodyRectangle(target_pos, 16, 16, 10);
-				// 	cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << endl;
+				if (intGridInfo.name == "HasColission")
+				{
+					b2BodyDef bodyDef;
+					bodyDef.type = b2_dynamicBody;
+					bodyDef.position.Set(target_pos.x, target_pos.y);
 
-				// 	// this makes it a static body
-				// 	body->enabled = false;
-				// }
+					b2Body *body = world->CreateBody(&bodyDef);
+
+					b2PolygonShape dynamicBox;
+					dynamicBox.SetAsBox(1.0f, 1.0f);
+
+					b2FixtureDef fixtureDef;
+					fixtureDef.shape = &dynamicBox;
+					fixtureDef.density = 1.0f;
+					fixtureDef.friction = 0.3f;
+
+					body->CreateFixture(&fixtureDef);
+					
+					// auto body = CreatePhysicsBodyRectangle(target_pos, 16, 16, 10);
+					// cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << endl;
+
+					// this makes it a static body
+					// body->enabled = false;
+				}
 			}
 		}
 	}
@@ -171,19 +185,19 @@ void GameScene::set_selected_level(int lvl)
 		// float colx = (colliderRect.x + 1.5) * GameConstants::CellSize;
 		// float coly = (colliderRect.y + 0.5) * GameConstants::CellSize;
 
-		float wanted_colx = colliderRect.x * GameConstants::CellSize;
-		float wanted_coly = colliderRect.y * GameConstants::CellSize;
-		float colw = colliderRect.width * GameConstants::CellSize;
-		float colh = colliderRect.height * GameConstants::CellSize;
+		// float wanted_colx = colliderRect.x * GameConstants::CellSize;
+		// float wanted_coly = colliderRect.y * GameConstants::CellSize;
+		// float colw = colliderRect.width * GameConstants::CellSize;
+		// float colh = colliderRect.height * GameConstants::CellSize;
 
-		float transformed_colx = wanted_colx + colw / 2;
-		float tramsformed_coly = wanted_coly + colh / 2;
+		// float transformed_colx = wanted_colx + colw / 2;
+		// float tramsformed_coly = wanted_coly + colh / 2;
 
-		auto body = CreatePhysicsBodyRectangle({transformed_colx, tramsformed_coly}, colw, colh, 10);
-		cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << " w:" << colw << " h:" << colh << endl;
+		// auto body = CreatePhysicsBodyRectangle({transformed_colx, tramsformed_coly}, colw, colh, 10);
+		// cout << "Created physic body on x:" << body->position.x << " y:" << body->position.y << " w:" << colw << " h:" << colh << endl;
 
 		// this makes it a static body
-		body->enabled = false;
-		body->freezeOrient = true;
+		// body->enabled = false;
+		// body->freezeOrient = true;
 	}
 }
