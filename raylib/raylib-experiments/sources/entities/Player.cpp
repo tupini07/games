@@ -1,5 +1,7 @@
 #include <math.h>
 #include <sstream>
+#include <unordered_map>
+#include <vector>
 
 #include <raylib.h>
 #include <box2d/box2d.h>
@@ -16,6 +18,35 @@ using namespace std;
 Player::Player()
 {
 	this->sprite = LoadTexture(AppConstants::GetAssetPath("dinoCharactersVersion1.1/sheets/DinoSprites - vita.png").c_str());
+
+	auto make_player_frame_rect = [](float frame_num)
+	{
+		return (Rectangle){.x = frame_num * 23.0f, .y = 0.0f, .width = 23.0f, .height = 23.0f};
+	};
+
+	animation_map["idle"] = {
+		make_player_frame_rect(0),
+		make_player_frame_rect(1),
+		make_player_frame_rect(2),
+	};
+
+	animation_map["walk"] = {
+		make_player_frame_rect(3),
+		make_player_frame_rect(4),
+		make_player_frame_rect(5),
+	};
+
+	animation_map["jump_start"] = {
+		make_player_frame_rect(6),
+	};
+
+	animation_map["jump_apex"] = {
+		make_player_frame_rect(7),
+	};
+
+	animation_map["jump_fall"] = {
+		make_player_frame_rect(8),
+	};
 }
 
 Player::~Player()
@@ -34,11 +65,13 @@ void Player::update(float dt)
 	// TODO Cap velocities
 	if (IsKeyDown(KEY_LEFT))
 	{
+		looking_right = false;
 		set_velocity_x(-effective_speed);
 	}
 
 	if (IsKeyDown(KEY_RIGHT))
 	{
+		looking_right = true;
 		set_velocity_x(effective_speed);
 	}
 
@@ -51,10 +84,15 @@ void Player::update(float dt)
 
 void Player::draw()
 {
-	DrawTexture(sprite,
-				(body->GetPosition().x * GameConstants::PhysicsWorldScale) - 12,
-				(body->GetPosition().y * GameConstants::PhysicsWorldScale) - 12,
-				WHITE);
+	auto spritePosX = (body->GetPosition().x * GameConstants::PhysicsWorldScale) - 12;
+	auto spritePosY = (body->GetPosition().y * GameConstants::PhysicsWorldScale) - 13;
+
+	DrawTexturePro(sprite,
+				   {0, 0, (looking_right ? 1.0f : -1.0f) * 23, 23},
+				   {spritePosX, spritePosY, 23, 23},
+				   {0, 0},
+				   0.0f,
+				   WHITE);
 }
 
 void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
