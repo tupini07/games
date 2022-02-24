@@ -7,14 +7,12 @@
 class Player
 {
 private:
-    static const int MOVE_SPEED = 300;
-    static const int MIN_RADIUS = 10;
-
-    int radius;
-    float radius_timer;
-
     Texture2D sprite;
     b2Body *body{};
+
+    void set_velocity_x(float vx);
+    void set_velocity_y(float vy);
+    void set_velocity_xy(float vx, float vy);
 
 public:
     Player();

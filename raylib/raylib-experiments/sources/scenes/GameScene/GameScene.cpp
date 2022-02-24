@@ -75,7 +75,7 @@ void GameScene::set_selected_level(int lvl)
 		delete world;
 	}
 
-	b2Vec2 gravity(0.0f, 10.0f);
+	b2Vec2 gravity(0.0f, 60.0f);
 	world = new b2World(gravity);
 
 	current_level = lvl;

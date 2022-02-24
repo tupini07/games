@@ -15,9 +15,6 @@ using namespace std;
 
 Player::Player()
 {
-	this->radius = 8;
-	this->radius_timer = 0.0f;
-
 	this->sprite = LoadTexture(AppConstants::GetAssetPath("dinoCharactersVersion1.1/sheets/DinoSprites - vita.png").c_str());
 }
 
@@ -28,37 +25,32 @@ Player::~Player()
 
 void Player::update(float dt)
 {
-	auto effective_speed = 35.0f;
+	const float horizontalDampeningFactor = 1;
+	auto effective_speed = 15.0f;
 
-	radius_timer += dt;
-
-	if (radius_timer >= 3 && radius >= MIN_RADIUS)
-	{
-		radius -= 1;
-		radius_timer *= 0;
-	}
+	// dampen horizontal movement
+	set_velocity_x(body->GetLinearVelocity().x * (1 - dt * horizontalDampeningFactor));
 
 	// TODO Cap velocities
 	if (IsKeyDown(KEY_LEFT))
 	{
-		body->ApplyForceToCenter({-effective_speed, 0}, true);
+		set_velocity_x(-effective_speed);
 	}
 
 	if (IsKeyDown(KEY_RIGHT))
 	{
-		body->ApplyForceToCenter({effective_speed, 0}, true);
+		set_velocity_x(effective_speed);
 	}
 
 	// TODO only jump if touching ground
 	if (IsKeyPressed(KEY_UP))
 	{
-		body->ApplyForceToCenter({0, -300}, true);
+		set_velocity_y(-25);
 	}
 }
 
 void Player::draw()
 {
-	// DrawCircle(body->position.x, body->position.y, this->radius, GREEN);
 	DrawTexture(sprite,
 				(body->GetPosition().x * GameConstants::PhysicsWorldScale) - 12,
 				(body->GetPosition().y * GameConstants::PhysicsWorldScale) - 12,
@@ -87,7 +79,28 @@ void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
 	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.4f;
+	fixtureDef.friction = 10.0f;
 
 	body->CreateFixture(&fixtureDef);
+}
+
+void Player::set_velocity_x(float vx)
+{
+	body->SetLinearVelocity({
+		vx,
+		body->GetLinearVelocity().y,
+	});
+}
+
+void Player::set_velocity_y(float vy)
+{
+	body->SetLinearVelocity({
+		body->GetLinearVelocity().x,
+		vy,
+	});
+}
+
+void Player::set_velocity_xy(float vx, float vy)
+{
+	body->SetLinearVelocity({vx, vy});
 }
