@@ -19,9 +19,9 @@ Player::Player()
 {
 	this->sprite = LoadTexture(AppConstants::GetAssetPath("dinoCharactersVersion1.1/sheets/DinoSprites - vita.png").c_str());
 
-	auto make_player_frame_rect = [](float frame_num)
+	auto make_player_frame_rect = [](float frame_num) -> Rectangle
 	{
-		return (Rectangle){.x = frame_num * 23.0f, .y = 0.0f, .width = 23.0f, .height = 23.0f};
+		return {.x = frame_num * 23.0f, .y = 0.0f, .width = 23.0f, .height = 23.0f};
 	};
 
 	animation_map["idle"] = {
@@ -63,6 +63,8 @@ void Player::update(float dt)
 	set_velocity_x(body->GetLinearVelocity().x * (1 - dt * horizontalDampeningFactor));
 
 	// TODO Cap velocities
+	// TODO Player gets stuck agains walls if it moves in the direction of wall when adjacent to it
+	//        ^ velocity should not be set in direction of wall if player is colliding with said wall
 	if (IsKeyDown(KEY_LEFT))
 	{
 		looking_right = false;
@@ -76,7 +78,7 @@ void Player::update(float dt)
 	}
 
 	// TODO only jump if touching ground
-	if (IsKeyPressed(KEY_UP))
+	if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))
 	{
 		set_velocity_y(-25);
 	}

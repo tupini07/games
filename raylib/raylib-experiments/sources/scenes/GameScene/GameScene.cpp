@@ -136,34 +136,6 @@ void GameScene::set_selected_level(int lvl)
 				};
 
 				DrawTextureRec(currentTilesetTexture, source_rect, target_pos, WHITE);
-
-				/**
-				 * Note for self: below is how we would add physcis entities for
-				 * every solid block. But it seem that the physac library
-				 * doesn't work very well when there are many bodies in the scene.
-				 *
-				 */
-				// if tile is solid then create physics
-				auto gx = tile.position.x / tile_size;
-				auto gy = tile.position.y / tile_size;
-				auto intGridInfo = currentLdtkLevel->getLayer("PhysicsLayer").getIntGridVal(gx, gy);
-
-				if (intGridInfo.name == "HasColission")
-				{
-					auto halfGridSize = GameConstants::CellSize / 2;
-
-					b2BodyDef bodyDef;
-					bodyDef.position.Set((target_pos.x + halfGridSize) / GameConstants::PhysicsWorldScale,
-										 (target_pos.y + halfGridSize) / GameConstants::PhysicsWorldScale);
-
-					b2Body *body = world->CreateBody(&bodyDef);
-
-					b2PolygonShape groundBox;
-					groundBox.SetAsBox(1, 1);
-
-					body->CreateFixture(&groundBox, 0.0f);
-					cout << "Created physic body at x:" << body->GetPosition().x * GameConstants::PhysicsWorldScale << " y:" << body->GetPosition().y * GameConstants::PhysicsWorldScale << endl;
-				}
 			}
 		}
 	}
@@ -181,5 +153,35 @@ void GameScene::set_selected_level(int lvl)
 		{
 			player->init_for_level(&entity, world);
 		}
+	}
+
+	// create solid blocks on level
+	cout << "Loading solid blocks in level:" << endl;
+	for (auto &&entity : currentLdtkLevel->getLayer("PhysicsEntities").allEntities())
+	{
+		// box2d width and height start from the center of the box
+		auto b2width = entity.getSize().x / 2.0f;
+		auto b2height = entity.getSize().y / 2.0f;
+
+		auto centerX = entity.getPosition().x + b2width;
+		auto centerY = entity.getPosition().y + b2height;
+
+		b2BodyDef bodyDef;
+		bodyDef.position.Set(centerX / GameConstants::PhysicsWorldScale,
+							 centerY / GameConstants::PhysicsWorldScale);
+
+		b2Body *body = world->CreateBody(&bodyDef);
+
+		b2PolygonShape groundBox;
+		groundBox.SetAsBox(b2width / GameConstants::PhysicsWorldScale,
+						   b2height / GameConstants::PhysicsWorldScale);
+
+		body->CreateFixture(&groundBox, 0.0f);
+
+		fmt::print("  - x:{} y:{} width:{} height:{}\n",
+				   centerX,
+				   centerY,
+				   b2width,
+				   b2height);
 	}
 }
