@@ -1,5 +1,4 @@
 #include <math.h>
-#include <sstream>
 #include <unordered_map>
 #include <vector>
 
@@ -101,9 +100,7 @@ void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 {
 	auto pos = entity->getPosition();
 
-	stringstream stream;
-	stream << "Setting player position to x:" << pos.x << " and y:" << pos.y << endl;
-	DebugUtils::println(stream.str());
+	DebugUtils::print("Setting player position to x:{} and y:{}", pos.x, pos.y);
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;

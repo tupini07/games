@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include <raylib.h>
 #include <box2d/box2d.h>
 #include <LDtkLoader/World.hpp>
@@ -82,18 +80,18 @@ void GameScene::set_selected_level(int lvl)
 
 	currentLdtkLevel = &ldtkWorld->getLevel(current_level);
 
-	// DebugUtils::print("hi I {} want", 123);
-	// DebugUtils::print("----------------------------------------------");
-	// DebugUtils::print("Loaded LDTK map with {}  levels in it", ldtkWorld->allLevels().size());
-	// DebugUtils::print("The loaded level is {} and it has {} layers", current_level, currentLdtkLevel->allLayers().size());
-	// for (auto &&layer : currentLdtkLevel->allLayers())
-	// {
-	// 	DebugUtils::print("  - {}", layer.getName());
-	// }
+	DebugUtils::println("----------------------------------------------");
+	DebugUtils::print("Loaded LDTK map with {}  levels in it", ldtkWorld->allLevels().size());
+	DebugUtils::print("The loaded level is {} and it has {} layers", current_level, currentLdtkLevel->allLayers().size());
+	for (auto &&layer : currentLdtkLevel->allLayers())
+	{
+		DebugUtils::print("  - {}", layer.getName());
+	}
 
 	auto testTileLayerTileset = currentLdtkLevel->getLayer("TileLayer").getTileset();
-	// stream << "The path to the tile layer tileset is: " << testTileLayerTileset.path << endl;
-	// stream << "----------------------------------------------" << endl;
+
+	DebugUtils::println("The path to the tile layer tileset is: {}", testTileLayerTileset.path);
+	DebugUtils::println("----------------------------------------------");
 
 	auto levelSize = currentLdtkLevel->size;
 	auto renderTexture = LoadRenderTexture(levelSize.x, levelSize.y);
@@ -102,7 +100,7 @@ void GameScene::set_selected_level(int lvl)
 
 	if (currentLdtkLevel->hasBgImage())
 	{
-		cout << "Drawing background image" << endl;
+		DebugUtils::println("Drawing background image");
 		auto img = currentLdtkLevel->getBgImage();
 		auto imgTex = LoadTexture(AppConstants::GetAssetPath(img.path.c_str()).c_str());
 		SetTextureFilter(imgTex, TEXTURE_FILTER_TRILINEAR);
@@ -144,11 +142,10 @@ void GameScene::set_selected_level(int lvl)
 	renderedLevelTexture = renderTexture.texture;
 
 	// get entity positions
-	cout << "Entities in level:" << endl;
+	DebugUtils::println("Entities in level:");
 	for (auto &&entity : currentLdtkLevel->getLayer("Entities").allEntities())
 	{
-		cout << "  - " << entity.getName() << endl;
-
+		DebugUtils::println("  - {}", entity.getName());
 		if (entity.getName() == "Player")
 		{
 			player->init_for_level(&entity, world);
@@ -156,7 +153,7 @@ void GameScene::set_selected_level(int lvl)
 	}
 
 	// create solid blocks on level
-	cout << "Loading solid blocks in level:" << endl;
+	DebugUtils::println("Loading solid blocks in level:");
 	for (auto &&entity : currentLdtkLevel->getLayer("PhysicsEntities").allEntities())
 	{
 		// box2d width and height start from the center of the box
@@ -178,10 +175,10 @@ void GameScene::set_selected_level(int lvl)
 
 		body->CreateFixture(&groundBox, 0.0f);
 
-		fmt::print("  - x:{} y:{} width:{} height:{}\n",
-				   centerX,
-				   centerY,
-				   b2width,
-				   b2height);
+		DebugUtils::println("  - x:{} y:{} width:{} height:{}",
+							centerX,
+							centerY,
+							b2width,
+							b2height);
 	}
 }

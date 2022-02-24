@@ -3,6 +3,7 @@
 #define SHOW_DEBUG
 
 #include <string>
+#include <iostream>
 
 #include <raylib.h>
 #include <box2d/box2d.h>
@@ -55,10 +56,20 @@ namespace DebugUtils
 #endif
     }
 
-    inline void println(string str)
+    template <typename... T>
+    inline void print(fmt::format_string<T...> fmt, T &&...args)
     {
 #ifdef SHOW_DEBUG
-        cout << "DEBUG: " << str << endl;
+        fmt::print(fmt, args...);
+#endif
+    }
+
+    template <typename... T>
+    inline void println(fmt::format_string<T...> fmt, T &&...args)
+    {
+#ifdef SHOW_DEBUG
+        auto formatted = fmt::format(fmt, args...);
+        cout << formatted << endl;
 #endif
     }
 }
