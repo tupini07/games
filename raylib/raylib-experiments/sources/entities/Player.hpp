@@ -9,6 +9,15 @@
 
 using namespace std;
 
+enum PlayerAnimationState
+{
+    IDLE,
+    WALK,
+    JUMP_START,
+    JUMP_APEX,
+    JUMP_FALL
+};
+
 class Player
 {
 private:
@@ -17,8 +26,9 @@ private:
 
     bool looking_right = true;
 
-    unordered_map<string, vector<Rectangle>> animation_map;
-
+    uint animation_counter = 0;
+    PlayerAnimationState anim_state = PlayerAnimationState::IDLE;
+    unordered_map<PlayerAnimationState, vector<Rectangle>> animation_map;
 
     void set_velocity_x(float vx);
     void set_velocity_y(float vy);
