@@ -59,10 +59,12 @@ void Player::update(float dt)
 	const float horizontalDampeningFactor = 1;
 	auto effective_speed = 15.0f;
 
-	if (fmod(GetTime(), 1.0) > 0.99)
+	animation_ticker -= dt;
+	if (animation_ticker <= 0)
 	{
-		DebugUtils::println("some some some");
-		animation_counter += 1;
+		animation_ticker = animation_frame_duration;
+		current_anim_frame += 1;
+		DebugUtils::println("current_anim_frame: {}", current_anim_frame);
 	}
 
 	// dampen horizontal movement
@@ -105,7 +107,7 @@ void Player::draw()
 	auto spritePosY = (body->GetPosition().y * GameConstants::PhysicsWorldScale) - 13;
 
 	auto current_anim_states = animation_map[anim_state];
-	auto current_anim_rect = current_anim_states[anim_state % current_anim_states.size()];
+	auto current_anim_rect = current_anim_states[current_anim_frame % current_anim_states.size()];
 
 	if (!looking_right)
 	{

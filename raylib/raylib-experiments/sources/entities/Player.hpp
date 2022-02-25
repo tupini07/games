@@ -26,7 +26,10 @@ private:
 
     bool looking_right = true;
 
-    uint animation_counter = 0;
+    const float animation_frame_duration = 0.2f;
+    float animation_ticker = animation_frame_duration;
+
+    size_t current_anim_frame = 0;
     PlayerAnimationState anim_state = PlayerAnimationState::IDLE;
     unordered_map<PlayerAnimationState, vector<Rectangle>> animation_map;
 
