@@ -74,6 +74,8 @@ void Player::update(float dt)
 	check_if_on_floor();
 	check_if_move();
 	check_if_jump();
+
+	check_if_should_respawn();
 }
 
 void Player::draw()
@@ -103,11 +105,13 @@ void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 
 	DebugUtils::print("Setting player position to x:{} and y:{}", pos.x, pos.y);
 
+	level_spawn_position = {(float)pos.x / GameConstants::PhysicsWorldScale,
+							(float)pos.y / GameConstants::PhysicsWorldScale};
+
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 	bodyDef.fixedRotation = true;
-	bodyDef.position.Set((float)pos.x / GameConstants::PhysicsWorldScale,
-						 (float)pos.y / GameConstants::PhysicsWorldScale);
+	bodyDef.position.Set(level_spawn_position.x, level_spawn_position.y);
 
 	this->body = physicsWorld->CreateBody(&bodyDef);
 
@@ -253,5 +257,18 @@ void Player::check_if_move()
 	{
 		looking_right = true;
 		set_velocity_x(effective_speed);
+	}
+}
+
+void Player::check_if_should_respawn()
+{
+	auto body_pos = body->GetPosition();
+	auto is_out_of_x = body_pos.x < 0 || body_pos.x * GameConstants::PhysicsWorldScale > GameConstants::WorldWidth;
+	auto is_out_of_y = body_pos.y < 0 || body_pos.y * GameConstants::PhysicsWorldScale > GameConstants::WorldHeight;
+
+	if (is_out_of_x || is_out_of_y)
+	{
+		set_velocity_xy(0, 0);
+		body->SetTransform(level_spawn_position, 0);
 	}
 }

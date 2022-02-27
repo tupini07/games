@@ -23,6 +23,7 @@ class Player
 private:
     Texture2D sprite;
     b2Body *body{};
+    b2Vec2 level_spawn_position;
 
     bool is_touching_floor = true;
     bool looking_right = true;
@@ -42,6 +43,8 @@ private:
     void check_if_on_floor();
     void check_if_jump();
     void check_if_move();
+
+    void check_if_should_respawn();
 
 public:
     Player();
