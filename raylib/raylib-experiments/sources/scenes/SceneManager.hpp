@@ -16,6 +16,7 @@ public:
 
 	static void update(float dt);
 	static void draw();
+	static void cleanup();
 };
 
 BaseScene *SceneManager::current_screen = nullptr;
@@ -35,6 +36,7 @@ void SceneManager::set_current_screen(Scenes screen)
 	if (SceneManager::current_screen != nullptr)
 	{
 		delete SceneManager::current_screen;
+		SceneManager::current_screen = nullptr;
 	}
 
 	switch (screen)
@@ -71,5 +73,14 @@ void SceneManager::draw()
 	if (SceneManager::current_screen != nullptr)
 	{
 		SceneManager::current_screen->draw();
+	}
+}
+
+void SceneManager::cleanup()
+{
+	if (SceneManager::current_screen != nullptr)
+	{
+		delete SceneManager::current_screen;
+		SceneManager::current_screen = nullptr;
 	}
 }

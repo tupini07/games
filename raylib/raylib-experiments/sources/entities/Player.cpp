@@ -12,6 +12,9 @@
 #include <utils/DebugUtils.hpp>
 
 #include "Player.hpp"
+#include "../physics/PhysicsTypes.hpp"
+#include "../scenes/GameScene/GameScene.hpp"
+#include "../physics/RaycastCallbacks.hpp"
 
 using namespace std;
 
@@ -64,8 +67,9 @@ void Player::update(float dt)
 	{
 		animation_ticker = animation_frame_duration;
 		current_anim_frame += 1;
-		DebugUtils::println("current_anim_frame: {}", current_anim_frame);
 	}
+
+	check_if_on_floor();
 
 	// dampen horizontal movement
 	set_velocity_x(body->GetLinearVelocity().x * (1 - dt * horizontalDampeningFactor));
@@ -86,7 +90,7 @@ void Player::update(float dt)
 	}
 
 	// TODO only jump if touching ground
-	if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE))
+	if (is_touching_floor && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE)))
 	{
 		set_velocity_y(-25);
 	}
@@ -98,6 +102,25 @@ void Player::update(float dt)
 	else
 	{
 		anim_state = IDLE;
+	}
+
+	if (!is_touching_floor)
+	{
+		auto vel = body->GetLinearVelocity().y;
+		const int jump_threshold = 5;
+
+		if (vel > jump_threshold)
+		{
+			anim_state = JUMP_FALL;
+		}
+		else if (vel < -jump_threshold)
+		{
+			anim_state = JUMP_START;
+		}
+		else
+		{
+			anim_state = JUMP_APEX;
+		}
 	}
 }
 
@@ -130,9 +153,9 @@ void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
+	bodyDef.fixedRotation = true;
 	bodyDef.position.Set((float)pos.x / GameConstants::PhysicsWorldScale,
 						 (float)pos.y / GameConstants::PhysicsWorldScale);
-	bodyDef.fixedRotation = true;
 
 	this->body = physicsWorld->CreateBody(&bodyDef);
 
@@ -166,4 +189,46 @@ void Player::set_velocity_y(float vy)
 void Player::set_velocity_xy(float vx, float vy)
 {
 	body->SetLinearVelocity({vx, vy});
+}
+
+void Player::check_if_on_floor()
+{
+	// first, reset whether we're touching floor
+	is_touching_floor = false;
+
+	// check left, center, and right touch points
+	float x_deviations[] = {-1.0f, 0.0f, 1.0f};
+
+	for (auto x_dev : x_deviations)
+	{
+		// query raylib to see if we're touching floor
+		RaysCastGetNearestCallback raycastCallback;
+
+		auto source = body->GetPosition();
+		source.x += x_dev;
+
+		auto target = body->GetPosition();
+		target.x += x_dev;
+		target.y += 1.1;
+
+		GameScene::world->RayCast(&raycastCallback,
+								  source,
+								  target);
+
+		if (raycastCallback.m_fixture)
+		{
+			auto collision_body = raycastCallback.m_fixture->GetBody();
+
+			if (collision_body->GetUserData().pointer)
+			{
+				string physics_type = (char *)collision_body->GetUserData().pointer;
+				is_touching_floor = physics_type == PhysicsTypes::SolidBlock;
+			}
+		}
+
+		if (is_touching_floor)
+		{
+			break;
+		}
+	}
 }

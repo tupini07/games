@@ -17,15 +17,15 @@ private:
     ldtk::World *ldtkWorld{};
     const ldtk::Level *currentLdtkLevel{};
 
-    b2World *world{};
-    Player *player{};
-
     Texture2D currentTilesetTexture;
     Texture2D renderedLevelTexture;
 
 public:
     GameScene();
     ~GameScene();
+
+    static b2World *world;
+    static Player *player;
 
     void draw() override;
     Scenes update(float dt) override;

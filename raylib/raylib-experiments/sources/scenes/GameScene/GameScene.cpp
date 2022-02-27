@@ -7,9 +7,13 @@
 #include <utils/DebugUtils.hpp>
 
 #include "GameScene.hpp"
+#include "../../physics/PhysicsTypes.hpp"
 #include "../Scenes.hpp"
 
 using namespace std;
+
+Player *GameScene::player = nullptr;
+b2World *GameScene::world = nullptr;
 
 GameScene::GameScene()
 {
@@ -71,6 +75,7 @@ void GameScene::set_selected_level(int lvl)
 		// if we had an old world then delete it and recreate
 		// a new one for the new level
 		delete world;
+		world = nullptr;
 	}
 
 	b2Vec2 gravity(0.0f, 60.0f);
@@ -164,6 +169,7 @@ void GameScene::set_selected_level(int lvl)
 		auto centerY = entity.getPosition().y + b2height;
 
 		b2BodyDef bodyDef;
+		bodyDef.userData.pointer = (uintptr_t)PhysicsTypes::SolidBlock.c_str();
 		bodyDef.position.Set(centerX / GameConstants::PhysicsWorldScale,
 							 centerY / GameConstants::PhysicsWorldScale);
 

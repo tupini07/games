@@ -37,6 +37,8 @@ int main()
 	}
 #endif
 
+	SceneManager::cleanup();
+	UnloadRenderTexture(frameBuffer);
 	CloseWindow();
 	return 0;
 }

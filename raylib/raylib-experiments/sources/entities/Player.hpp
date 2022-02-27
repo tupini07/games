@@ -24,6 +24,7 @@ private:
     Texture2D sprite;
     b2Body *body{};
 
+    bool is_touching_floor = true;
     bool looking_right = true;
 
     const float animation_frame_duration = 0.2f;
@@ -36,6 +37,8 @@ private:
     void set_velocity_x(float vx);
     void set_velocity_y(float vy);
     void set_velocity_xy(float vx, float vy);
+
+    void check_if_on_floor();
 
 public:
     Player();
