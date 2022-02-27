@@ -38,7 +38,10 @@ private:
     void set_velocity_y(float vy);
     void set_velocity_xy(float vx, float vy);
 
+    bool can_move_in_x_direction(bool moving_right);
     void check_if_on_floor();
+    void check_if_jump();
+    void check_if_move();
 
 public:
     Player();

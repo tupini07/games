@@ -14,7 +14,7 @@
 #include "Player.hpp"
 #include "../physics/PhysicsTypes.hpp"
 #include "../scenes/GameScene/GameScene.hpp"
-#include "../physics/RaycastCallbacks.hpp"
+#include "../physics/RaycastUtils.hpp"
 
 using namespace std;
 
@@ -60,7 +60,6 @@ Player::~Player()
 void Player::update(float dt)
 {
 	const float horizontalDampeningFactor = 1;
-	auto effective_speed = 15.0f;
 
 	animation_ticker -= dt;
 	if (animation_ticker <= 0)
@@ -69,59 +68,12 @@ void Player::update(float dt)
 		current_anim_frame += 1;
 	}
 
-	check_if_on_floor();
-
 	// dampen horizontal movement
 	set_velocity_x(body->GetLinearVelocity().x * (1 - dt * horizontalDampeningFactor));
 
-	// TODO Cap velocities
-	// TODO Player gets stuck agains walls if it moves in the direction of wall when adjacent to it
-	//        ^ velocity should not be set in direction of wall if player is colliding with said wall
-	if (IsKeyDown(KEY_LEFT))
-	{
-		looking_right = false;
-		set_velocity_x(-effective_speed);
-	}
-
-	if (IsKeyDown(KEY_RIGHT))
-	{
-		looking_right = true;
-		set_velocity_x(effective_speed);
-	}
-
-	// TODO only jump if touching ground
-	if (is_touching_floor && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE)))
-	{
-		set_velocity_y(-25);
-	}
-
-	if (abs(body->GetLinearVelocity().x) > 0)
-	{
-		anim_state = WALK;
-	}
-	else
-	{
-		anim_state = IDLE;
-	}
-
-	if (!is_touching_floor)
-	{
-		auto vel = body->GetLinearVelocity().y;
-		const int jump_threshold = 5;
-
-		if (vel > jump_threshold)
-		{
-			anim_state = JUMP_FALL;
-		}
-		else if (vel < -jump_threshold)
-		{
-			anim_state = JUMP_START;
-		}
-		else
-		{
-			anim_state = JUMP_APEX;
-		}
-	}
+	check_if_on_floor();
+	check_if_move();
+	check_if_jump();
 }
 
 void Player::draw()
@@ -202,8 +154,6 @@ void Player::check_if_on_floor()
 	for (auto x_dev : x_deviations)
 	{
 		// query raylib to see if we're touching floor
-		RaysCastGetNearestCallback raycastCallback;
-
 		auto source = body->GetPosition();
 		source.x += x_dev;
 
@@ -211,24 +161,97 @@ void Player::check_if_on_floor()
 		target.x += x_dev;
 		target.y += 1.1;
 
-		GameScene::world->RayCast(&raycastCallback,
-								  source,
-								  target);
-
-		if (raycastCallback.m_fixture)
-		{
-			auto collision_body = raycastCallback.m_fixture->GetBody();
-
-			if (collision_body->GetUserData().pointer)
-			{
-				string physics_type = (char *)collision_body->GetUserData().pointer;
-				is_touching_floor = physics_type == PhysicsTypes::SolidBlock;
-			}
-		}
+		is_touching_floor = RaycastCheckCollisionWithUserData(
+			GameScene::world,
+			source,
+			target,
+			PhysicsTypes::SolidBlock);
 
 		if (is_touching_floor)
 		{
 			break;
 		}
+	}
+}
+
+bool Player::can_move_in_x_direction(bool moving_right)
+{
+	float y_deviations[] = {-1.0f, 0.0f, 1.0f};
+	for (auto y_dev : y_deviations)
+	{
+		// query raylib to see if we're touching floor
+		auto source = body->GetPosition();
+		source.y += y_dev;
+
+		auto target = body->GetPosition();
+		target.y += y_dev;
+
+		// check left side if necessary
+		target.x += (moving_right ? 1 : -1) * 1.1;
+
+		auto is_agains_wall = RaycastCheckCollisionWithUserData(
+			GameScene::world,
+			source,
+			target,
+			PhysicsTypes::SolidBlock);
+
+		if (is_agains_wall)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void Player::check_if_jump()
+{
+	if (is_touching_floor && (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_SPACE)))
+	{
+		set_velocity_y(-25);
+	}
+
+	if (abs(body->GetLinearVelocity().x) > 0)
+	{
+		anim_state = WALK;
+	}
+	else
+	{
+		anim_state = IDLE;
+	}
+
+	if (!is_touching_floor)
+	{
+		auto vel = body->GetLinearVelocity().y;
+		const int jump_threshold = 5;
+
+		if (vel > jump_threshold)
+		{
+			anim_state = JUMP_FALL;
+		}
+		else if (vel < -jump_threshold)
+		{
+			anim_state = JUMP_START;
+		}
+		else
+		{
+			anim_state = JUMP_APEX;
+		}
+	}
+}
+
+void Player::check_if_move()
+{
+	const auto effective_speed = 15.0f;
+	if (IsKeyDown(KEY_LEFT) && can_move_in_x_direction(false))
+	{
+		looking_right = false;
+		set_velocity_x(-effective_speed);
+	}
+
+	if (IsKeyDown(KEY_RIGHT) && can_move_in_x_direction(true))
+	{
+		looking_right = true;
+		set_velocity_x(effective_speed);
 	}
 }
