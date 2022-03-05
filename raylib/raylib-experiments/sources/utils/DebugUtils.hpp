@@ -1,7 +1,5 @@
 #pragma once
 
-#define SHOW_DEBUG
-
 #include <string>
 #include <iostream>
 
@@ -17,7 +15,7 @@ namespace DebugUtils
 {
     inline void draw_physics_objects_bounding_boxes(b2World *const world)
     {
-#ifdef SHOW_DEBUG
+#ifdef DEBUG
         auto currentBody = world->GetBodyList();
         while (currentBody != nullptr)
         {
@@ -59,7 +57,7 @@ namespace DebugUtils
     template <typename... T>
     inline void print(fmt::format_string<T...> fmt, T &&...args)
     {
-#ifdef SHOW_DEBUG
+#ifdef DEBUG
         fmt::print(fmt, args...);
 #endif
     }
@@ -67,7 +65,7 @@ namespace DebugUtils
     template <typename... T>
     inline void println(fmt::format_string<T...> fmt, T &&...args)
     {
-#ifdef SHOW_DEBUG
+#ifdef DEBUG
         auto formatted = fmt::format(fmt, args...);
         cout << formatted << endl;
 #endif

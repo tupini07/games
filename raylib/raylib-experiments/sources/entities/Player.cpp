@@ -116,7 +116,7 @@ void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 	this->body = physicsWorld->CreateBody(&bodyDef);
 
 	b2PolygonShape dynamicBox;
-	dynamicBox.SetAsBox(1, 1);
+	dynamicBox.SetAsBox(0.9, 1);
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
