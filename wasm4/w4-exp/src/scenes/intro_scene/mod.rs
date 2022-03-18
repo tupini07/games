@@ -54,9 +54,6 @@ impl Scene for IntroScene {
     }
 
     fn draw(&self) {
-        unsafe {
-            *DRAW_COLORS = 0x4321;
-        }
         fn draw_block(color: u8, x: i32, y: i32) {
             let colors = [color | (color << 2) | (color << 4) | (color << 6); 16];
             blit(&colors, x, y, 8, 8, BLIT_2BPP);

@@ -26,7 +26,6 @@ impl SceneManager {
     }
 
     pub fn set_state(&mut self, new_state: GameStates) {
-        dbg!(&new_state);
         self.current_state = Box::new(match new_state {
             GameStates::TITLE => IntroScene::new(),
         })
