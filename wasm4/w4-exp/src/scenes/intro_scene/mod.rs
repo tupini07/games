@@ -54,9 +54,30 @@ impl Scene for IntroScene {
     }
 
     fn draw(&self) {
-        text("Hello from Rust!", 10, 10);
+        unsafe {
+            *DRAW_COLORS = 0x4321;
+        }
+        fn draw_block(color: u8, x: i32, y: i32) {
+            let colors = [color | (color << 2) | (color << 4) | (color << 6); 16];
+            blit(&colors, x, y, 8, 8, BLIT_2BPP);
+        }
 
-        blit(&SMILEY, 76, 76, 8, 8, BLIT_1BPP);
-        text("Press X to continue", 8, 90);
+        draw_block(1, 0, 0);
+        draw_block(0, 1, 0);
+
+        draw_block(1, 9, 0);
+
+        draw_block(2, 18, 0);
+
+        draw_block(3, 27, 0);
+
+        // text("Hello from Rust!", 10, 10);
+        /*
+        000100100011 < DRAW_COLORS
+        10101010 <<
+
+        */
+        // blit(&SMILEY, 76, 76, 8, 8, BLIT_1BPP);
+        // text("Press X to continue", 8, 90);
     }
 }

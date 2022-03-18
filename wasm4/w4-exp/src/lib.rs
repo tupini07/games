@@ -1,8 +1,9 @@
 #[cfg(feature = "buddy-alloc")]
 mod alloc;
 mod wasm4;
-use scene_manager::{Scene, SceneManager};
+use scene_manager::SceneManager;
 
+mod assets;
 mod scene_manager;
 mod scenes;
 mod w4utils;
@@ -11,7 +12,8 @@ static mut SCENE_MANAGER: Option<SceneManager> = None;
 
 #[no_mangle]
 fn start() {
-    w4utils::graphics::set_palette([0xfbf7f3, 0xe5b083, 0x426e5d, 0x20283d]);
+    assets::load_ldtk_project();
+    w4utils::graphics::set_palette([0x40f0f3, 0xe5b083, 0x426e5d, 0x20283d]);
 
     unsafe {
         SCENE_MANAGER = Some(SceneManager::new());
