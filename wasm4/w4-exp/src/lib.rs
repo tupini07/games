@@ -16,7 +16,7 @@ static mut SCENE_MANAGER: Option<SceneManager> = None;
 #[no_mangle]
 fn start() {
     w4utils::graphics::set_palette([0x002b59, 0x005f8c, 0x00b9be, 0x9ff4e5]);
-
+    
     unsafe {
         SCENE_MANAGER = Some(SceneManager::new());
     }
@@ -24,9 +24,8 @@ fn start() {
 
 #[no_mangle]
 fn update() {
-    w4utils::graphics::set_draw_color_raw(0x1234);
-
     // w4utils::graphics::clear_screen(w4utils::graphics::DrawColors::Color1);
+    w4utils::graphics::set_draw_color_raw(0x4321);
 
     unsafe {
         if let Some(sm) = &mut SCENE_MANAGER {
