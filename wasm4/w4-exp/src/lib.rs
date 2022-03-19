@@ -38,9 +38,9 @@ fn update() {
         &assets::sprites::PLAYER,
         20,
         20,
-        16,
-        16,
-        wasm4::BLIT_2BPP,
+        assets::sprites::PLAYER_WIDTH,
+        assets::sprites::PLAYER_HEIGHT,
+        assets::sprites::PLAYER_FLAGS,
     );
 
     // draw a color 2 box
