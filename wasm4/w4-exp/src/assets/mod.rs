@@ -1,1 +1,2 @@
-pub mod sprites;
+mod auto_sprites;
+pub use auto_sprites::*;

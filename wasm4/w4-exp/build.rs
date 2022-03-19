@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn open_output_file() -> Result<File, Box<dyn Error>> {
     let output_directory = PathBuf::from("./src/assets/");
-    let output_path = output_directory.join("sprites.rs");
+    let output_path = output_directory.join("auto_sprites.rs");
     let output_file = OpenOptions::new()
         .write(true)
         .create(true)
