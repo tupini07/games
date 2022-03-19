@@ -1,3 +1,5 @@
+#![feature(int_roundings)]
+
 #[cfg(feature = "buddy-alloc")]
 mod alloc;
 mod wasm4;
@@ -23,9 +25,8 @@ fn start() {
 #[no_mangle]
 fn update() {
     w4utils::graphics::set_draw_color_raw(0x1234);
-    wasm4::blit(&[1; 160^2], 0, 0, 160, 160, wasm4::BLIT_1BPP);
 
-    // w4utils::graphics::set_draw_color(w4utils::graphics::DrawColors::Color2);
+    // w4utils::graphics::clear_screen(w4utils::graphics::DrawColors::Color1);
 
     unsafe {
         if let Some(sm) = &mut SCENE_MANAGER {
@@ -35,13 +36,19 @@ fn update() {
     }
 
     wasm4::blit(
-        &assets::sprites::sprites::PLAYER,
+        &assets::sprites::PLAYER,
         20,
         20,
         16,
         16,
         wasm4::BLIT_2BPP,
     );
+
+    // draw a color 2 box
+    w4utils::graphics::set_draw_color(w4utils::graphics::DrawColors::Color2);
+    const arr_size: usize = 100_usize.div_ceil(8_usize); // 8 pixels per u8
+    let ss: [u8; arr_size] = [0b00000000; arr_size];
+    wasm4::blit(&ss, 100, 100, 10, 10, wasm4::BLIT_1BPP);
 
     w4utils::controller::update_controller();
 }
