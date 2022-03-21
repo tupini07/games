@@ -38,7 +38,7 @@ impl Scene for IntroScene {
 
     fn update(&mut self) -> Option<GameStates> {
         if controller::is_key_down(Keys::X) {
-            graphics::set_draw_color(graphics::DrawColors::Color3);
+            graphics::set_draw_color_raw(0x1234);
         }
 
         if controller::is_key_just_pressed(Keys::Left) {

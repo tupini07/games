@@ -45,8 +45,8 @@ fn update() {
 
     // draw a color 2 box
     w4utils::graphics::set_draw_color(w4utils::graphics::DrawColors::Color2);
-    const arr_size: usize = 100_usize.div_ceil(8_usize); // 8 pixels per u8
-    let ss: [u8; arr_size] = [0b00000000; arr_size];
+    const ARR_SIZE: usize = 100_usize.div_ceil(8_usize); // 8 pixels per u8
+    let ss: [u8; ARR_SIZE] = [0b00000000; ARR_SIZE];
     wasm4::blit(&ss, 100, 100, 10, 10, wasm4::BLIT_1BPP);
 
     w4utils::controller::update_controller();
