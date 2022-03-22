@@ -5,7 +5,7 @@
 #include <raylib.h>
 #include <Constants.hpp>
 
-#include "entities/Player.hpp"
+#include "entities/Player/Player.hpp"
 #include "scenes/SceneManager.hpp"
 #include "scenes/Scenes.hpp"
 

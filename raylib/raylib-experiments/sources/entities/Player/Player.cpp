@@ -12,9 +12,9 @@
 #include <utils/DebugUtils.hpp>
 
 #include "Player.hpp"
-#include "../physics/PhysicsTypes.hpp"
-#include "../scenes/GameScene/GameScene.hpp"
-#include "../physics/RaycastUtils.hpp"
+#include "../../physics/PhysicsTypes.hpp"
+#include "../../scenes/GameScene/GameScene.hpp"
+#include "../../physics/RaycastUtils.hpp"
 
 using namespace std;
 
@@ -103,7 +103,7 @@ void Player::init_for_level(const ldtk::Entity *entity, b2World *physicsWorld)
 {
 	auto pos = entity->getPosition();
 
-	DebugUtils::print("Setting player position to x:{} and y:{}", pos.x, pos.y);
+	DebugUtils::println("Setting player position to x:{} and y:{}", pos.x, pos.y);
 
 	level_spawn_position = {(float)pos.x / GameConstants::PhysicsWorldScale,
 							(float)pos.y / GameConstants::PhysicsWorldScale};

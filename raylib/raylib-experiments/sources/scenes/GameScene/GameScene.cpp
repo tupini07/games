@@ -10,6 +10,8 @@
 #include "../../physics/PhysicsTypes.hpp"
 #include "../Scenes.hpp"
 
+#include "./entities/BaseEntity.hpp"
+
 using namespace std;
 
 Player *GameScene::player = nullptr;
@@ -154,6 +156,12 @@ void GameScene::set_selected_level(int lvl)
 		if (entity.getName() == "Player")
 		{
 			player->init_for_level(&entity, world);
+		}
+
+		if (entity.getName() == "Portal")
+		{
+			float target_lvl = entity.getField<float>("level_destination").value();
+			DebugUtils::println("Portal goes to level: {}", target_lvl);
 		}
 	}
 

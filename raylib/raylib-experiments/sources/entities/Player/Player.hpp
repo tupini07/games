@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../BaseEntity.hpp"
+
 #include <unordered_map>
 #include <vector>
 
@@ -18,7 +20,7 @@ enum PlayerAnimationState
     JUMP_FALL
 };
 
-class Player
+class Player : public BaseEntity
 {
 private:
     Texture2D sprite;
@@ -50,8 +52,8 @@ public:
     Player();
     ~Player();
 
-    void update(float dt);
-    void draw();
+    void update(float dt) override;
+    void draw() override;
 
     void init_for_level(const ldtk::Entity *entity, b2World *physicsWorld);
 };

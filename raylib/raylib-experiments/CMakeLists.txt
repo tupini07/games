@@ -27,7 +27,7 @@ set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # don't build the supplied example g
 add_git_dependency(
     raylib 
     https://github.com/raysan5/raylib.git
-    296b57e1f55f27b5d1f71a5cc8d623a2fbbde20b
+    7584ce6f48ae58c625fce1718319d7d046503c41
 )
 
 # Add LDtkLoader
@@ -49,7 +49,7 @@ add_git_dependency(
 add_git_dependency(
     fmt
     https://github.com/fmtlib/fmt.git
-    86477f7ecc1606e15abae1ff784e6b0c55d99619
+    0cef1f819e9811209a6b110ae37fe65e70aa79b0
 )
 
 ##########################################################################################

@@ -7,7 +7,8 @@
 #include "../BaseScene.hpp"
 #include "../Scenes.hpp"
 
-#include "../../entities/Player.hpp"
+#include "../../entities/Player/Player.hpp"
+#include "./entities/BaseEntity.hpp"
 
 class GameScene : public BaseScene
 {
