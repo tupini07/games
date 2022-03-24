@@ -1,5 +1,6 @@
 use crate::wasm4::*;
 
+#[derive(Clone, Copy)]
 pub enum DrawColors {
     Color1,
     Color2,
@@ -46,10 +47,36 @@ pub fn clear_screen(color: DrawColors) {
     }
 }
 
-pub fn set_draw_color(color: DrawColors) {
+pub fn set_draw_colors(color: DrawColors) {
     set_draw_color_raw(color.into());
+}
+
+pub fn reset_draw_colors() {
+    set_draw_color_raw(0x4321);
 }
 
 pub fn set_draw_color_raw(color: u16) {
     unsafe { *DRAW_COLORS = color }
+}
+
+fn set_color_at(at: DrawColors, color: DrawColors) {
+    let padding = match at {
+        DrawColors::Color1 => 0,
+        DrawColors::Color2 => 4,
+        DrawColors::Color3 => 8,
+        DrawColors::Color4 => 12,
+    };
+
+    let canceller = !(0b1111 << padding);
+    let target_color: u16 = color.into();
+
+    unsafe { *DRAW_COLORS = ((*DRAW_COLORS) & canceller) | (target_color << padding) }
+}
+
+pub fn set_primary_color(color: DrawColors) {
+    set_color_at(DrawColors::Color1, color);
+}
+
+pub fn set_secondary_color(color: DrawColors) {
+    set_color_at(DrawColors::Color2, color);
 }

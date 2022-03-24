@@ -1,9 +1,7 @@
+use w4utils::{controller::{self, Keys}, graphics};
+
 use crate::{
     scene_manager::{GameStates, Scene},
-    w4utils::{
-        controller::{self, Keys},
-        graphics,
-    },
     wasm4::*,
 };
 

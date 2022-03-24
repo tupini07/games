@@ -1,5 +1,3 @@
-use crate::scenes::intro_scene::IntroScene;
-
 pub trait Scene {
     fn new() -> Self
     where
@@ -14,31 +12,16 @@ pub enum GameStates {
     TITLE,
 }
 
-pub struct SceneManager {
-    current_state: Box<dyn Scene>,
-}
+pub struct SceneManager {}
 
 impl SceneManager {
-    pub fn new() -> Self {
-        SceneManager {
-            current_state: Box::new(IntroScene::new()),
-        }
-    }
+    pub fn do_tick<S: Scene>(scene: &mut Option<S>) -> Option<GameStates> {
+        let scene_opt_ref = scene.as_mut();
+        let scene_ref = scene_opt_ref.unwrap();
 
-    pub fn set_state(&mut self, new_state: GameStates) {
-        self.current_state = Box::new(match new_state {
-            GameStates::TITLE => IntroScene::new(),
-        })
-    }
+        let up_res = scene_ref.update();
+        scene_ref.draw();
 
-    pub fn update(&mut self) {
-        let new_state = self.current_state.update();
-
-        if let Some(state) = new_state {
-            self.set_state(state);
-        }
-    }
-    pub fn draw(&self) {
-        self.current_state.draw();
+        up_res
     }
 }
