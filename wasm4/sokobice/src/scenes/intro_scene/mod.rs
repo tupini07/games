@@ -1,8 +1,11 @@
-use w4utils::{controller::{self, Keys}, graphics};
+use w4utils::{
+    controller::{self, Keys},
+    graphics,
+};
 
 use crate::{
     scene_manager::{GameStates, Scene},
-    wasm4::*,
+    wasm4::{self, *}, assets,
 };
 
 pub struct IntroScene {
@@ -74,5 +77,14 @@ impl Scene for IntroScene {
         */
         // blit(&SMILEY, 76, 76, 8, 8, BLIT_1BPP);
         // text("Press X to continue", 8, 90);
+
+        wasm4::blit(
+            &assets::sprites::BACKGROUND1,
+            0,
+            0,
+            assets::sprites::BACKGROUND1_WIDTH,
+            assets::sprites::BACKGROUND1_HEIGHT,
+            assets::sprites::BACKGROUND1_FLAGS,
+        );
     }
 }

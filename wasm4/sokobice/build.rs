@@ -10,7 +10,6 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut cargo_instructions = String::default();
     module.generate_cargo_build_instructions(&mut cargo_instructions)?;
-    println!("{}", cargo_instructions);
 
     let mut output_file = open_output_file()?;
     let module = module.parse()?;
