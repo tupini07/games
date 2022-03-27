@@ -47,7 +47,6 @@ impl Scene for GameScene {
         }
 
         if controller::is_key_just_pressed(Keys::Z) {
-            trace("changing to another scene!");
             return Some(GameStates::TITLE);
         }
 

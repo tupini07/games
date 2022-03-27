@@ -5,5 +5,5 @@ help:
 bundle: 
     cargo build --release
     mkdir -p target/bundled
-    wasm-opt ./target/wasm32-unknown-unknown/release/cart.wasm -o ./target/bundled/cart_out/cart_min.wasm -Oz  --converge --strip-debug --strip-dwarf --vacuum --rse --remove-unused-names --remove-unused-module-elements
-    w4 bundle ./target/wasm32-unknown-unknown/release/cart_min.wasm --html ./target/bundled/cart_out.html
+    wasm-opt ./target/wasm32-unknown-unknown/release/cart.wasm -o ./target/bundled/cart_min.wasm -Oz  --converge --strip-debug --strip-dwarf --vacuum --rse --remove-unused-names --remove-unused-module-elements
+    w4 bundle ./target/bundled/cart_min.wasm --html ./target/bundled/cart_out.html

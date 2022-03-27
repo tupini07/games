@@ -1,12 +1,12 @@
 use w4utils::{
     controller::{self, Keys},
-    graphics::{self, DrawColors},
+    graphics::{self, shapes, DrawColors},
 };
 
 use crate::{
-    assets,
+    assets, constants,
     scene_manager::{GameStates, Scene},
-    wasm4::{self, *}, constants,
+    wasm4::{self, *},
 };
 
 mod snowflakes;
@@ -14,8 +14,10 @@ mod snowflakes;
 use self::snowflakes::Snowflake;
 
 pub struct IntroScene {
+    rng: oorandom::Rand32,
     snowflakes: Vec<Snowflake>,
-    rng: oorandom::Rand32
+    switching_scene: bool,
+    switching_scene_progress: f32,
 }
 
 impl Scene for IntroScene {
@@ -23,13 +25,26 @@ impl Scene for IntroScene {
         let mut rng = oorandom::Rand32::new(42);
         IntroScene {
             snowflakes: Snowflake::make_snowflake_vec(30, &mut rng),
-            rng
+            rng,
+            switching_scene: false,
+            switching_scene_progress: 0.0,
         }
     }
 
     fn update(&mut self) -> Option<GameStates> {
-        if controller::is_key_down(Keys::X) {
+        if self.switching_scene {
             graphics::set_draw_color_raw(0x1234);
+
+            self.switching_scene_progress += 0.4;
+            if self.snowflakes.len() < 200 {
+                self.snowflakes.push(Snowflake::new(&mut self.rng));
+                self.snowflakes.push(Snowflake::new(&mut self.rng));
+                self.snowflakes.push(Snowflake::new(&mut self.rng));
+            }
+        }
+
+        if controller::is_key_down(Keys::Z) {
+            self.switching_scene = true;
         }
 
         if controller::is_key_down(Keys::Right) {
@@ -40,11 +55,13 @@ impl Scene for IntroScene {
 
         if controller::is_key_down(Keys::Left) {
             if self.snowflakes.len() > 5 {
-                self.snowflakes.pop().expect("expected there to be flakes in the vector");
+                self.snowflakes
+                    .pop()
+                    .expect("expected there to be flakes in the vector");
             }
         }
 
-        if controller::is_key_just_pressed(Keys::Z) {
+        if self.switching_scene_progress >= 100.0 {
             return Some(GameStates::GAME);
         }
 
@@ -71,5 +88,13 @@ impl Scene for IntroScene {
         for flake in &self.snowflakes {
             flake.draw();
         }
+
+        shapes::rect(
+            0,
+            160 - (130.0 * (self.switching_scene_progress / 100.0)) as i32,
+            160,
+            160,
+            DrawColors::Color4,
+        );
     }
 }
