@@ -10,6 +10,7 @@ pub trait Scene {
 #[derive(Debug)]
 pub enum GameStates {
     TITLE,
+    GAME
 }
 
 pub struct SceneManager {}

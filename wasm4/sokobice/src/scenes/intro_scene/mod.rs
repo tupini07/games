@@ -1,39 +1,29 @@
 use w4utils::{
     controller::{self, Keys},
-    graphics,
+    graphics::{self, DrawColors},
 };
 
 use crate::{
+    assets,
     scene_manager::{GameStates, Scene},
-    wasm4::{self, *}, assets,
+    wasm4::{self, *}, constants,
 };
 
-pub struct IntroScene {
-    posx: f32,
-    posy: f32,
-    radius: f32,
-    going_under: bool,
-}
+mod snowflakes;
 
-#[rustfmt::skip]
-const SMILEY: [u8; 8] = [
-    0b11000011,
-    0b10000001,
-    0b00100100,
-    0b00100100,
-    0b00000000,
-    0b00100100,
-    0b10011001,
-    0b11000011,
-];
+use self::snowflakes::Snowflake;
+
+pub struct IntroScene {
+    snowflakes: Vec<Snowflake>,
+    rng: oorandom::Rand32
+}
 
 impl Scene for IntroScene {
     fn new() -> IntroScene {
+        let mut rng = oorandom::Rand32::new(42);
         IntroScene {
-            posx: 0.0,
-            posy: 0.0,
-            radius: 15.0,
-            going_under: true,
+            snowflakes: Snowflake::make_snowflake_vec(30, &mut rng),
+            rng
         }
     }
 
@@ -42,49 +32,44 @@ impl Scene for IntroScene {
             graphics::set_draw_color_raw(0x1234);
         }
 
-        if controller::is_key_just_pressed(Keys::Left) {
-            trace("Just pressed LEFT key this frame!");
+        if controller::is_key_down(Keys::Right) {
+            if self.snowflakes.len() < 200 {
+                self.snowflakes.push(Snowflake::new(&mut self.rng));
+            }
+        }
+
+        if controller::is_key_down(Keys::Left) {
+            if self.snowflakes.len() > 5 {
+                self.snowflakes.pop().expect("expected there to be flakes in the vector");
+            }
         }
 
         if controller::is_key_just_pressed(Keys::Z) {
-            trace("changing to another scene!");
-            return Some(GameStates::TITLE);
+            return Some(GameStates::GAME);
+        }
+
+        for flake in &mut self.snowflakes {
+            flake.update();
         }
 
         return None;
     }
 
     fn draw(&self) {
-        fn draw_block(color: u8, x: i32, y: i32) {
-            let colors = [color | (color << 2) | (color << 4) | (color << 6); 16];
-            blit(&colors, x, y, 8, 8, BLIT_2BPP);
-        }
-
-        draw_block(1, 0, 0);
-        draw_block(0, 1, 0);
-
-        draw_block(1, 9, 0);
-
-        draw_block(2, 18, 0);
-
-        draw_block(3, 27, 0);
-
-        // text("Hello from Rust!", 10, 10);
-        /*
-        000100100011 < DRAW_COLORS
-        10101010 <<
-
-        */
-        // blit(&SMILEY, 76, 76, 8, 8, BLIT_1BPP);
-        // text("Press X to continue", 8, 90);
-
         wasm4::blit(
-            &assets::sprites::BACKGROUND1,
+            &assets::sprites::TITLE_BACKGROUND,
             0,
             0,
-            assets::sprites::BACKGROUND1_WIDTH,
-            assets::sprites::BACKGROUND1_HEIGHT,
-            assets::sprites::BACKGROUND1_FLAGS,
+            assets::sprites::TITLE_BACKGROUND_WIDTH,
+            assets::sprites::TITLE_BACKGROUND_HEIGHT,
+            assets::sprites::TITLE_BACKGROUND_FLAGS,
         );
+
+        graphics::shapes::text("Ice Fall", 15, 15, DrawColors::Color2);
+        graphics::shapes::text("Press Z to play", 17, 27, DrawColors::Color4);
+
+        for flake in &self.snowflakes {
+            flake.draw();
+        }
     }
 }
