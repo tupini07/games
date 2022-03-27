@@ -68,6 +68,7 @@ impl Player {
         let potential_new_x = self.pos.x + self.vel.x;
         if potential_new_x < 0 || potential_new_x > (160 - 16) {
             self.vel.x = 0;
+            self.facing_right = !self.facing_right;
         }
 
         self.pos.x += self.vel.x;
