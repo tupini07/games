@@ -8,7 +8,7 @@ use crate::{assets, common::vector2d::Vector2d, wasm4};
 const X_SPEED: i32 = 5;
 
 struct SkateMark {
-    pos: Vector2d,
+    pos: Vector2d<i32>,
     pub lifetime: u32,
 }
 
@@ -36,8 +36,8 @@ impl SkateMark {
 }
 
 pub struct Player {
-    pos: Vector2d,
-    vel: Vector2d,
+    pos: Vector2d<i32>,
+    vel: Vector2d<i32>,
     facing_right: bool,
     skate_marks: Vec<SkateMark>,
 }

@@ -1,11 +1,11 @@
-#[derive(Debug)]
-pub struct Vector2d {
-    pub x: i32,
-    pub y: i32,
+#[derive(Debug, Clone)]
+pub struct Vector2d<T> {
+    pub x: T,
+    pub y: T,
 }
 
-impl Vector2d {
-    pub fn new(x: i32, y: i32) -> Vector2d {
+impl<T: PartialOrd> Vector2d<T> {
+    pub fn new(x: T, y: T) -> Vector2d<T> {
         Vector2d { x, y }
     }
 }
