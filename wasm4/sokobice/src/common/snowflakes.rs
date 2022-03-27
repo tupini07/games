@@ -2,13 +2,15 @@ use std::ops::Range;
 
 use w4utils::graphics::{shapes, DrawColors};
 
+use crate::common::vector2d::Vector2d;
+
+
 #[derive(Debug)]
 pub struct Snowflake {
-    x: i32,
-    y: i32,
-    vx: i32,
-    vy: i32,
+    pos: Vector2d,
+    vel: Vector2d,
     size: u32,
+    lifetime: f32,
 }
 
 fn rand_range_i32(rng: &mut oorandom::Rand32, target_range: Range<i32>) -> i32 {
@@ -27,30 +29,33 @@ impl Snowflake {
 
     pub fn new(rng: &mut oorandom::Rand32) -> Snowflake {
         Snowflake {
-            x: rand_range_i32(rng, 0..160),
-            y: rand_range_i32(rng, 0..160),
-            vx: rand_range_i32(rng, 2..7),
-            vy: rand_range_i32(rng, 2..4),
+            pos: Vector2d::new(rand_range_i32(rng, 0..160), rand_range_i32(rng, 0..160)),
+            vel: Vector2d::new(rand_range_i32(rng, 2..7), rand_range_i32(rng, 2..4)),
             size: rng.rand_range(1..5),
+            lifetime: 0.0,
         }
     }
 
     pub fn update(&mut self) {
-        self.x += self.vx;
-        self.y += self.vy;
+        self.pos.x += self.vel.x;
+        self.pos.y += self.vel.y;
 
-        if self.x > 160 {
-            self.x = 0;
-        } else if self.x < 0 {
-            self.x = 160;
+        if self.pos.x > 160 {
+            self.pos.x = 0;
+        } else if self.pos.x < 0 {
+            self.pos.x = 160;
         }
 
-        if self.y > 160 {
-            self.y = 0;
+        if self.pos.y > 160 {
+            self.pos.y = 0;
         }
+
+        self.lifetime += 0.1;
+
+        self.vel.x += self.lifetime.sin() as i32;
     }
 
     pub fn draw(&self) {
-        shapes::circle(self.x, self.y, self.size, DrawColors::Color4);
+        shapes::circle(self.pos.x, self.pos.y, self.size, DrawColors::Color4);
     }
 }

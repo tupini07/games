@@ -4,14 +4,12 @@ use w4utils::{
 };
 
 use crate::{
-    assets, constants,
+    assets,
+    common::snowflakes::Snowflake,
+    constants,
     scene_manager::{GameStates, Scene},
-    wasm4::{self, *},
+    wasm4::{self},
 };
-
-mod snowflakes;
-
-use self::snowflakes::Snowflake;
 
 pub struct IntroScene {
     rng: oorandom::Rand32,
@@ -40,6 +38,11 @@ impl Scene for IntroScene {
                 self.snowflakes.push(Snowflake::new(&mut self.rng));
                 self.snowflakes.push(Snowflake::new(&mut self.rng));
                 self.snowflakes.push(Snowflake::new(&mut self.rng));
+            }
+
+            if constants::DEV_MODE {
+                // don't wait for switching anim unless we need to
+                self.switching_scene_progress = 100.0;
             }
         }
 

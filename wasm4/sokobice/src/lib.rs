@@ -11,6 +11,7 @@ use scenes::intro_scene::IntroScene;
 use crate::scene_manager::SceneManager;
 
 mod assets;
+mod common;
 mod constants;
 mod scene_manager;
 mod scenes;
@@ -44,7 +45,7 @@ fn update() {
         };
 
         if let Some(new_scene) = new_scene_opt {
-            if constants::DEBUG {
+            if constants::DEV_MODE {
                 wasm4::trace(format!("Changing scene to {:?}", new_scene));
             }
 

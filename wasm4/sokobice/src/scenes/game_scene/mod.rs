@@ -1,82 +1,47 @@
-use w4utils::{
-    controller::{self, Keys},
-    graphics,
-};
+use w4utils::controller::{self, Keys};
 
 use crate::{
+    assets,
+    common::snowflakes::Snowflake,
     scene_manager::{GameStates, Scene},
-    wasm4::{self, *}, assets,
+    wasm4::{self},
 };
 
-pub struct GameScene {
-    posx: f32,
-    posy: f32,
-    radius: f32,
-    going_under: bool,
-}
+use self::player::Player;
 
-#[rustfmt::skip]
-const SMILEY: [u8; 8] = [
-    0b11000011,
-    0b10000001,
-    0b00100100,
-    0b00100100,
-    0b00000000,
-    0b00100100,
-    0b10011001,
-    0b11000011,
-];
+mod player;
+
+pub struct GameScene {
+    player: Player,
+    rng: oorandom::Rand32,
+    snowflakes: Vec<Snowflake>,
+}
 
 impl Scene for GameScene {
     fn new() -> GameScene {
+        let mut rng = oorandom::Rand32::new(42);
         GameScene {
-            posx: 0.0,
-            posy: 0.0,
-            radius: 15.0,
-            going_under: true,
+            player: Player::new(160 / 2, 160 - 26),
+            snowflakes: Snowflake::make_snowflake_vec(7, &mut rng),
+            rng,
         }
     }
 
     fn update(&mut self) -> Option<GameStates> {
-        if controller::is_key_down(Keys::X) {
-            graphics::set_draw_color_raw(0x1234);
-        }
-
-        if controller::is_key_just_pressed(Keys::Left) {
-            trace("Just pressed LEFT key this frame!");
-        }
+        self.player.update();
 
         if controller::is_key_just_pressed(Keys::Z) {
             return Some(GameStates::TITLE);
+        }
+
+        for flake in &mut self.snowflakes {
+            flake.update();
         }
 
         return None;
     }
 
     fn draw(&self) {
-        fn draw_block(color: u8, x: i32, y: i32) {
-            let colors = [color | (color << 2) | (color << 4) | (color << 6); 16];
-            blit(&colors, x, y, 8, 8, BLIT_2BPP);
-        }
-
-        draw_block(1, 0, 0);
-        draw_block(0, 1, 0);
-
-        draw_block(1, 9, 0);
-
-        draw_block(2, 18, 0);
-
-        draw_block(3, 27, 0);
-
-        // text("Hello from Rust!", 10, 10);
-        /*
-        000100100011 < DRAW_COLORS
-        10101010 <<
-
-        */
-        // blit(&SMILEY, 76, 76, 8, 8, BLIT_1BPP);
-        // text("Press X to continue", 8, 90);
-
         wasm4::blit(
             &assets::sprites::BACKGROUND1,
             0,
@@ -85,5 +50,11 @@ impl Scene for GameScene {
             assets::sprites::BACKGROUND1_HEIGHT,
             assets::sprites::BACKGROUND1_FLAGS,
         );
+
+        self.player.draw();
+
+        for flake in &self.snowflakes {
+            flake.draw();
+        }
     }
 }
