@@ -1,4 +1,7 @@
-use w4utils::controller::{self, Keys};
+use w4utils::{
+    controller::{self, Keys},
+    graphics,
+};
 
 use crate::{
     assets,
@@ -7,14 +10,16 @@ use crate::{
     wasm4::{self},
 };
 
-use self::player::Player;
+use self::{clouds::Cloud, player::Player};
 
+mod clouds;
 mod player;
 
 pub struct GameScene {
     player: Player,
     rng: oorandom::Rand32,
     snowflakes: Vec<Snowflake>,
+    clouds: Vec<Cloud>,
 }
 
 impl Scene for GameScene {
@@ -23,6 +28,7 @@ impl Scene for GameScene {
         GameScene {
             player: Player::new(160 / 2, 160 - 26),
             snowflakes: Snowflake::make_snowflake_vec(7, &mut rng),
+            clouds: Cloud::make_clouds(&mut rng),
             rng,
         }
     }
@@ -36,6 +42,10 @@ impl Scene for GameScene {
 
         for flake in &mut self.snowflakes {
             flake.update();
+        }
+
+        for cloud in &mut self.clouds {
+            cloud.update(&mut self.rng);
         }
 
         return None;
@@ -52,6 +62,10 @@ impl Scene for GameScene {
         );
 
         self.player.draw();
+
+        for cloud in &self.clouds {
+            cloud.draw();
+        }
 
         for flake in &self.snowflakes {
             flake.draw();
