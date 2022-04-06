@@ -10,26 +10,35 @@ use crate::{
     wasm4::{self},
 };
 
-use self::{clouds::Cloud, player::Player};
+use self::{clouds::Cloud, falling_block::FallingBlock, player::Player};
 
 mod clouds;
+mod falling_block;
 mod player;
 
+const SPAWN_BLOCK_INITIAL_TIMER: u32 = 300;
+
 pub struct GameScene {
+    clouds: Vec<Cloud>,
+    falling_blocks: Vec<FallingBlock>,
+    passed_blocks: u32,
     player: Player,
     rng: oorandom::Rand32,
     snowflakes: Vec<Snowflake>,
-    clouds: Vec<Cloud>,
+    spawn_block_timer: u32,
 }
 
 impl Scene for GameScene {
     fn new() -> GameScene {
         let mut rng = oorandom::Rand32::new(42);
         GameScene {
-            player: Player::new(160 / 2, 160 - 26),
-            snowflakes: Snowflake::make_snowflake_vec(7, &mut rng),
             clouds: Cloud::make_clouds(&mut rng),
+            falling_blocks: vec![],
+            passed_blocks: 0,
+            player: Player::new(160 / 2, 160 - 26),
             rng,
+            snowflakes: Snowflake::make_snowflake_vec(7, &mut rng),
+            spawn_block_timer: 70,
         }
     }
 
@@ -40,12 +49,23 @@ impl Scene for GameScene {
             return Some(GameStates::TITLE);
         }
 
+        for block in &mut self.falling_blocks {
+            block.update();
+        }
+
         for flake in &mut self.snowflakes {
             flake.update();
         }
 
         for cloud in &mut self.clouds {
             cloud.update(&mut self.rng);
+        }
+
+        self.spawn_block_timer -= 1;
+        if self.spawn_block_timer <= 0 {
+            self.spawn_block_timer = SPAWN_BLOCK_INITIAL_TIMER;
+            self.falling_blocks
+                .push(FallingBlock::spawn_random_block(1, &mut self.rng));
         }
 
         return None;
@@ -62,6 +82,10 @@ impl Scene for GameScene {
         );
 
         self.player.draw();
+
+        for block in &self.falling_blocks {
+            block.draw();
+        }
 
         for cloud in &self.clouds {
             cloud.draw();
