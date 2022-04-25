@@ -5,4 +5,7 @@ table.insert(package.loaders or package.searchers, fennel.searcher)
 pp = function(x) print(fennel.view(x)) end
 
 lume = require("lib.lume")
+
+lg = love.graphics
+
 require("wrap")
