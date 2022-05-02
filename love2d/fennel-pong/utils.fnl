@@ -1,3 +1,4 @@
+
 {
  :table-contains-value
  (fn [tbl val]
@@ -8,4 +9,4 @@
  :get-text-width-px
  (fn [text]
    (* (text:len) 8))
-}
+ }

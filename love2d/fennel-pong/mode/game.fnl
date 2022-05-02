@@ -23,11 +23,18 @@
 ;; Draw stuff
 
 (fn draw-hud []
-  (lg.print (.. "P1: " player1.score) 10 10)
+  (fn draw-score [label score x y]
+    (let [full-label (.. label ": " score)
+          rect-width (utils.get-text-width-px full-label)]
+      (lg.setColor 0.2 0.7 0.2 1)
+      (lg.rectangle :fill x y rect-width 15)
+      (lg.setColor 1 1 1 1)
+      (lg.print full-label (+ 4 x) y))
+    )
+  (draw-score "P1" player1.score 10 10)
   (let [p2-score-txt (.. "P2: " player2.score)
-        p2-score-x (- (lg.getWidth) (utils.get-text-width-px p2-score-txt))]
-    (lg.print p2-score-txt p2-score-x 10)
-    ;; TODO draw rectangle under scores to prevent player overlapping (maybe slightly transparent?)
+        p2-score-x (- (lg.getWidth) (utils.get-text-width-px p2-score-txt) 10)]
+    (draw-score "P2" player2.score p2-score-x 10)
     ))
 
 (fn draw-player [player]
@@ -37,20 +44,22 @@
 
 (fn activate []
   (set ball {:pos {:x 0 :y 0} :vel {:x 0 :y 0}})
-  (set player1 {:pos {:x 20 :y 10} :score 0})
-  (set player2 {:pos {:x 680 :y 10} :score 0})
+  (set player1 {:pos {:x 20 :y 40} :score 0})
+  (set player2 {:pos {:x 680 :y 40} :score 0})
   (set game-info {:speed 200 :played-games 0}))
 
 ;; when module is reloaded we need to re-activate. Don't know if there's
 ;; a better way to do it. Maybe with globals?
 (activate)
 
-{: activate
- :draw (fn draw []
-         (draw-hud)
-         (draw-player player1)
-         (draw-player player2)
-         (draw-ball))
+{
+  :name "game"
+  : activate
+  :draw (fn draw []
+          (draw-player player1)
+          (draw-player player2)
+          (draw-ball)
+          (draw-hud))
  :update (fn update [dt set-mode]
            (update-player dt player1 :w :s)
            (update-player dt player2 :up :down)

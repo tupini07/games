@@ -1,0 +1,3 @@
+[submodule "love2d/fennel-pong/lib/love-api"]
+	path = love2d/fennel-pong/lib/love-api
+	url = git@github.com:love2d-community/love-api.git

@@ -1,50 +1,68 @@
 require("love.event")
-local view = require("lib.fennel").view
+local fennel = require("lib.fennel")
+local view = fennel.view
 local event, channel = ...
-local function _0_(...)
-  if channel then
-    local function _0_()
-      io.write("> ")
-      io.flush()
-      return io.read("*l")
-    end
-    local prompt = _0_
-    local function looper(input)
-      if input then
-        love.event.push(event, input)
-        print(channel:demand())
-        return looper(prompt())
-      end
-    end
-    return looper(prompt())
+local function display(s)
+  io.write(s)
+  return io.flush()
+end
+local function prompt()
+  return display("\n>> ")
+end
+local function read_chunk()
+  local input = io.read()
+  if input then
+    return (input .. "\n")
+  else
+    return nil
   end
 end
-_0_(...)
-local function start_repl()
-  local code = love.filesystem.read("stdio.fnl")
-  local function _1_()
-    if code then
-      return love.filesystem.newFileData(fennel.compileString(code), "io")
+local input = ""
+if channel then
+  local bytestream, clearstream = fennel.granulate(read_chunk)
+  local read
+  local function _2_()
+    local c = (bytestream() or 10)
+    input = (input .. string.char(c))
+    return c
+  end
+  read = fennel.parser(_2_)
+  while true do
+    prompt()
+    input = ""
+    local ok, ast = pcall(read)
+    if not ok then
+      display(("Parse error:" .. ast .. "\n"))
     else
-      return love.filesystem.read("lib/stdio.lua")
+      love.event.push(event, input)
+      display(channel:demand())
     end
   end
-  local lua = _1_()
-  local thread = love.thread.newThread(lua)
+else
+end
+local function start_repl()
+  local code = love.filesystem.read("stdio.fnl")
+  local lua_s
+  if code then
+    lua_s = love.filesystem.newFileData(fennel.compileString(code), "io")
+  else
+    lua_s = love.filesystem.read("lib/stdio.lua")
+  end
+  local thread = love.thread.newThread(lua_s)
   local io_channel = love.thread.newChannel()
   thread:start("eval", io_channel)
-  local function _2_(input)
-    local ok, val = pcall(fennel.eval, input)
-    local function _3_()
+  local function _6_(input0)
+    local ok, val = pcall(fennel.eval, input0)
+    local function _7_()
       if ok then
         return view(val)
       else
         return val
       end
     end
-    return io_channel:push(_3_())
+    return io_channel:push(_7_())
   end
-  love.handlers.eval = _2_
+  love.handlers.eval = _6_
   return nil
 end
-return ({start = start_repl})
+return {start = start_repl}

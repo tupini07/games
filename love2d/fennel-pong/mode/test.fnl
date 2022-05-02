@@ -2,6 +2,7 @@
 
 
 {
+  :name "test"
  :draw
  (fn draw []
    (love.graphics.print "Testss ♌ scene:" 0 0)
