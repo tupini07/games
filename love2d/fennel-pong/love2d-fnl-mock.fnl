@@ -6,11 +6,11 @@
 
 ;; load love2d definitions if we're not in a love process
 (when (not _G.is-love)
-  (let [current-dir (io.popen "cd")
-        dir-path (current-dir:read "*l")]
-    (local io (require :io))
-    (tset package :path (.. dir-path "/?.lua;" package.path))
-    )
+  ;; (let [current-dir (io.popen "cd")
+  ;;       dir-path (current-dir:read "*l")]
+  ;;   (local io (require :io))
+  ;;   (tset package :path (.. dir-path "/?.lua;" package.path))
+  ;;   )
 
   ;; when we're running in a love2d process, _G.love is aleady set
   (tset _G :love (let [lapi (require :lib.love-api.love_api)
