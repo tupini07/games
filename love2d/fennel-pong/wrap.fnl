@@ -1,4 +1,4 @@
-(tset package :path (.. "../?.lua;" package.path))
+(tset package :path (.. "./?.lua;../?.lua;" package.path))
 
 
 ;; set love2d locals as mocks if we're not running inside a love2d env
@@ -17,6 +17,7 @@
 ;; This module contains non-game-specific bits and mode-changing logic.
 (if _G.is-love
     (tset _G :repl (require "lib.stdio")))
+
 (local canvas (let [(w h) (_G.love.window.getMode)]
                 (_G.love.graphics.newCanvas w h)))
 (local controller (require :controller))
@@ -27,19 +28,20 @@
 (var mode (require :mode.intro))
 
 (fn set-mode [mode-name ...]
-  (set mode (require (.. "mode." mode-name )))
+  (set mode (require (.. "mode." mode-name)))
   (when mode.activate
     (mode.activate ...)))
 
 (fn safely [f]
-  (xpcall f #(set-mode :error-mode mode.name $ (fennel.traceback))))
-
+   (if _G.is-love
+    (xpcall f #(set-mode :error-mode mode.name $ (fennel.traceback)))
+    (xpcall f)))
 
 (fn love.load [args]
   (canvas:setFilter "nearest" "nearest")
-  (when (~= :web (. args 1)) (_G.repl.start))
+  (when (~= :web (. args 1)) (_G.repl.start)))
   ;; (sound.play :temple)
-  )
+  
 
 (var debug-txt "")
 (fn love.draw []
@@ -79,8 +81,8 @@
           (tset package.loaded name old)))))
 
   (when (= "escape" key)
-    (_G.love.event.quit))
-  )
+    (_G.love.event.quit)))
+  
 
 ;; (fn love.keypressed [key]
 ;;   (if (and (= key "f11") (= scale 2))

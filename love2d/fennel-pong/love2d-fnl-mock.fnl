@@ -25,18 +25,20 @@
                         (collect [_ fn-desc (ipairs module.functions)]
                           (values fn-desc.name dummy-fn))))))))
 
-(comment ;; this is an example of trying to create a macro that will in turn create
-  ;; proper dummy functions for each of the love2d methos. Basically these dummy functions
-  ;; should have a docstring inherited from the love_api, as well as a proper argument
-  ;; list.
-  ;; This effort didn't go anywhere but I'm leaving this here in case I ever pick it up
-  ;; in the future.
-  (macro make-dummy-function [[details]]
-    (let [args [:qwe :asds :zs]]
-      `(fn ,args
-         ,args
-         (.. "" (. ,details :description))
-         {})))
-  (var xx (aaa [testy]))
-  (xx)
-  (macrodebug (aaa [testy])))
+;; this is an example of trying to create a macro that will in turn create
+;; proper dummy functions for each of the love2d methos. Basically these dummy functions
+;; should have a docstring inherited from the love_api, as well as a proper argument
+;; list.
+;; This effort didn't go anywhere but I'm leaving this here in case I ever pick it up
+;; in the future.
+;;
+;; (macro make-dummy-function [[details]]
+;;   (let [args [:qwe :asds :zs]]
+;;     `(fn ,args
+;;        ,args
+;;        (.. "" (. ,details :description))
+;;        {})))
+
+;; (var xx (aaa [testy]))
+;; (xx)
+;; (macrodebug (aaa [testy]))
