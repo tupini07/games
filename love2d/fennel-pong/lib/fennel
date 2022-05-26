@@ -5087,12 +5087,12 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
   do
     local builtin_macros = [===[;; These macros are awkward because their definition cannot rely on the any
     ;; built-in macros, only special forms. (no when, no icollect, etc)
-    
+
     (fn copy [t]
       (let [out []]
         (each [_ v (ipairs t)] (table.insert out v))
         (setmetatable out (getmetatable t))))
-    
+
     (fn ->* [val ...]
       "Thread-first macro.
     Take the first value and splice it into the second form as its first argument.
@@ -5103,7 +5103,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
           (table.insert elt 2 x)
           (set x elt)))
       x)
-    
+
     (fn ->>* [val ...]
       "Thread-last macro.
     Same as ->, except splices the value into the last position of each form
@@ -5114,7 +5114,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
           (table.insert elt x)
           (set x elt)))
       x)
-    
+
     (fn -?>* [val ?e ...]
       "Nil-safe thread-first macro.
     Same as -> except will short-circuit with nil when it encounters a nil value."
@@ -5128,7 +5128,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                (if (not= nil ,tmp)
                    (-?> ,el ,...)
                    ,tmp)))))
-    
+
     (fn -?>>* [val ?e ...]
       "Nil-safe thread-last macro.
     Same as ->> except will short-circuit with nil when it encounters a nil value."
@@ -5142,7 +5142,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                (if (not= ,tmp nil)
                    (-?>> ,el ,...)
                    ,tmp)))))
-    
+
     (fn ?dot [tbl ...]
       "Nil-safe table look up.
     Same as . (dot), except will short-circuit with nil when it encounters
@@ -5155,7 +5155,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
           (table.insert lookups (# lookups) `(if (not= nil ,head)
                                                (set ,head (. ,head ,k)))))
         lookups))
-    
+
     (fn doto* [val ...]
       "Evaluate val and splice it into the first argument of subsequent forms."
       (let [name (gensym)
@@ -5166,7 +5166,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
             (table.insert form elt)))
         (table.insert form name)
         form))
-    
+
     (fn when* [condition body1 ...]
       "Evaluate body for side-effects only when condition is truthy."
       (assert body1 "expected body")
@@ -5174,7 +5174,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
            (do
              ,body1
              ,...)))
-    
+
     (fn with-open* [closable-bindings ...]
       "Like `let`, but invokes (v:close) on each binding after evaluating the body.
     The body is evaluated inside `xpcall` so that bound values will be closed upon
@@ -5191,7 +5191,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
         `(let ,closable-bindings
            ,closer
            (close-handlers# (_G.xpcall ,bodyfn ,traceback)))))
-    
+
     (fn extract-into [iter-tbl]
       (var (into iter-out found?) (values [] (copy iter-tbl)))
       (for [i (length iter-tbl) 2 -1]
@@ -5204,19 +5204,19 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
       (assert (or (not found?) (sym? into) (table? into) (list? into))
               "expected table, function call, or symbol in :into clause")
       (values into iter-out))
-    
+
     (fn collect* [iter-tbl key-expr value-expr ...]
       "Return a table made by running an iterator and evaluating an expression that
     returns key-value pairs to be inserted sequentially into the table.  This can
     be thought of as a table comprehension. The body should provide two expressions
     (used as key and value) or nil, which causes it to be omitted.
-    
+
     For example,
       (collect [k v (pairs {:apple \"red\" :orange \"orange\"})]
         (values v k))
     returns
       {:red \"apple\" :orange \"orange\"}
-    
+
     Supports an :into clause after the iterator to put results in an existing table.
     Supports early termination with an :until clause."
       (assert (and (sequence? iter-tbl) (>= (length iter-tbl) 2))
@@ -5231,20 +5231,20 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
              (match ,kv-expr
                (k# v#) (tset tbl# k# v#)))
            tbl#)))
-    
+
     (fn icollect* [iter-tbl value-expr ...]
       "Return a sequential table made by running an iterator and evaluating an
     expression that returns values to be inserted sequentially into the table.
     This can be thought of as a table comprehension. If the body evaluates to nil
     that element is omitted.
-    
+
     For example,
       (icollect [_ v (ipairs [1 2 3 4 5])]
         (when (not= v 3)
           (* v v)))
     returns
       [1 4 16 25]
-    
+
     Supports an :into clause after the iterator to put results in an existing table.
     Supports early termination with an :until clause."
       (assert (and (sequence? iter-tbl) (>= (length iter-tbl) 2))
@@ -5263,18 +5263,18 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                  (set i# (+ i# 1))
                  (tset tbl# i# val#))))
            tbl#)))
-    
+
     (fn accumulate* [iter-tbl body ...]
       "Accumulation macro.
-    
+
     It takes a binding table and an expression as its arguments.  In the binding
     table, the first form starts out bound to the second value, which is an initial
     accumulator. The rest are an iterator binding table in the format `each` takes.
-    
+
     It runs through the iterator in each step of which the given expression is
     evaluated, and the accumulator is set to the value of the expression. It
     eventually returns the final value of the accumulator.
-    
+
     For example,
       (accumulate [total 0
                    _ n (pairs {:apple 2 :orange 3})]
@@ -5293,11 +5293,11 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
              ,(if (list? accum-var)
                   (list (sym :values) (unpack accum-var))
                   accum-var))))
-    
+
     (fn double-eval-safe? [x type]
       (or (= :number type) (= :string type) (= :boolean type)
           (and (sym? x) (not (multi-sym? x)))))
-    
+
     (fn partial* [f ...]
       "Return a function with all arguments partially applied to f."
       (assert f "expected a function to partially apply")
@@ -5317,10 +5317,10 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
               `(fn [,_VARARG] ,body)
               `(let ,bindings
                  (fn [,_VARARG] ,body))))))
-    
+
     (fn pick-args* [n f]
       "Create a function of arity n that applies its arguments to f.
-    
+
     For example,
       (pick-args 2 func)
     expands to
@@ -5335,10 +5335,10 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
           (tset bindings i (gensym)))
         `(fn ,bindings
            (,f ,(unpack bindings)))))
-    
+
     (fn pick-values* [n ...]
       "Evaluate to exactly n values.
-    
+
     For example,
       (pick-values 2 ...)
     expands to
@@ -5353,7 +5353,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
         (if (= n 0) `(values)
             `(let [,let-syms ,let-values]
                (values ,(unpack let-syms))))))
-    
+
     (fn lambda* [...]
       "Function literal with nil-checked arguments.
     Like `fn`, but will throw an exception if a declared argument is passed in as
@@ -5380,26 +5380,26 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                                             (tostring a)
                                             (or a.filename :unknown)
                                             (or a.line "?"))))))
-    
+
         (assert (= :table (type arglist)) "expected arg list")
         (each [_ a (ipairs arglist)]
           (check! a))
         (if empty-body?
             (table.insert args (sym :nil)))
         `(fn ,(unpack args))))
-    
+
     (fn macro* [name ...]
       "Define a single macro."
       (assert (sym? name) "expected symbol for macro name")
       (local args [...])
       `(macros {,(tostring name) (fn ,(unpack args))}))
-    
+
     (fn macrodebug* [form return?]
       "Print the resulting form after performing macroexpansion.
     With a second argument, returns expanded form as a string instead of printing."
       (let [handle (if return? `do `print)]
         `(,handle ,(view (macroexpand form _SCOPE)))))
-    
+
     (fn import-macros* [binding1 module-name1 ...]
       "Bind a table of macros from each macro module according to a binding form.
     Each binding form can be either a symbol or a k/v destructuring table.
@@ -5427,9 +5427,9 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                             (tostring modname)))
                 (tset scope.macros import-key (. macros* macro-name))))))
       nil)
-    
+
     ;;; Pattern matching
-    
+
     (fn match-values [vals pattern unifications match-pattern]
       (let [condition `(and)
             bindings []]
@@ -5440,7 +5440,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
             (each [_ b (ipairs subbindings)]
               (table.insert bindings b))))
         (values condition bindings)))
-    
+
     (fn match-table [val pattern unifications match-pattern]
       (let [condition `(and (= (_G.type ,val) :table))
             bindings []]
@@ -5476,7 +5476,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                 (each [_ b (ipairs subbindings)]
                   (table.insert bindings b)))))
         (values condition bindings)))
-    
+
     (fn match-pattern [vals pattern unifications]
       "Take the AST of values and a single pattern and returns a condition
     to determine if it matches as well as a list of bindings to
@@ -5515,7 +5515,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
             (match-table val pattern unifications match-pattern)
             ;; literal value
             (values `(= ,val ,pattern) []))))
-    
+
     (fn match-condition [vals clauses]
       "Construct the actual `if` AST for the given match values and clauses."
       (if (not= 0 (% (length clauses) 2)) ; treat odd final clause as default
@@ -5529,7 +5529,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
             (table.insert out `(let ,bindings
                                  ,body))))
         out))
-    
+
     (fn match-val-syms [clauses]
       "How many multi-valued clauses are there? return a list of that many gensyms."
       (let [syms (list (gensym))]
@@ -5542,7 +5542,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                   (if (not (. syms valnum))
                       (tset syms valnum (gensym)))))))
         syms))
-    
+
     (fn match* [val ...]
       ;; Old implementation of match macro, which doesn't directly support
       ;; `where' and `or'. New syntax is implemented in `match-where',
@@ -5552,9 +5552,9 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
         ;; protect against multiple evaluation of the value, bind against as
         ;; many values as we ever match against in the clauses.
         (list `let [vals val] (match-condition vals clauses))))
-    
+
     ;; Construction of old match syntax from new syntax
-    
+
     (fn partition-2 [seq]
       ;; Partition `seq` by 2.
       ;; If `seq` has odd amount of elements, the last one is dropped.
@@ -5574,7 +5574,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
             (if (not= nil v2)
                 (table.insert res [v1 v2]))))
         res))
-    
+
     (fn transform-or [[_ & pats] guards]
       ;; Transforms `(or pat pats*)` lists into match `guard` patterns.
       ;;
@@ -5583,7 +5583,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
         (each [_ pat (ipairs pats)]
           (table.insert res (list pat `? (unpack guards))))
         res))
-    
+
     (fn transform-cond [cond]
       ;; Transforms `where` cond into sequence of `match` guards.
       ;;
@@ -5598,12 +5598,12 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                 [(list second `? (unpack cond 3))]))
           :else
           [cond]))
-    
+
     (fn match-where [val ...]
       "Perform pattern matching on val. See reference for details.
-    
+
     Syntax:
-    
+
     (match data-expression
       pattern body
       (where pattern guard guards*) body
@@ -5617,7 +5617,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
             (table.insert match-body cond)
             (table.insert match-body body)))
         (match* val (unpack match-body))))
-    
+
     (fn match-try-step [expr else pattern body ...]
       (if (= nil pattern body)
           expr
@@ -5629,14 +5629,14 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
                 ,pattern ,(match-try-step body else ...)
                 ,(unpack else)))
             ,expr)))
-    
+
     (fn match-try* [expr pattern body ...]
       "Perform chained pattern matching for a sequence of steps which might fail.
-    
+
     The values from the initial expression are matched against the first pattern.
     If they match, the first body is evaluated and its values are matched against
     the second pattern, etc.
-    
+
     If there is a (catch pat1 body1 pat2 body2 ...) form at the end, any mismatch
     from the steps will be tried against these patterns in sequence as a fallback
     just like a normal match. If there is no catch, the mismatched values will be
@@ -5651,7 +5651,7 @@ package.preload["fennel"] = package.preload["fennel"] or function(...)
         (assert (= 0 (math.fmod (length catch) 2))
                 "expected every catch pattern to have a body")
         (match-try-step expr catch (unpack clauses))))
-    
+
     {:-> ->*
      :->> ->>*
      :-?> -?>*
