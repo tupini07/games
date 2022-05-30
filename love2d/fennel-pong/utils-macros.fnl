@@ -10,7 +10,7 @@
         b (/ (tonumber bs 16) 255)
         a (/ (tonumber as 16) 255)
         ]
-    `(_G.love.graphics.setColor ,r ,g ,b ,a)))
+    `(love.graphics.setColor ,r ,g ,b ,a)))
 
 (fn set-color-hex-rgb [hex-str]
   (assert-compile (= (hex-str:len) 6)

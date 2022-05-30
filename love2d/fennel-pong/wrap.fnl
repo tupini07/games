@@ -1,9 +1,5 @@
 (tset package :path (.. "./?.lua;../?.lua;" package.path))
-
-
-;; set love2d locals as mocks if we're not running inside a love2d env
-;; e.g. when doing interactive development with fennel repl
-(require "love2d-fnl-mock")
+(tset _G :is-love (not= nil _G.love))
 
 (tset _G :pp (fn [x]
                (let [fennel (require "lib.fennel")]
@@ -13,13 +9,14 @@
 
 (tset _G :lume (require "lib.lume"))
 
-
 ;; This module contains non-game-specific bits and mode-changing logic.
 (if _G.is-love
     (tset _G :repl (require "lib.stdio")))
 
-(local canvas (let [(w h) (_G.love.window.getMode)]
-                (_G.love.graphics.newCanvas w h)))
+(local love (require :love-api))
+
+(local canvas (let [(w h) (love.window.getMode)]
+                (love.graphics.newCanvas w h)))
 (local controller (require :controller))
 
 ;; (local sound (require "sound"))
@@ -28,6 +25,7 @@
 (var mode (require :mode.intro))
 
 (fn set-mode [mode-name ...]
+  (print "mode name:: " mode-name)
   (set mode (require (.. "mode." mode-name)))
   (when mode.activate
     (mode.activate ...)))
@@ -45,14 +43,14 @@
 
 (var debug-txt "")
 (fn love.draw []
-  (_G.love.graphics.setCanvas canvas)
-  (_G.love.graphics.clear)
-  (_G.love.graphics.setColor 1 1 1)
+  (love.graphics.setCanvas canvas)
+  (love.graphics.clear)
+  (love.graphics.setColor 1 1 1)
   (safely mode.draw)
-  (_G.love.graphics.print debug-txt 11 305)
-  (_G.love.graphics.setCanvas)
-  (_G.love.graphics.setColor 1 1 1)
-  (_G.love.graphics.draw canvas 0 0 0 scale scale))
+  (love.graphics.print debug-txt 11 305)
+  (love.graphics.setCanvas)
+  (love.graphics.setColor 1 1 1)
+  (love.graphics.draw canvas 0 0 0 scale scale))
 
 (fn love.update [dt]
   (when mode.update
@@ -81,7 +79,7 @@
           (tset package.loaded name old)))))
 
   (when (= "escape" key)
-    (_G.love.event.quit)))
+    (love.event.quit)))
   
 
 ;; (fn love.keypressed [key]
