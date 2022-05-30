@@ -1,3 +1,4 @@
+(local love (require :love-api))
 (local utils (require :utils))
 
 (var just-pressed-keys [])

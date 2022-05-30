@@ -3,6 +3,8 @@
 (local utils (require :utils))
 (local controller (require :controller))
 
+(local exports {:name :game})
+
 (local player-height 70)
 (local player-width 20)
 
@@ -45,7 +47,7 @@
 
 (fn draw-ball [])
 
-(fn activate []
+(fn exports.activate []
   (set ball {:pos {:x 0 :y 0} :vel {:x 0 :y 0}})
   (set player1 {:pos {:x 20 :y 40} :score 0})
   (set player2 {:pos {:x 680 :y 40} :score 0})
@@ -53,16 +55,17 @@
 
 ;; when module is reloaded we need to re-activate. Don't know if there's
 ;; a better way to do it. Maybe with globals?
-(activate)
+(exports.activate)
 
-{:name :game
- : activate
- :draw (fn draw []
+(fn exports.draw []
          (draw-player player1)
          (draw-player player2)
          (draw-ball)
          (draw-hud))
- :update (fn update [dt set-mode]
-           (update-player dt player1 :w :s)
-           (update-player dt player2 :up :down)
-           (update-ball))}
+
+(fn exports.update [dt set-mode]
+ (update-player dt player1 :w :s)
+ (update-player dt player2 :up :down)
+ (update-ball))
+
+exports
