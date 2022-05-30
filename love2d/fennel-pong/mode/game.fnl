@@ -1,3 +1,5 @@
+(local love (require :love-api))
+
 (local utils (require :utils))
 (local controller (require :controller))
 
@@ -26,18 +28,20 @@
   (fn draw-score [label score x y]
     (let [full-label (.. label ": " score)
           rect-width (utils.get-text-width-px full-label)]
-      (lg.setColor 0.2 0.7 0.2 1)
-      (lg.rectangle :fill x y rect-width 15)
-      (lg.setColor 1 1 1 1)
-      (lg.print full-label (+ 4 x) y)))
+      (love.graphics.setColor 0.2 0.7 0.2 1)
+      (love.graphics.rectangle :fill x y rect-width 15)
+      (love.graphics.setColor 1 1 1 1)
+      (love.graphics.print full-label (+ 4 x) y)))
 
   (draw-score :P1 player1.score 10 10)
   (let [p2-score-txt (.. "P2: " player2.score)
-        p2-score-x (- (lg.getWidth) (utils.get-text-width-px p2-score-txt) 10)]
+        p2-score-x (- (love.graphics.getWidth)
+                      (utils.get-text-width-px p2-score-txt) 10)]
     (draw-score :P2 player2.score p2-score-x 10)))
 
 (fn draw-player [player]
-  (lg.rectangle :fill player.pos.x player.pos.y player-width player-height))
+  (love.graphics.rectangle :fill player.pos.x player.pos.y player-width
+                           player-height))
 
 (fn draw-ball [])
 

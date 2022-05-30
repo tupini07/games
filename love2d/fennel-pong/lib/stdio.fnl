@@ -13,7 +13,7 @@
   (io.flush))
 
 (fn prompt []
-  (display "\n>> "))
+  (display "\n[LOVE]>> "))
 
 (fn read-chunk []
   (let [input (io.read)]
@@ -34,10 +34,10 @@
       (let [(ok ast) (pcall read)]
         (if (not ok)
             (do
-              (display (.. "Parse error:" ast "\n"))
+              (display (.. "Parse error:" ast "\n")))
               ;; fixme: not sure why the following fails
               ;; (clearstream)
-              )
+              
             (do
               (love.event.push event input)
               (display (: channel :demand))))))))

@@ -1,5 +1,7 @@
 (import-macros um :utils-macros)
 (local controller (require :controller))
+(local love (require :love-api))
+
 (var counter 0)
 
 {:name :intro

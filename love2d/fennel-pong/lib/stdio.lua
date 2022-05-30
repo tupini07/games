@@ -7,7 +7,7 @@ local function display(s)
   return io.flush()
 end
 local function prompt()
-  return display("\n>> ")
+  return display("\n[LOVE]>> ")
 end
 local function read_chunk()
   local input = io.read()

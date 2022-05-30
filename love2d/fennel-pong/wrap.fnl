@@ -1,19 +1,24 @@
-(tset package :path (.. "./?.lua;../?.lua;" package.path))
-(tset _G :is-love (not= nil _G.love))
+(set package.path (.. "./?.lua;../?.lua;" package.path))
 
-(tset _G :pp (fn [x]
-               (let [fennel (require :lib.fennel)]
-                 (-> x
-                     fennel.view
-                     print))))
+;; !! change when building for release
+(set _G.is-debug true)
+;; (set _G.is-debug false)
 
-(tset _G :lume (require :lib.lume))
+(set _G.is-love (not= nil _G.love))
+
+(set _G.lume (require :lib.lume))
+(set _G.pp (fn [x]
+             (let [fennel (require :lib.fennel)]
+               (-> x
+                   fennel.view
+                   print))))
 
 ;; This module contains non-game-specific bits and mode-changing logic.
 (if _G.is-love
     (tset _G :repl (require :lib.stdio)))
 
 (local love (require :love-api))
+(local log (require :logger))
 
 (local canvas (let [(w h) (love.window.getMode)]
                 (love.graphics.newCanvas w h)))
@@ -26,7 +31,7 @@
 (var mode (require :mode.intro))
 
 (fn set-mode [mode-name ...]
-  (print "mode name:: " mode-name)
+  (log.debug "switching to mode name:" mode-name)
   (set mode (require (.. :mode. mode-name)))
   (when mode.activate
     (mode.activate ...)))
