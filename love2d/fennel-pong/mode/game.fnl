@@ -29,13 +29,12 @@
       (lg.setColor 0.2 0.7 0.2 1)
       (lg.rectangle :fill x y rect-width 15)
       (lg.setColor 1 1 1 1)
-      (lg.print full-label (+ 4 x) y))
-    )
-  (draw-score "P1" player1.score 10 10)
+      (lg.print full-label (+ 4 x) y)))
+
+  (draw-score :P1 player1.score 10 10)
   (let [p2-score-txt (.. "P2: " player2.score)
         p2-score-x (- (lg.getWidth) (utils.get-text-width-px p2-score-txt) 10)]
-    (draw-score "P2" player2.score p2-score-x 10)
-    ))
+    (draw-score :P2 player2.score p2-score-x 10)))
 
 (fn draw-player [player]
   (lg.rectangle :fill player.pos.x player.pos.y player-width player-height))
@@ -52,14 +51,13 @@
 ;; a better way to do it. Maybe with globals?
 (activate)
 
-{
-  :name "game"
-  : activate
-  :draw (fn draw []
-          (draw-player player1)
-          (draw-player player2)
-          (draw-ball)
-          (draw-hud))
+{:name :game
+ : activate
+ :draw (fn draw []
+         (draw-player player1)
+         (draw-player player2)
+         (draw-ball)
+         (draw-hud))
  :update (fn update [dt set-mode]
            (update-player dt player1 :w :s)
            (update-player dt player2 :up :down)

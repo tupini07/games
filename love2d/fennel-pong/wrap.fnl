@@ -2,21 +2,22 @@
 (tset _G :is-love (not= nil _G.love))
 
 (tset _G :pp (fn [x]
-               (let [fennel (require "lib.fennel")]
+               (let [fennel (require :lib.fennel)]
                  (-> x
                      fennel.view
                      print))))
 
-(tset _G :lume (require "lib.lume"))
+(tset _G :lume (require :lib.lume))
 
 ;; This module contains non-game-specific bits and mode-changing logic.
 (if _G.is-love
-    (tset _G :repl (require "lib.stdio")))
+    (tset _G :repl (require :lib.stdio)))
 
 (local love (require :love-api))
 
 (local canvas (let [(w h) (love.window.getMode)]
                 (love.graphics.newCanvas w h)))
+
 (local controller (require :controller))
 
 ;; (local sound (require "sound"))
@@ -26,20 +27,21 @@
 
 (fn set-mode [mode-name ...]
   (print "mode name:: " mode-name)
-  (set mode (require (.. "mode." mode-name)))
+  (set mode (require (.. :mode. mode-name)))
   (when mode.activate
     (mode.activate ...)))
 
 (fn safely [f]
-   (if _G.is-love
-    (xpcall f #(set-mode :error-mode mode.name $ (fennel.traceback)))
-    (xpcall f)))
+  (if _G.is-love
+      (xpcall f #(set-mode :error-mode mode.name $ (fennel.traceback)))
+      (xpcall f)))
 
 (fn love.load [args]
-  (canvas:setFilter "nearest" "nearest")
-  (when (~= :web (. args 1)) (_G.repl.start)))
-  ;; (sound.play :temple)
-  
+  (canvas:setFilter :nearest :nearest)
+  (when (not= :web (. args 1))
+    (_G.repl.start)))
+
+;; (sound.play :temple)
 
 (var debug-txt "")
 (fn love.draw []
@@ -55,18 +57,15 @@
 (fn love.update [dt]
   (when mode.update
     (safely #(mode.update dt set-mode)))
-
-  (if (controller.is-key-just-pressed "y")
-      (set debug-txt "pottt"))
-
+  (if (controller.is-key-just-pressed :y)
+      (set debug-txt :pottt))
   (controller.remove-just-pressed-keys))
-
 
 (fn love.keypressed [key scancode isrepeat]
   (controller.register-keypress key)
   ;; LIVE RELOADING
-  (when (= "f5" key)
-    (let [name (.. "mode." mode.name)]
+  (when (= :f5 key)
+    (let [name (.. :mode. mode.name)]
       (let [old (require name)
             _ (tset package.loaded name nil)
             new (require name)]
@@ -77,10 +76,8 @@
             (when (not (. new k))
               (tset old k nil)))
           (tset package.loaded name old)))))
-
-  (when (= "escape" key)
+  (when (= :escape key)
     (love.event.quit)))
-  
 
 ;; (fn love.keypressed [key]
 ;;   (if (and (= key "f11") (= scale 2))

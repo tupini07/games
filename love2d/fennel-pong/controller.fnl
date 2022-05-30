@@ -9,15 +9,12 @@
   (set just-pressed-keys []))
 
 (fn is-key-just-pressed [key]
-  (utils.table-contains-value just-pressed-keys
-                              key))
+  (utils.table-contains-value just-pressed-keys key))
 
 (fn is-key-down [key]
   (love.keyboard.isDown key))
 
-{
- : register-keypress
+{: register-keypress
  : remove-just-pressed-keys
  : is-key-just-pressed
- : is-key-down
-}
+ : is-key-down}

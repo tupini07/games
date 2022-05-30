@@ -14,8 +14,8 @@
                counter-x (- s-width counter-width)]
            (love.graphics.print counter-str counter-x 10)
            (um.set-color-hex-rgb :00ff00)
-           (love.graphics.line counter-x 26
-                                  (+ counter-x (- counter-width 16)) 26)))
+           (love.graphics.line counter-x 26 (+ counter-x (- counter-width 16))
+                               26)))
  :update (fn update [dt set-mode]
            (set counter (+ counter 1))
            ;; zero counter if pressed z
