@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <box2d/box2d.h>
+#include <LDtkLoader/Project.hpp>
 #include <LDtkLoader/World.hpp>
 #include <fmt/core.h>
 
@@ -20,9 +21,11 @@ b2World *GameScene::world = nullptr;
 GameScene::GameScene()
 {
 	player = new Player();
+	ldtkProject = new ldtk::Project();
 
-	ldtkWorld = new ldtk::World();
-	ldtkWorld->loadFromFile(AppConstants::GetAssetPath("world.ldtk"));
+	ldtkProject->loadFromFile(AppConstants::GetAssetPath("world.ldtk"));
+
+	ldtkWorld = &ldtkProject->getWorld();
 
 	current_level = -1;
 	set_selected_level(0);
@@ -30,9 +33,12 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	delete ldtkProject;
 	delete ldtkWorld;
 	delete player;
 	delete world;
+
+	ldtkProject = nullptr;
 
 	UnloadTexture(renderedLevelTexture);
 	UnloadTexture(currentTilesetTexture);
@@ -125,7 +131,7 @@ void GameScene::set_selected_level(int lvl)
 			// if it is a tile layer then draw every tile to the frame buffer
 			for (auto &&tile : layer.allTiles())
 			{
-				auto source_pos = tile.texture_position;
+				auto source_pos = tile.getTextureRect();
 				auto tile_size = float(layer.getTileset().tile_size);
 
 				Rectangle source_rect = {
@@ -136,8 +142,8 @@ void GameScene::set_selected_level(int lvl)
 				};
 
 				Vector2 target_pos = {
-					(float)tile.position.x,
-					(float)tile.position.y,
+					(float)tile.getPosition().x,
+					(float)tile.getPosition().y,
 				};
 
 				DrawTextureRec(currentTilesetTexture, source_rect, target_pos, WHITE);

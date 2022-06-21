@@ -2,6 +2,7 @@
 
 #include <box2d/box2d.h>
 #include <raylib.h>
+#include <LDtkLoader/Project.hpp>
 #include <LDtkLoader/World.hpp>
 
 #include "../BaseScene.hpp"
@@ -15,7 +16,8 @@ class GameScene : public BaseScene
 private:
     int current_level;
 
-    ldtk::World *ldtkWorld{};
+    ldtk::Project *ldtkProject{};
+    const ldtk::World *ldtkWorld{};
     const ldtk::Level *currentLdtkLevel{};
 
     Texture2D currentTilesetTexture;

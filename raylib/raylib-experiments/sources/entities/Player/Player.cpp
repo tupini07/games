@@ -24,7 +24,11 @@ Player::Player()
 
 	auto make_player_frame_rect = [](float frame_num) -> Rectangle
 	{
-		return {.x = frame_num * 24.0f, .y = 0.0f, .width = 24.0f, .height = 24.0f};
+		return {
+			.x = frame_num * 24.0f,
+			.y = 0.0f,
+			.width = 24.0f,
+			.height = 24.0f};
 	};
 
 	animation_map[IDLE] = {
