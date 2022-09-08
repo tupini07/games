@@ -132,12 +132,27 @@ function update_player()
 	
 	local new_x = px + pvel.x
 	local new_y = py + pvel.y
+
+--	if fget(mget(flr(nx/8),flr(ny/8)),0) then
+--	else
+--		px = nx
+--		py = ny
+--	end
+ 
+ -- todo: do smart 1px at a time
+	move_player(pvel.x, pvel.y)
+end
+
+function move_player(dx, dy)
+	local rx = flr(dx)	
+	local ry = flr(dy)
 	
-	if fget(mget(flr(new_x/8),flr(new_y/8)),0) then
-	else
-		px = new_x
-		py = new_y
+	while rx ~= 0 or ry ~= 0 do
+		print("hi")
+		rx -= 1
+		ry -= 1
 	end
+
 end
 
 function draw_player()
