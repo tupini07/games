@@ -1,0 +1,16 @@
+{
+    "collections": [
+        {
+            "name": "core",
+            "path": "C:\\Users\\andreatupini\\scoop\\apps\\odin\\current\\core"
+        },
+        {
+            "name": "vendor",
+            "path": "C:\\Users\\andreatupini\\scoop\\apps\\odin\\current\\vendor"
+        }
+    ],
+    "enable_document_symbols": true,
+    "enable_semantic_tokens": false,
+    "enable_hover": true,
+    "enable_snippets": true
+}
