@@ -1,0 +1,11 @@
+help:
+    just --list
+
+run:
+    zig build run
+
+# instead of having git submodules, download dep repos directly
+download-deps:
+    mkdir -p deps
+    
+    git clone https://github.com/Not-Nik/raylib-zig.git deps/raylib-zig
