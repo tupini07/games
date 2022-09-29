@@ -51,6 +51,10 @@ impl Scene for GameScene {
 
         for block in &mut self.falling_blocks {
             block.update();
+            if block.collidable && block.pos.y > 145 {
+                block.collidable = false;
+                self.passed_blocks += 1;
+            }
         }
 
         for flake in &mut self.snowflakes {
@@ -65,7 +69,7 @@ impl Scene for GameScene {
         if self.spawn_block_timer <= 0 {
             self.spawn_block_timer = SPAWN_BLOCK_INITIAL_TIMER;
             self.falling_blocks
-                .push(FallingBlock::spawn_random_block(1, &mut self.rng));
+                .push(FallingBlock::spawn_random_block(&mut self.rng));
         }
 
         return None;
@@ -94,5 +98,13 @@ impl Scene for GameScene {
         for flake in &self.snowflakes {
             flake.draw();
         }
+
+        // draw score
+        graphics::shapes::rect(1, 1, 76, 12, w4utils::graphics::DrawColors::Color4);
+        graphics::shapes::rect(2, 2, 74, 10, w4utils::graphics::DrawColors::Color3);
+
+        graphics::set_primary_color(w4utils::graphics::DrawColors::Color1);
+        graphics::set_secondary_color(w4utils::graphics::DrawColors::Color2);
+        wasm4::text(format!("Score: {: >2}", self.passed_blocks), 3, 3);
     }
 }

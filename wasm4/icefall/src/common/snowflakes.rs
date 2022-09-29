@@ -2,7 +2,6 @@ use std::ops::Range;
 
 use w4utils::graphics::{shapes, DrawColors};
 
-use crate::common::math;
 use crate::common::vector2d::Vector2d;
 
 #[derive(Debug)]

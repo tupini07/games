@@ -1,6 +1,8 @@
 help: 
     just --list
 
+develop:
+    w4 watch target/wasm32-unknown-unknown/debug/cart.wasm
 
 bundle: 
     cargo build --release

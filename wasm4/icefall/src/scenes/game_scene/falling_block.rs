@@ -6,27 +6,29 @@ use crate::{assets, common::vector2d::Vector2d, wasm4};
 const BLOCK_UPDATE_TIME: u32 = 2;
 
 pub struct FallingBlock {
-    pos: Vector2d<u32>,
+    pub pos: Vector2d<u32>,
     vel: u32,
     time_to_update: u32,
+    pub collidable: bool,
 }
 
 impl FallingBlock {
-    pub fn spawn_random_block(vel: u32, rng: &mut Rand32) -> FallingBlock {
+    pub fn spawn_random_block(rng: &mut Rand32) -> FallingBlock {
         FallingBlock {
             pos: Vector2d::new(
                 rng.rand_range(5..(160 - assets::sprites::BLOCK1_WIDTH - 5)),
                 10,
             ),
-            vel: vel,
+            vel: rng.rand_range(1..3),
             time_to_update: rng.rand_range(1..BLOCK_UPDATE_TIME),
+            collidable: true,
         }
     }
 
     pub fn update(&mut self) {
         self.time_to_update -= 1;
         if self.time_to_update <= 0 {
-            self.pos.y += 1;
+            self.pos.y += self.vel;
             self.time_to_update = BLOCK_UPDATE_TIME;
         }
     }
