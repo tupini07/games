@@ -26,6 +26,7 @@ pub struct GameScene {
     rng: oorandom::Rand32,
     snowflakes: Vec<Snowflake>,
     spawn_block_timer: u32,
+    spawn_block_timer_speed: f32,
 }
 
 impl Scene for GameScene {
@@ -39,6 +40,7 @@ impl Scene for GameScene {
             rng,
             snowflakes: Snowflake::make_snowflake_vec(7, &mut rng),
             spawn_block_timer: 70,
+            spawn_block_timer_speed: 1.0,
         }
     }
 
@@ -65,11 +67,17 @@ impl Scene for GameScene {
             cloud.update(&mut self.rng);
         }
 
-        self.spawn_block_timer -= 1;
+        self.spawn_block_timer -= self.spawn_block_timer_speed as u32;
         if self.spawn_block_timer <= 0 {
             self.spawn_block_timer = SPAWN_BLOCK_INITIAL_TIMER;
             self.falling_blocks
                 .push(FallingBlock::spawn_random_block(&mut self.rng));
+
+            // increase timer speed
+            if self.spawn_block_timer_speed < 6.0 {
+                self.spawn_block_timer_speed += 0.1;
+                wasm4::trace(format!("new spawn speed: {}", self.spawn_block_timer_speed));
+            }
         }
 
         return None;
