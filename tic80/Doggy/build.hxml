@@ -1,0 +1,8 @@
+-js out.js
+-main Main.hx
+--class-path src
+--dce full
+-D js_classic
+-D js_unflatten
+
+--macro nullSafety("utils")

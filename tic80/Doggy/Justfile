@@ -1,0 +1,28 @@
+develop:
+    watchexec -e hx just build-dev
+
+build-dev:
+    @echo "--- start debug build ---"
+    @haxe debug.hxml
+    @python3 replace_code.py out.js
+    @du -h *.js
+    @echo "--- end debug build ---"
+
+build-prod:
+    @echo "--- start prod build ---"
+    @haxe build.hxml
+    @uglifyjs out.js -o out.min.js
+    @python3 replace_code.py out.min.js
+    @du -h *.js
+    @echo "--- end prod build ---"
+
+
+export-tiled:
+    mkdir -p temp_dir
+    tic80 --fs=$(pwd) --cmd="load Doggy.js & export tiles temp_dir/tiles.png" --cli
+    tic80 --fs=$(pwd) --cmd="load Doggy.js & export map temp_dir/world.map" --cli
+    cd temp_dir && tic2tiled world.map world.tmx
+
+import-tiled:
+    cd temp_dir && tic2tiled world.tmx world.map
+    tic80 --fs=$(pwd) --cmd="load Doggy.js & import map temp_dir/world.map" --cli
