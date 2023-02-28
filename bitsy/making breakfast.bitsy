@@ -1,46 +1,50 @@
 Making breakfast
 
-# BITSY VERSION 7.11
+# BITSY VERSION 8.4
 
+! VER_MAJ 8
+! VER_MIN 4
 ! ROOM_FORMAT 1
+! DLG_COMPAT 0
+! TXT_MODE 0
 
 PAL 0
-NAME blueprint
 228,203,181
 255,105,94
 255,255,255
+NAME blueprint
 
 PAL 1
-NAME dream
 254,141,229
 152,94,255
 227,233,251
+NAME dream
 
 ROOM 0
 a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
 a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
 a,a,0,0,0,0,b,0,0,0,0,0,0,0,a,a
 a,a,0,0,0,0,b,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
+a,a,a,0,0,0,0,0,0,0,0,0,0,0,a,a
 a,a,b,b,b,b,b,0,0,0,0,0,0,0,a,a
 a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
-a,a,0,0,0,0,0,0,0,0,0,0,0,0,a,a
+a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,d
 a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
 a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
-NAME my room
-EXT 15,7 1 13,13 FX slide_u DLG 3
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+NAME room-just-wakeup
+EXT 3,3 3 3,3 DLG 6
 PAL 0
 
 ROOM 1
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,a,0,0,0,0
+0,0,0,0,0,0,0,a,a,0,0,0,0,0,0,0
+0,0,0,0,0,a,a,a,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -55,7 +59,6 @@ ROOM 1
 0,0,0,0,0,0,0,0,0,0,0,a,a,a,0,a
 0,0,0,0,0,0,0,0,0,0,0,0,0,a,a,a
 NAME kitchen
-EXT 13,13 0 15,7 FX fade_w
 PAL 0
 
 ROOM 2
@@ -76,8 +79,30 @@ c,0,0,c,c,c,0,c,c,c,0,0,c,c,0,c
 c,c,0,c,c,c,c,c,0,c,c,c,c,0,0,c
 c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c
 NAME start room
-EXT 7,6 0 2,3 FX fade_b DLG 5
+EXT 6,6 0 2,3 FX wave DLG 5
 PAL 1
+AVA a
+
+ROOM 3
+a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
+a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
+a,a,0,0,0,0,b,0,0,0,0,0,0,0,a,a
+a,a,0,0,0,0,b,0,0,0,0,0,0,0,a,a
+a,a,a,0,0,0,0,0,0,0,0,0,0,0,a,a
+a,a,b,b,b,b,b,0,0,0,0,0,0,0,a,a
+a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,a
+a,a,0,0,0,0,0,0,0,0,0,0,0,0,0,d
+a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
+a,a,a,a,a,a,a,a,a,a,a,a,a,a,a,a
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+NAME room
+EXT 15,7 1 13,13 FX fade_b DLG 3
+PAL 0
 
 TIL a
 11111111
@@ -115,6 +140,16 @@ TIL c
 NAME dream tile
 WAL true
 
+TIL d
+00000000
+01111110
+01000010
+01000010
+01000010
+01010010
+01000010
+01000010
+
 SPR A
 00011000
 00011000
@@ -124,9 +159,18 @@ SPR A
 10111101
 00100100
 00100100
-POS 2 7,7
+POS 2 5,6
 
 SPR a
+00000000
+00000000
+01010010
+01110010
+01110010
+01111100
+00111100
+01000100
+>
 00000000
 00000000
 01010001
@@ -137,7 +181,7 @@ SPR a
 00100100
 NAME cat
 DLG 0
-POS 0 8,12
+POS 3 8,3
 
 SPR b
 00000000
@@ -150,7 +194,7 @@ SPR b
 00000000
 NAME bed-top
 DLG 4
-POS 0 2,2
+POS 3 2,2
 
 SPR c
 00000000
@@ -162,6 +206,52 @@ SPR c
 11111100
 00000000
 NAME bed-bottom
+DLG 4
+POS 3 3,2
+
+SPR d
+00000000
+01111111
+01000111
+01010011
+01010011
+01000001
+01111111
+00000000
+NAME bed-top-dummy
+POS 0 2,2
+
+SPR e
+00000000
+00000000
+01010001
+01110001
+01110010
+01111100
+00111100
+00100100
+>
+00000000
+00000000
+01010010
+01110010
+01110010
+01111100
+00111100
+01000100
+NAME cat-dummy
+POS 0 8,3
+
+SPR f
+00000000
+11111100
+11111100
+11111100
+11101100
+11000100
+11111100
+00000000
+NAME bed-bottom-dummy
 POS 0 3,2
 
 ITM 0
@@ -189,7 +279,24 @@ NAME key
 DLG 2
 
 DLG 0
-I'm a cat
+"""
+{cat_talk = cat_talk + 1}{
+  - cat_talk == 0 ?
+    {wvy}Miawww{/wvy}
+  - else ?
+    {
+      - cat_talk == 1 ?
+        Miaw?
+      - else ?
+        {
+          - cat_talk <= 2 ?
+            oh well, if you really insist. Here is the key to the door {drwi "key"}
+          - else ?
+            hmm.. Have you gone to the kitchen yet?
+        }
+    }
+}
+"""
 NAME cat dialog
 
 DLG 1
@@ -204,11 +311,9 @@ DLG 3
 """
 {
   - {item "1"} >= 1 ?
-    {property locked false}
-    The key opens the door!
+    {property locked false}The key opens the door!
   - else ?
-    {property locked true}
-    The door is locked...
+    {property locked true}The door is locked...
 }
 """
 NAME locked exit 1
@@ -217,18 +322,37 @@ DLG 4
 """
 {
   - explained_bed == 0 ?
-     This is my bed. It smells funny.{explained_bed = 1}
-}{pg}It was {shk}hard enough{shk} to get up, I should probably not lie down again.
+    This is my bed. It smells funny.{explained_bed = 1}
+}{pg}It was {shk}hard enough{shk} to get up, I should not lie down again.
 """
 NAME bed-top dialog
 
 DLG 5
-Wake up!
-NAME exit narration 1
+Brrrr! Wake up!
+NAME exit-from-dreamworld
 
-VAR a
-42
+DLG 6
+dammm.. Today is {wvy}Saturday{/wvy}! I must remember to update my alarm so it doesn't sound on weekend.
+NAME exit-from-just-wakeup
 
 VAR explained_bed
 0
+
+VAR cat_talk
+-1
+
+TUNE 1
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+KEY C,D,E,F,G,A,B d,r,m,s,l
+TMP FST
+SQR P4 P8
+ARP INT5
+
+BLIP 3
+E5,G#5,C#5
+NAME pick up
+ENV 81 113 3 64 149
+BEAT 52 0
+SQR P2
 
