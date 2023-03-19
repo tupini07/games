@@ -51,6 +51,14 @@ impl Scene for GameScene {
             return Some(GameStates::TITLE);
         }
 
+        for flake in &mut self.snowflakes {
+            flake.update();
+        }
+
+        for cloud in &mut self.clouds {
+            cloud.update(&mut self.rng);
+        }
+
         for block in &mut self.falling_blocks {
             block.update();
             if block.collidable && block.pos.y > 145 {
@@ -59,12 +67,11 @@ impl Scene for GameScene {
             }
         }
 
-        for flake in &mut self.snowflakes {
-            flake.update();
-        }
-
-        for cloud in &mut self.clouds {
-            cloud.update(&mut self.rng);
+        // after updating all the blocks check if the player is colliding with any of them. If so, game over
+        for block in &self.falling_blocks {
+            if block.collidable && block.is_colliding_with_vector(&self.player.pos) {
+                return Some(GameStates::GAMEOVER);
+            }
         }
 
         self.spawn_block_timer -= self.spawn_block_timer_speed as u32;

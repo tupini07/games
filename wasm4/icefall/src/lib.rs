@@ -6,6 +6,7 @@ mod wasm4;
 
 use scene_manager::{GameStates, Scene};
 use scenes::game_scene::GameScene;
+use scenes::gameover_scene::GameOverScene;
 use scenes::intro_scene::IntroScene;
 
 use crate::scene_manager::SceneManager;
@@ -24,6 +25,7 @@ static mut CURRENT_SCENE: GameStates = GameStates::TITLE;
 // current scene (which is maybe not so bad?)
 static mut INTRO_SCENE: Option<IntroScene> = None;
 static mut GAME_SCENE: Option<GameScene> = None;
+static mut GAMEOVER_SCENE: Option<GameOverScene> = None;
 
 #[no_mangle]
 fn start() {
@@ -42,6 +44,7 @@ fn update() {
         let new_scene_opt: Option<GameStates> = match CURRENT_SCENE {
             GameStates::TITLE => SceneManager::do_tick(&mut INTRO_SCENE),
             GameStates::GAME => SceneManager::do_tick(&mut GAME_SCENE),
+            GameStates::GAMEOVER => SceneManager::do_tick(&mut GAMEOVER_SCENE),
         };
 
         if let Some(new_scene) = new_scene_opt {
@@ -53,6 +56,7 @@ fn update() {
             match CURRENT_SCENE {
                 GameStates::TITLE => INTRO_SCENE = None,
                 GameStates::GAME => GAME_SCENE = None,
+                GameStates::GAMEOVER => GAMEOVER_SCENE = None,
             }
 
             CURRENT_SCENE = new_scene;
@@ -61,6 +65,7 @@ fn update() {
             match CURRENT_SCENE {
                 GameStates::TITLE => INTRO_SCENE = Some(IntroScene::new()),
                 GameStates::GAME => GAME_SCENE = Some(GameScene::new()),
+                GameStates::GAMEOVER => GAMEOVER_SCENE = Some(GameOverScene::new()),
             }
         }
     }

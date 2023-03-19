@@ -36,7 +36,7 @@ impl SkateMark {
 }
 
 pub struct Player {
-    pos: Vector2d<i32>,
+    pub pos: Vector2d<i32>,
     vel: Vector2d<i32>,
     facing_right: bool,
     skate_marks: Vec<SkateMark>,

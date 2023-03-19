@@ -44,4 +44,11 @@ impl FallingBlock {
             assets::sprites::BLOCK1_FLAGS,
         );
     }
+
+    pub fn is_colliding_with_vector(&self, pos: &Vector2d<i32>) -> bool {
+        return pos.x >= self.pos.x as i32
+            && pos.x <= (self.pos.x + assets::sprites::BLOCK1_WIDTH) as i32
+            && pos.y >= self.pos.y as i32
+            && pos.y <= (self.pos.y + assets::sprites::BLOCK1_HEIGHT) as i32;
+    }
 }
