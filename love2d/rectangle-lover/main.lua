@@ -43,6 +43,8 @@ function love.load()
 end
 
 function love.draw()
+    love.graphics.clear(0.83, 0.8, 0.8)
+
     scene_table[current_scene_name].draw()
 end
 
