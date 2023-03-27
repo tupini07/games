@@ -36,6 +36,9 @@ end
 -- if love.system.getOS() == 'iOS' or love.system.getOS() == 'Android' then
 --   mobile = true
 -- end
+if love.system.getOS() == 'iOS' or love.system.getOS() == 'Android' then
+    love.window.setFullscreen(true)
+end
 
 
 --------------------
