@@ -20,9 +20,20 @@ function exports.draw()
     if mx then
         x = mx
     end
-
     if my then
         y = my
+    end
+
+    local touch_ids = love.touch.getTouches()
+    if #touch_ids > 0 then
+        local tx, ty = love.touch.getPosition(touch_ids[1])
+        if tx then
+            x = tx
+        end
+
+        if ty then
+            y = ty
+        end
     end
 
     love.graphics.rectangle("fill", x-40, y-40, 80, 80)

@@ -1,4 +1,5 @@
-love = require "lib.love-api"
+-- This might not be required if VSCode's Love2d integration works fine.
+-- love = require "lib.love-api"
 
 local utils = require "lib.utils"
 local inspect = require "lib.inspect"
@@ -30,6 +31,12 @@ end
 function PPRINT(what)
     print(inspect(what))
 end
+
+-- mobile = false
+-- if love.system.getOS() == 'iOS' or love.system.getOS() == 'Android' then
+--   mobile = true
+-- end
+
 
 --------------------
 -- setup love callbacks
