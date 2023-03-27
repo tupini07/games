@@ -1,18 +1,31 @@
+local enemy_cube = require "entities.enemy_cube"
+
 local exports = {}
 
 exports.name = "scenes.game_scene"
+
+local enemies = {}
 
 function exports.init()
     PPRINT({
         Hellow = "I don't know",
         World = "Initializing intro scene",
     })
+
+    table.insert(enemies, enemy_cube.new_enemy())
 end
 
 function exports.update(dt)
+    for _, enemy in ipairs(enemies) do
+        enemy:update(dt)
+    end
 end
 
 function exports.draw()
+    for _, enemy in ipairs(enemies) do
+        enemy:draw()
+    end
+
     local x = 400
     local y = 300
 
@@ -36,6 +49,7 @@ function exports.draw()
         end
     end
 
+    love.graphics.setColor(0.4, 0.4, 0.4)
     love.graphics.rectangle("fill", x-40, y-40, 80, 80)
 end
 
