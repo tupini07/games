@@ -5,7 +5,7 @@ local exports = {}
 function exports.init()
     PPRINT({
         Hellow = "I don't know",
-        World = "Initializing intro scene",
+        World = "Initializing Game Over scene",
     })
 end
 
@@ -16,23 +16,9 @@ function exports.update(dt)
 end
 
 function exports.draw()
-    local x = 400
-    local y = 300
-
-    local mx, my = love.mouse.getPosition()
-    if mx then
-        x = mx
-    end
-
-    if my then
-        y = my
-    end
-
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Hellssso World!", x - 40, y - 5)
-
     love.graphics.setColor(0, 0.4, 0.2)
-    love.graphics.print("Click to begin!", 30, 30)
+    love.graphics.print("Game Over! Click to begin again!", 30, 30)
+    love.graphics.print("Score: 0000", 30, 40)
 end
 
 return exports

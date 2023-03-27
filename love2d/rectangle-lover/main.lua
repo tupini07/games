@@ -7,14 +7,18 @@ local inspect = require "lib.inspect"
 --------------------
 -- setup scenes we know about
 
+local scene_names = require "scenes.scene_names"
+
 local intro_scene = require "scenes.intro_scene"
 local game_scene = require "scenes.game_scene"
+local game_over_scene = require "scenes.game_over_scene"
 
-local current_scene_name = intro_scene.name
+local current_scene_name = "NOTHING"
 
 local scene_table = {
-    [intro_scene.name] = intro_scene,
-    [game_scene.name] = game_scene,
+    [scene_names.intro_scene_name] = intro_scene,
+    [scene_names.game_scene_name] = game_scene,
+    [scene_names.game_over_scene_name] = game_over_scene,
 }
 
 
@@ -23,6 +27,7 @@ local scene_table = {
 
 -- switch to a scene with the given name
 function SWITCH_TO_SCENE(scene_name)
+    print("Switching to scene: " .. scene_name)
     current_scene_name = scene_name
     scene_table[current_scene_name].init()
 end
@@ -48,8 +53,7 @@ local is_focused = true
 
 function love.load()
     -- initially setup intro scene as first scene
-    current_scene_name = intro_scene.name
-    intro_scene.init()
+    SWITCH_TO_SCENE(scene_names.intro_scene_name)
 end
 
 function love.draw()
@@ -72,9 +76,8 @@ function love.mousefocus(focus)
     is_focused = focus
 end
 
-function love.keypressed(key, scancode, isrepeat)
+function love.keypressed(key)
     if "f5" == key then
-        utils.reload_package(current_scene_name)
-        scene_table[current_scene_name].init()
+        utils.reload_all_packages(current_scene_name)
     end
 end
