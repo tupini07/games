@@ -40,7 +40,17 @@ end
 function exports.reload_all_packages(active_scene_name)
     print("")
 
-    -- first reload all entities
+    -- reload all utilitis
+    local utilities = find_recursive_with_extension("utilities", {}, ".lua")
+    for _, utility in ipairs(utilities) do
+        local package_name = utility:sub(1, -5)
+        package_name = package_name:gsub("/", ".")
+
+        print("Reloading package: " .. package_name)
+        exports.reload_package(package_name)
+    end
+
+    -- then reload all entities
     local entities = find_recursive_with_extension("entities", {}, ".lua")
     for _, entity in ipairs(entities) do
         local package_name = entity:sub(1, -5)

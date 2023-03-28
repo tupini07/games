@@ -1,7 +1,7 @@
 -- This might not be required if VSCode's Love2d integration works fine.
 -- love = require "lib.love-api"
 
-local utils = require "lib.utils"
+local hot_reload = require "lib.hot_reload"
 local inspect = require "lib.inspect"
 
 --------------------
@@ -78,6 +78,6 @@ end
 
 function love.keypressed(key)
     if "f5" == key then
-        utils.reload_all_packages(current_scene_name)
+        hot_reload.reload_all_packages(current_scene_name)
     end
 end

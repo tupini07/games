@@ -40,7 +40,7 @@ function base_cube:update(dt, player_cube)
         if not self.is_smaller_than_player then
             SWITCH_TO_SCENE(scene_names.game_over_scene_name)
         else
-            -- TODO: remove enemy and increase player size
+            player_cube.size = player_cube.size + self.size / 2
             self.dead = true
         end
     end
@@ -57,8 +57,8 @@ function base_cube:draw()
 end
 
 ---@return enemy_cube
-function exports.new_enemy()
-    local enemy = { size = 40 }
+function exports.new_enemy(x, y, size)
+    local enemy = { x = x, y = y, size = size }
     enemy = setmetatable(enemy, { __index = base_cube })
     return enemy
 end
