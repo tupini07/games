@@ -36,12 +36,20 @@ function exports.init()
         World = "Initializing GAME scene",
     })
 
+    enemies = {}
     player = player_cube.init_player()
     game_tracking.score = 0
 end
 
 function exports.update(dt)
     player:update(dt)
+
+    if #enemies == 0 then
+        -- populate initial enemies
+        for _ = 1, 30 do
+            enemy_spawner.spawn_enemy(player, enemies)
+        end
+    end
 
     for i, enemy in ipairs(enemies) do
         enemy:update(dt, player)

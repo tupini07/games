@@ -1,9 +1,17 @@
 local scene_names = (require "scenes.scene_names")
+local easing_functions = require "utilities.easing_functions"
 
 local exports = {}
 
 ---@class enemy_cube
-local base_cube = { x = 0, y = 0, size = 0, is_smaller_than_player = false, dead = false }
+local base_cube = {
+    x = 0,
+    y = 0,
+    size = 0,
+    is_smaller_than_player = false,
+    dead = false,
+    grace_timer = 0,
+}
 
 
 ---@param enemy enemy_cube
@@ -16,8 +24,8 @@ local function is_colliding_with_player(enemy, player_cube)
     local w1 = enemy.size
     local h1 = enemy.size
 
-    local x2 = player_cube.x - player_cube.size / 2
-    local y2 = player_cube.y - player_cube.size / 2
+    local x2 = player_cube.x
+    local y2 = player_cube.y
     local w2 = player_cube.size
     local h2 = player_cube.size
 
@@ -30,13 +38,25 @@ end
 ---@param dt number
 ---@param player_cube player_cube
 function base_cube:update(dt, player_cube)
-    self.x = self.x + 1 * dt
-
     self.is_smaller_than_player = self.size < player_cube.size
 
-    if is_colliding_with_player(self, player_cube) then
-        print("colliding!")
+    local prev_size = self.size
+    self.size = self.size - self.size * easing_functions.ease_out_circ(self.size / 140) * dt
 
+    -- collapse size if necessary
+    if self.size < 5 then
+        self.dead = true
+        return
+    end
+
+    -- for a short while after spawning, don't collide with player
+    self.grace_timer = self.grace_timer - dt
+
+    -- adjust position so we shrink towards center
+    self.x = self.x + (prev_size - self.size) / 2
+    self.y = self.y + (prev_size - self.size) / 2
+
+    if self.grace_timer < 0 and is_colliding_with_player(self, player_cube) then
         if not self.is_smaller_than_player then
             SWITCH_TO_SCENE(scene_names.game_over_scene_name)
         else
@@ -54,11 +74,24 @@ function base_cube:draw()
     end
 
     love.graphics.rectangle("fill", self.x, self.y, self.size, self.size)
+
+    -- draw lines around the cube
+    love.graphics.setColor(0.2, 0.2, 0.2)
+    love.graphics.setLineWidth(2)
+    love.graphics.rectangle("line", self.x, self.y, self.size, self.size)
 end
 
+---@param x number
+---@param y number
+---@param size number
 ---@return enemy_cube
 function exports.new_enemy(x, y, size)
-    local enemy = { x = x, y = y, size = size }
+    local enemy = {
+        x = x,
+        y = y,
+        size = size,
+        grace_timer = 0.2
+    }
     enemy = setmetatable(enemy, { __index = base_cube })
     return enemy
 end
