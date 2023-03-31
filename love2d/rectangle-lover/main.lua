@@ -28,6 +28,10 @@ local scene_table = {
 -- switch to a scene with the given name
 function SWITCH_TO_SCENE(scene_name)
     print("Switching to scene: " .. scene_name)
+    if scene_name[current_scene_name] then
+        scene_table[current_scene_name].exit()
+    end
+
     current_scene_name = scene_name
     scene_table[current_scene_name].init()
 end

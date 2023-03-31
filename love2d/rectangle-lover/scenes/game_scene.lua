@@ -78,4 +78,9 @@ function exports.draw()
     draw_score()
 end
 
+function exports.exit()
+    player = nil
+    enemies = {}
+end
+
 return exports

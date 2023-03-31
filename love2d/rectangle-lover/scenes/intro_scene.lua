@@ -35,4 +35,7 @@ function exports.draw()
     love.graphics.print("Click to begin!", 30, 30)
 end
 
+function exports.exit()
+end
+
 return exports
