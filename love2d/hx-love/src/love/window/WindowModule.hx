@@ -1,0 +1,139 @@
+package love.window;
+import love.image.ImageData;
+import haxe.extern.Rest;
+import lua.Table;
+import lua.UserData;
+
+@:native("love.window")
+extern class WindowModule
+{
+
+	public static function close() : Void;
+
+	@:overload(function (px:Float, py:Float) : WindowModuleFromPixelsResult {})
+	public static function fromPixels(pixelvalue:Float) : Float;
+
+	public static function getDPIScale() : Float;
+
+	public static function getDesktopDimensions(?displayindex:Float) : WindowModuleGetDesktopDimensionsResult;
+
+	public static function getDisplayCount() : Float;
+
+	public static function getDisplayName(?displayindex:Float) : String;
+
+	public static function getDisplayOrientation(?displayindex:Float) : DisplayOrientation;
+
+	public static function getFullscreen() : WindowModuleGetFullscreenResult;
+
+	public static function getFullscreenModes(?displayindex:Float) : Table<Dynamic,Dynamic>;
+
+	public static function getIcon() : ImageData;
+
+	public static function getMode() : WindowModuleGetModeResult;
+
+	public static function getPosition() : WindowModuleGetPositionResult;
+
+	public static function getSafeArea() : WindowModuleGetSafeAreaResult;
+
+	public static function getTitle() : String;
+
+	public static function getVSync() : Float;
+
+	public static function hasFocus() : Bool;
+
+	public static function hasMouseFocus() : Bool;
+
+	public static function isDisplaySleepEnabled() : Bool;
+
+	public static function isMaximized() : Bool;
+
+	public static function isMinimized() : Bool;
+
+	public static function isOpen() : Bool;
+
+	public static function isVisible() : Bool;
+
+	public static function maximize() : Void;
+
+	public static function minimize() : Void;
+
+	public static function requestAttention(?continuous:Bool) : Void;
+
+	public static function restore() : Void;
+
+	public static function setDisplaySleepEnabled(enable:Bool) : Void;
+
+	@:overload(function (fullscreen:Bool, fstype:FullscreenType) : Bool {})
+	public static function setFullscreen(fullscreen:Bool) : Bool;
+
+	public static function setIcon(imagedata:ImageData) : Bool;
+
+	public static function setMode(width:Float, height:Float, ?flags:Table<Dynamic,Dynamic>) : Bool;
+
+	public static function setPosition(x:Float, y:Float, ?displayindex:Float) : Void;
+
+	public static function setTitle(title:String) : Void;
+
+	public static function setVSync(vsync:Float) : Void;
+
+	@:overload(function (title:String, message:String, buttonlist:Table<Dynamic,Dynamic>, ?type:MessageBoxType, ?attachtowindow:Bool) : Float {})
+	public static function showMessageBox(title:String, message:String, ?type:MessageBoxType, ?attachtowindow:Bool) : Bool;
+
+	@:overload(function (x:Float, y:Float) : WindowModuleToPixelsResult {})
+	public static function toPixels(value:Float) : Float;
+
+	public static function updateMode(width:Float, height:Float, settings:Table<Dynamic,Dynamic>) : Bool;
+}
+
+@:multiReturn
+extern class WindowModuleToPixelsResult
+{
+	var px : Float;
+	var py : Float;
+}
+
+@:multiReturn
+extern class WindowModuleGetFullscreenResult
+{
+	var fullscreen : Bool;
+	var fstype : FullscreenType;
+}
+
+@:multiReturn
+extern class WindowModuleGetModeResult
+{
+	var width : Float;
+	var height : Float;
+	var flags : Table<Dynamic,Dynamic>;
+}
+
+@:multiReturn
+extern class WindowModuleGetSafeAreaResult
+{
+	var x : Float;
+	var y : Float;
+	var w : Float;
+	var h : Float;
+}
+
+@:multiReturn
+extern class WindowModuleGetDesktopDimensionsResult
+{
+	var width : String;
+	var height : String;
+}
+
+@:multiReturn
+extern class WindowModuleGetPositionResult
+{
+	var x : Float;
+	var y : Float;
+	var displayindex : Float;
+}
+
+@:multiReturn
+extern class WindowModuleFromPixelsResult
+{
+	var x : Float;
+	var y : Float;
+}
