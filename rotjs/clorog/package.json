@@ -1,0 +1,16 @@
+{
+  "name": "clorog",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "repl": "shadow-cljs node-repl",
+    "watch": "shadow-cljs watch frontend",
+    "relesae": "shadow-cljs release frontend"
+  },
+  "devDependencies": {
+    "shadow-cljs": "2.22.10"
+  },
+  "dependencies": {
+    "rot-js": "^2.2.0"
+  }
+}

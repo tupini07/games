@@ -1,0 +1,15 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src/dev"
+  "src/"
+  "src/test"]
+
+ :dependencies
+ [[cider/cider-nrepl "0.24.0"]]
+
+ :dev-http {8080 "public/"}
+
+ :builds
+ {:frontend
+  {:target :browser
+   :modules {:main {:init-fn clorog.web-core/init}}}}}
