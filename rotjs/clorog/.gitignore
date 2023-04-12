@@ -10,9 +10,12 @@ pom.xml.asc
 *.iml
 *.jar
 *.log
+
+.calva
 .shadow-cljs
 .clj-kondo
 .lsp
+
 .idea
 .lein-*
 .nrepl-*

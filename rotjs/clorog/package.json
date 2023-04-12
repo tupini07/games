@@ -5,12 +5,13 @@
   "scripts": {
     "repl": "shadow-cljs node-repl",
     "watch": "shadow-cljs watch frontend",
-    "relesae": "shadow-cljs release frontend"
+    "release": "shadow-cljs release frontend"
   },
   "devDependencies": {
     "shadow-cljs": "2.22.10"
   },
   "dependencies": {
+    "rexpaintjs": "^0.1.2",
     "rot-js": "^2.2.0"
   }
 }
