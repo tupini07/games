@@ -37,6 +37,21 @@
                                            :walkable
                                            (is-tile-walkable? glyph))]
 
+                   (comment "TODO we might want to have this reduce return more things
+                            than just a map with cells. An idea would be to have it
+                            return a map with the following keys:
+                             
+                             {
+                                :map {[x y] {raw cell}}
+                                :entities [{entities :posx :posy :...}]
+                                :items [{list of items `should they be entities?`}]
+                                :player? `would be nice to set the player initial pos from the map somewhere`
+                             }
+                            
+                            Maybe all `fun things` should be `entities` and then there's
+                            some other part of the code where we go through this list and
+                            actually add them to the state....
+                            ")
                    (assoc acc [cellx celly] cell-payload)))
                {})))
 
