@@ -1,36 +1,72 @@
 (ns clorog.web-core
-  (:require [clorog.level-manager :as level-manager]
-            [rot-js :as ROT]))
+  (:require [clorog.entities.player :as player]
+            [clorog.level-manager :as level-manager]
+            [clorog.logger :as logger]
+            [clorog.rotjs :as rotjs]
+            [clorog.game-map :as game-map]))
 
-(defonce display (ROT/Display. (clj->js {:width 70
-                                         :height 44
-                                         :bg "purple"
-                                         :fontFamily "droid sans mono, monospace"
-                                         :forceSquareRatio true
-                                         :tileColorize true})))
+(def state (atom {:player {:posx 0 :posy 0}
+                  :map {}
+                  :last-input nil}))
 
-(defonce level (level-manager/load-level 0))
+(defn- update-everything [input-key]
+  (logger/log "update-everything: pressed key was" input-key)
 
+  (swap! state #(assoc % :last-input input-key))
 
-(defn browser-loop []
-  (.clear display)
+  (logger/log "state:" (-> @state
+                           ;; remove map to prevent spam in log
+                           (assoc :map "[...]")))
 
-  (.drawText display 1 1 "Welcome!" "white")
+  (when (not (nil? input-key))
+    (reset! state (-> @state
+                      player/pl-update))))
 
-  (doseq [[pos data] level]
-    (let [[x y] pos
-          {:keys [char color]} data]
+(defn- draw-everything []
+  (logger/log "draw-everything")
+  (rotjs/clear)
 
-      (.draw display x y char color)))
+  (rotjs/draw-text 1 1 "Welcome!" "white")
 
-  (.requestAnimationFrame js/window browser-loop))
+  ;; draw map
+  (game-map/draw-game-map @state)
+
+  ;; entities
+  (-> @state
+      player/pl-draw))
+
+(defn on-keydown
+  "Every time the user presses a key we want to clear the screen, 
+   update all entities, and then re-draw everything"
+  [event]
+  ;; cancel JS event
+  (.preventDefault event)
+
+  ;; ignore repeat events
+  (when (not event.repeat)
+    (logger/log "on-keydown: running for key" event.key)
+
+    (update-everything event.key)
+    (draw-everything))
+  ;; (.requestAnimationFrame js/window on-keypress)
+  )
 
 
 (defn init []
-  (println "Appending display")
+  (logger/set-is-release false)
 
-  (js/document.body.appendChild (.getContainer display))
+  (logger/log "Appending display")
+
+  (-> (js/document.getElementById "canvas-holder")
+      (.appendChild (.getContainer rotjs/DISPLAY)))
+
+  (level-manager/load-level
+   0
+   (fn [new-map]
+     (swap! state (fn [old-state]
+                    (assoc old-state :map new-map)))))
 
   ;; start browser loop
-  (browser-loop))
+  (.addEventListener js/window "keydown" on-keydown)
+  (.addEventListener js/window "custom-request-redraw" draw-everything))
 
