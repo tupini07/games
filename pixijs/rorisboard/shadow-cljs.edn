@@ -5,9 +5,9 @@
   "src/test"]
 
  :dev-http {8080 "public"}
- 
+
  :dependencies
- []
+ [[cljsjs/pixi "7.2.4-0"]]
 
  :builds
  {:frontend
