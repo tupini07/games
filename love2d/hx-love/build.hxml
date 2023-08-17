@@ -3,5 +3,8 @@
 -main Main
 
 # target lua
--lua lua_output/main.lua
+-lua build/main.lua
 -D lua-vanilla
+
+# copy additional lua files
+--cmd cp -r lua_src/* build

@@ -1,22 +1,17 @@
-import love.mouse.MouseModule;
-import love.mouse.Cursor;
-import physics.Vector2d;
-import love.graphics.GraphicsModule;
-import love.graphics.DrawMode;
-import love.Love;
+import managers.SceneManager;
 
 class Main {
+	static var sceneManager:SceneManager;
+
 	static function main() {
-		var pos = new Vector2d(0, 0);
+		sceneManager = new SceneManager();
 
 		Love.update = function(dt:Float) {
-			var mousePos = MouseModule.getPosition();
-			pos.x = mousePos.x;
-			pos.y = mousePos.y;
+			sceneManager.update(dt);
 		}
 
 		Love.draw = function() {
-			GraphicsModule.rectangle(DrawMode.Fill, pos.x, pos.y, 100, 100);
+			sceneManager.draw();
 		}
 
 		trace("Hello, world!");
