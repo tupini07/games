@@ -1,0 +1,6 @@
+build.opengl.hxml
+
+# hot reload works fine but makes everything go super slow
+# -D hot-reload
+
+--debug

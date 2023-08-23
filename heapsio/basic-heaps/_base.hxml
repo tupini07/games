@@ -1,0 +1,20 @@
+-lib ldtk-haxe-api
+-lib heaps
+-lib deepnightLibs
+-lib heaps-aseprite
+# -lib polygonal-ds
+
+-cp src
+-main Game
+
+# dead code elimination
+--dce full
+
+# --macro nullSafety("utils")
+
+# target lua
+# -lua build/main.lua
+# -D lua-vanilla
+
+# copy additional lua files
+# --cmd cp -r lua_src/* build

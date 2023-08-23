@@ -1,0 +1,11 @@
+--cmd haxelib --global update haxelib
+--cmd haxelib --always install ldtk-haxe-api 1.3.3-rc.1
+--cmd haxelib --always install heaps 1.10.0 
+--cmd haxelib --always install hlsdl 1.13.0  
+--cmd haxelib --always install heaps-aseprite 0.1.2 
+
+# --cmd haxelib install polygonal-ds 2.1.1
+--cmd haxelib --always git deepnightLibs https://github.com/deepnight/deepnightLibs.git@c8404fe6cae97987b7c7eef590d07f3d6be097aa
+
+# Done
+--cmd haxelib list
