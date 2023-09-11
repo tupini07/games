@@ -51,9 +51,6 @@ pub const Player = struct {
         }
         logger.debug("Starting to move in direction: {}", .{direction});
 
-        self.is_moving = true;
-        self.current_move_direction = direction;
-
         // find position to which the head should move to (e.g. the position until
         // which the head will hit a wall)
         var target_position = self.head_pos;
@@ -69,10 +66,10 @@ pub const Player = struct {
             }
 
             switch (self.current_move_direction) {
-                MoveDirection.Up => target_position.y -= self.move_speed,
-                MoveDirection.Left => target_position.x -= self.move_speed,
-                MoveDirection.Down => target_position.y += self.move_speed,
-                MoveDirection.Right => target_position.x += self.move_speed,
+                MoveDirection.Up => target_position.y -= 1,
+                MoveDirection.Left => target_position.x -= 1,
+                MoveDirection.Down => target_position.y += 1,
+                MoveDirection.Right => target_position.x += 1,
                 MoveDirection.None => unreachable,
             }
         }
@@ -85,18 +82,33 @@ pub const Player = struct {
         const target_x = math_utils.round_to_multiple(target_position.x, 8.0);
         const target_y = math_utils.round_to_multiple(target_position.y, 8.0);
 
+        if (std.meta.eql(self.head_pos, Vector2{ .x = target_x, .y = target_y })) {
+            logger.info("Already at target position, not moving", .{});
+            return;
+        }
+
+        self.is_moving = true;
+        self.current_move_direction = direction;
+
         self.move_to_target = Vector2{ .x = target_x, .y = target_y };
 
         logger.debug("Set final target position at {} . Current head position is {}", .{ self.move_to_target, self.head_pos });
     }
 
     fn SegmentInCell(self: *Player, cell_x: i32, cell_y: i32) bool {
-        const current_cell_x = math_utils.round_to_multiple(cell_x, 8.0);
-        const current_cell_y = math_utils.round_to_multiple(cell_y, 8.0);
+        const cell_to_check_x = math_utils.round_to_multiple(cell_x, 8.0);
+        const cell_to_check_y = math_utils.round_to_multiple(cell_y, 8.0);
+
+        const current_player_cell_x = math_utils.round_to_multiple(self.head_pos.x, 8.0);
+        const current_player_cell_y = math_utils.round_to_multiple(self.head_pos.y, 8.0);
+
+        if (cell_to_check_x == current_player_cell_x and cell_to_check_y == current_player_cell_y) {
+            return false;
+        }
 
         for (0..self.num_segments) |seg_idx| {
             const segment = self.segments[seg_idx];
-            if (segment.pos.x == current_cell_x and segment.pos.y == current_cell_y) {
+            if (segment.pos.x == cell_to_check_x and segment.pos.y == cell_to_check_y) {
                 return true;
             }
         }
@@ -104,9 +116,29 @@ pub const Player = struct {
         return false;
     }
 
+    fn HasOvershotTarget(self: *Player) bool {
+        if (self.current_move_direction == .Up) {
+            return self.head_pos.y < self.move_to_target.y;
+        }
+
+        if (self.current_move_direction == .Down) {
+            return self.head_pos.y > self.move_to_target.y;
+        }
+
+        if (self.current_move_direction == .Left) {
+            return self.head_pos.x < self.move_to_target.x;
+        }
+
+        if (self.current_move_direction == .Right) {
+            return self.head_pos.x > self.move_to_target.x;
+        }
+
+        return false;
+    }
+
     pub fn Update(self: *Player) void {
         if (self.is_moving) {
-            if (!std.meta.eql(self.head_pos, self.move_to_target)) {
+            if (!self.HasOvershotTarget()) {
                 switch (self.current_move_direction) {
                     MoveDirection.Up => self.head_pos.y -= self.move_speed,
                     MoveDirection.Down => self.head_pos.y += self.move_speed,
@@ -120,15 +152,15 @@ pub const Player = struct {
                 const current_cell_y = math_utils.round_to_multiple(self.head_pos.y, 8.0);
 
                 if (!self.SegmentInCell(current_cell_x, current_cell_y)) {
-                    const segment_left_to_right = 96;
-                    const segment_top_to_bottom = 98;
-                    const segment_top_left_corner = 128;
+                    const segment_left_to_right = 256;
+                    const segment_top_to_bottom = 258;
+                    const segment_top_left_corner = 288;
                     _ = segment_top_left_corner;
-                    const segment_top_right_corner = 130;
+                    const segment_top_right_corner = 290;
                     _ = segment_top_right_corner;
-                    const segment_bottom_left_corner = 160;
+                    const segment_bottom_left_corner = 320;
                     _ = segment_bottom_left_corner;
-                    const segment_bottom_right_corner = 162;
+                    const segment_bottom_right_corner = 322;
                     _ = segment_bottom_right_corner;
 
                     var segment_sprite: u16 = segment_left_to_right;

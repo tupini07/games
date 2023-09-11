@@ -36,6 +36,16 @@ pub fn DoUpdate() void {
     if (newSceneOpt) |newScene| {
         tic.tracef("Switching to scene: {s}", .{@tagName(newScene)});
 
+        // var buffer: [100]u8 = undefined;
+        // var fba = std.heap.FixedBufferAllocator.init(&buffer);
+        // var calloc = fba.allocator();
+        // var aa = std.ArrayList(u32).init(calloc);
+        // aa.append(33) catch unreachable;
+        // aa.append(34) catch unreachable;
+        // for (aa.items) |item| {
+        //     tic.tracef("item: {d}", .{item});
+        // }
+
         if (newScene != current_scene) {
             // first deinit the current scene
             switch (current_scene) {

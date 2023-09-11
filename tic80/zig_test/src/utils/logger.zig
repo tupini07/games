@@ -8,3 +8,11 @@ pub fn debug(comptime fmt: []const u8, fmtargs: anytype) void {
 pub fn info(comptime fmt: []const u8, fmtargs: anytype) void {
     tic.tracef("[INFO] " ++ fmt, fmtargs);
 }
+
+pub fn warn(comptime fmt: []const u8, fmtargs: anytype) void {
+    tic.tracef("[WARN] " ++ fmt, fmtargs);
+}
+
+pub fn err(comptime fmt: []const u8, fmtargs: anytype) void {
+    tic.tracef("[ERROR] " ++ fmt, fmtargs);
+}
