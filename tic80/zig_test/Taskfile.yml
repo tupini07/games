@@ -1,0 +1,38 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true
+  
+  build:
+    cmds:
+      - zig build -Doptimize=ReleaseSmall
+  
+  import:
+    deps:
+      - build
+    cmds:
+      - tic80 --cli --fs . --cmd 'load game.wasmp & import binary zig-out/lib/cart.wasm & save'
+
+  run:
+    deps: [build]
+    cmds: 
+      - tic80 --fs . --cmd 'load game.wasmp & import binary zig-out/lib/cart.wasm & save & run'
+
+  release-tic:
+    cmds:
+      - rm -rf build || true
+      - mkdir build
+      - zig build -Doptimize=ReleaseSmall
+      - wasm-opt -Oz zig-out/lib/cart.wasm -o zig-out/lib/cart_optimized.wasm
+      - tic80 --cli --fs . --cmd 'load game.wasmp & import binary zig-out/lib/cart_optimized.wasm & save build/game.tic'
+  
+  release-html:
+    deps:
+      - release-tic
+    cmds:
+      - tic80 --cli --fs . --cmd 'load build/game.tic & export html build/game.html' 
