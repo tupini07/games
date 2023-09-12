@@ -2,12 +2,14 @@ const std = @import("std");
 const tic = @import("../tic80.zig");
 const map_utils = @import("../utils/map.zig");
 const math_utils = @import("../utils/math.zig");
+const Camera = @import("../entities/Camera.zig");
 const logger = @import("../utils//logger.zig");
 
 const Vector2 = @import("../entities/Vector2.zig").Vector2;
 
 const PlayerSegment = struct {
-    pos: Vector2,
+    grid_pos: Vector2,
+    pixel_pos: Vector2,
     sprite: u16,
 };
 
@@ -26,6 +28,7 @@ pub const Player = struct {
     head_pos: Vector2 = Vector2{ .x = 0, .y = 0 },
 
     is_moving: bool = false,
+    previous_move_direction: MoveDirection = MoveDirection.None,
     current_move_direction: MoveDirection = MoveDirection.None,
     move_to_target: Vector2 = Vector2{ .x = 0, .y = 0 },
 
@@ -40,80 +43,113 @@ pub const Player = struct {
     }
 
     fn AddSegment(self: *Player, pos: Vector2, sprite: u16) void {
-        self.segments[self.num_segments].pos = pos;
+        const current_cell_x = math_utils.round_to_multiple(pos.x, 8);
+        const current_cell_y = math_utils.round_to_multiple(pos.y, 8);
+
+        const current_cell = Vector2{ .x = current_cell_x, .y = current_cell_y };
+
+        logger.debug("Adding segment to: {}", .{current_cell});
+        self.segments[self.num_segments].pixel_pos = current_cell;
+        self.segments[self.num_segments].grid_pos = Camera.mapLevelToWorldGrid(current_cell, true);
         self.segments[self.num_segments].sprite = sprite;
         self.num_segments += 1;
     }
 
-    pub fn StartMoving(self: *Player, direction: MoveDirection) void {
-        if (self.is_moving) {
-            unreachable;
-        }
-        logger.debug("Starting to move in direction: {}", .{direction});
-
-        // find position to which the head should move to (e.g. the position until
-        // which the head will hit a wall)
-        var target_position = self.head_pos;
-        while (true) {
-            if (map_utils.tileHasFlagPx(target_position, .SOLID)) {
-                logger.info("Found end position for move because there's a SOLID tile at {}", .{target_position});
-                break;
-            }
-
-            if (self.SegmentInCell(target_position.x, target_position.y)) {
-                logger.info("Found end position for move because there's a tongue segment at {}", .{target_position});
-                break;
-            }
-
-            switch (self.current_move_direction) {
-                MoveDirection.Up => target_position.y -= 1,
-                MoveDirection.Left => target_position.x -= 1,
-                MoveDirection.Down => target_position.y += 1,
-                MoveDirection.Right => target_position.x += 1,
-                MoveDirection.None => unreachable,
-            }
-        }
-
-        // adjust for sprite size
-        if (self.current_move_direction == .Right) target_position.x -= 16;
-        if (self.current_move_direction == .Down) target_position.y -= 16;
-
-        // round target to nearest multiple of 8
-        const target_x = math_utils.round_to_multiple(target_position.x, 8.0);
-        const target_y = math_utils.round_to_multiple(target_position.y, 8.0);
-
-        if (std.meta.eql(self.head_pos, Vector2{ .x = target_x, .y = target_y })) {
-            logger.info("Already at target position, not moving", .{});
-            return;
-        }
-
-        self.is_moving = true;
-        self.current_move_direction = direction;
-
-        self.move_to_target = Vector2{ .x = target_x, .y = target_y };
-
-        logger.debug("Set final target position at {} . Current head position is {}", .{ self.move_to_target, self.head_pos });
-    }
-
-    fn SegmentInCell(self: *Player, cell_x: i32, cell_y: i32) bool {
-        const cell_to_check_x = math_utils.round_to_multiple(cell_x, 8.0);
-        const cell_to_check_y = math_utils.round_to_multiple(cell_y, 8.0);
-
-        const current_player_cell_x = math_utils.round_to_multiple(self.head_pos.x, 8.0);
-        const current_player_cell_y = math_utils.round_to_multiple(self.head_pos.y, 8.0);
-
-        if (cell_to_check_x == current_player_cell_x and cell_to_check_y == current_player_cell_y) {
-            return false;
-        }
-
+    fn IsThereSegmentAtGridPos(self: *Player, grid_pos: Vector2) bool {
         for (0..self.num_segments) |seg_idx| {
             const segment = self.segments[seg_idx];
-            if (segment.pos.x == cell_to_check_x and segment.pos.y == cell_to_check_y) {
+
+            if (std.meta.eql(segment.grid_pos, grid_pos)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    pub fn StartMoving(self: *Player, direction: MoveDirection) void {
+        if (self.is_moving) {
+            logger.err("We're starting to move when we shouldn't! This should not happen.", .{});
+            unreachable;
+        }
+
+        logger.debug("Starting to move in direction: {}", .{direction});
+
+        // find position to which the head should move to (e.g. the position until
+        // which the head will hit a wall)
+        var target_position_grid = Camera.mapLevelToWorldGrid(self.head_pos, true);
+        var is_first_loop = true;
+
+        while (true) {
+            switch (direction) {
+                MoveDirection.Up => target_position_grid.y -= 2,
+                MoveDirection.Left => target_position_grid.x -= 2,
+                MoveDirection.Down => target_position_grid.y += 2,
+                MoveDirection.Right => target_position_grid.x += 2,
+                MoveDirection.None => unreachable,
+            }
+
+            logger.info("Looking for posision. Current target in grid coords is {}", .{target_position_grid});
+            if (map_utils.tileHasFlagGrid(target_position_grid, .SOLID)) {
+                logger.info("Found end position for move because there's a SOLID tile at {}", .{target_position_grid});
+                break;
+            }
+
+            if (self.IsThereSegmentAtGridPos(target_position_grid)) {
+                logger.info("Found end position for move because there's a segment at {}", .{target_position_grid});
+                break;
+            }
+
+            is_first_loop = false;
+        }
+
+        // if we're still at the first loop then the move was invalid and we can exit
+        // early
+        if (is_first_loop) {
+            logger.debug("Exiting early from Player.StartMoving because moving in the specified direction is invalid.", .{});
+            return;
+        }
+
+        // undo last move
+        switch (direction) {
+            MoveDirection.Up => target_position_grid.y += 2,
+            MoveDirection.Left => target_position_grid.x += 2,
+            // down and right are by 2 because sprite is 2x2
+            MoveDirection.Down => target_position_grid.y -= 2,
+            MoveDirection.Right => target_position_grid.x -= 2,
+            MoveDirection.None => unreachable,
+        }
+
+        const target_px = target_position_grid.mul_scalar(8);
+
+        if (std.meta.eql(self.head_pos, target_px)) {
+            logger.info("Already at target position, not moving", .{});
+            return;
+        } else {
+            self.is_moving = true;
+
+            self.previous_move_direction = self.current_move_direction;
+            self.current_move_direction = direction;
+
+            self.move_to_target = target_px;
+
+            logger.debug("Set final target position at {} . Current head position is {}", .{ self.move_to_target, self.head_pos });
+
+            // add a corner segment if we're turning
+            if (self.previous_move_direction != self.current_move_direction) {
+                var corner_segment_sprite: u16 = 288; // top left corner
+                if (self.previous_move_direction == .Up and self.current_move_direction == .Right) {
+                    corner_segment_sprite = 290; // top right corner
+                }
+                if (self.previous_move_direction == .Down and self.current_move_direction == .Left) {
+                    corner_segment_sprite = 320; // bottom left corner
+                }
+                if (self.previous_move_direction == .Down and self.current_move_direction == .Right) {
+                    corner_segment_sprite = 322; // bottom right corner
+                }
+                self.AddSegment(self.head_pos, corner_segment_sprite);
+            }
+        }
     }
 
     fn HasOvershotTarget(self: *Player) bool {
@@ -147,11 +183,10 @@ pub const Player = struct {
                     MoveDirection.None => unreachable,
                 }
 
-                // Is there already a segment in the current cell?
-                const current_cell_x = math_utils.round_to_multiple(self.head_pos.x, 8.0);
-                const current_cell_y = math_utils.round_to_multiple(self.head_pos.y, 8.0);
+                const current_grid_pos = Camera.mapLevelToWorldGrid(self.head_pos, true);
+                const is_there_segment_in_current_cell = self.IsThereSegmentAtGridPos(current_grid_pos);
 
-                if (!self.SegmentInCell(current_cell_x, current_cell_y)) {
+                if (!is_there_segment_in_current_cell) {
                     const segment_left_to_right = 256;
                     const segment_top_to_bottom = 258;
                     const segment_top_left_corner = 288;
@@ -168,7 +203,7 @@ pub const Player = struct {
                         segment_sprite = segment_top_to_bottom;
                     }
 
-                    self.AddSegment(Vector2{ .x = current_cell_x, .y = current_cell_y }, segment_sprite);
+                    self.AddSegment(self.head_pos, segment_sprite);
                 }
             } else {
                 // move to the nearest multiple of 8
@@ -185,7 +220,7 @@ pub const Player = struct {
 
             tic.spr(segment.sprite,
             // a comment to prevent auto-formatting from breaking the line
-            segment.pos.x, segment.pos.y,
+            segment.pixel_pos.x, segment.pixel_pos.y,
             // args!
             .{ .w = 2, .h = 2, .transparent = &.{0} });
         }

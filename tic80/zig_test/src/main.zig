@@ -1,6 +1,7 @@
 const tic = @import("tic80.zig");
 const map_utils = @import("./utils//map.zig");
 const random = @import("./utils/random.zig");
+const constants = @import("./constants.zig");
 
 const scene_manager = @import("./scenes/scene_manager.zig");
 
@@ -15,6 +16,10 @@ export fn BOOT() void {
 }
 
 export fn TIC() void {
+    if (constants.DEBUG) {
+        @setRuntimeSafety(true);
+    }
+
     scene_manager.DoUpdate();
     scene_manager.DoDraw();
 }

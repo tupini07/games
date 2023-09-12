@@ -3,26 +3,24 @@ const tic = @import("../tic80.zig");
 const controller = @import("../utils/controller.zig");
 const constants = @import("../constants.zig");
 
-const Camera = @import("../entities/camera.zig").Camera;
+const Camera = @import("../entities/camera.zig");
 const KnownScenes = @import("known_scenes.zig").KnownScenes;
 const Player = @import("../entities/Player.zig").Player;
 const Vector2 = @import("../entities/Vector2.zig").Vector2;
 
 pub const GameScene = struct {
     current_level: u8,
-    camera: Camera,
     player: Player,
 
     pub fn Init() GameScene {
         var game = GameScene{
             .current_level = 0,
-            .camera = Camera.New(),
             .player = Player.New(),
         };
 
-        game.camera.currentLevel = 0;
+        Camera.currentLevel = 0;
 
-        var first_pos_idx: usize = game.camera.currentLevel * 2;
+        var first_pos_idx: usize = Camera.currentLevel * 2;
 
         var starting_player_pos = Vector2{
             .x = constants.PLAYER_START_POSITIONS[first_pos_idx],
@@ -43,7 +41,7 @@ pub const GameScene = struct {
 
     pub fn Draw(self: *GameScene) void {
         tic.cls(0);
-        self.camera.drawLevel();
+        Camera.drawLevel();
         _ = tic.print("hello, we're at in game", 10, 10, .{});
 
         self.player.Draw();

@@ -8,6 +8,10 @@ tasks:
       - task --list-all
     silent: true
   
+  test:
+    cmds:
+      - zig build test
+
   build:
     cmds:
       - zig build -Doptimize=ReleaseSmall
@@ -27,6 +31,7 @@ tasks:
     cmds:
       - rm -rf build || true
       - mkdir build
+      - zig build test
       - zig build -Doptimize=ReleaseSmall
       - wasm-opt -Oz zig-out/lib/cart.wasm -o zig-out/lib/cart_optimized.wasm
       - tic80 --cli --fs . --cmd 'load game.wasmp & import binary zig-out/lib/cart_optimized.wasm & save build/game.tic'

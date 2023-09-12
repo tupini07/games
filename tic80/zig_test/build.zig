@@ -24,4 +24,13 @@ pub fn build(b: *std.Build) !void {
     lib.export_symbol_names = &[_][]const u8{ "TIC", "OVR", "BDR", "BOOT" };
 
     b.installArtifact(lib);
+
+    const unit_tests = b.addTest(.{
+        .root_source_file = .{ .path = "src/test_main.zig" },
+        .target = b.standardTargetOptions(.{}),
+    });
+    const run_unit_tests = b.addRunArtifact(unit_tests);
+
+    const test_step = b.step("test", "Run unit tests");
+    test_step.dependOn(&run_unit_tests.step);
 }
