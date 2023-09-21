@@ -1,0 +1,22 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true
+
+  mod-tidy:
+    - go mod tidy -v
+    - go mod vendor -v
+
+  test:
+    - go test -v ./...
+
+  run:
+    - go run .
+
+  fmt:
+    - go fmt ./...
