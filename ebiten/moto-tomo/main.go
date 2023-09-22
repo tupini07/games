@@ -3,6 +3,7 @@ package main
 import (
 	"image/color"
 	"log"
+	"syscall"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/solarlune/ldtkgo"
@@ -10,7 +11,8 @@ import (
 )
 
 type Game struct {
-	Buffer *ebiten.Image
+	currentLevel int
+	overlayFader *OverlayFader
 
 	LDTKProject    *ldtkgo.Project
 	EbitenRenderer *EbitenRenderer
@@ -28,8 +30,8 @@ func main() {
 	ebiten.SetVsyncEnabled(true)
 
 	game := &Game{
-		Buffer: ebiten.NewImage(130, 130),
-		Space:  resolv.NewSpace(130, 130, 10, 10),
+		currentLevel: -1,
+		Space:        resolv.NewSpace(130, 130, 5, 5),
 	}
 
 	var err error
@@ -39,14 +41,46 @@ func main() {
 	}
 
 	game.EbitenRenderer = NewEbitenRenderer(NewDiskLoader("assets/maps"))
-	game.EbitenRenderer.Render(game.LDTKProject.Levels[0])
 
-	player := NewPlayer(game.Space)
-	game.Player = player
+	game.GoToNextLevel()
 
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (g *Game) GoToNextLevel() {
+	g.currentLevel += 1
+	log.Printf("Starting level: %d", g.currentLevel)
+
+	skipOverlayFadeOut := g.currentLevel == 0
+	g.overlayFader = NewOverlayFader(skipOverlayFadeOut, func() {
+		log.Println("Overlay done, inside callback")
+
+		var currentLevel = g.LDTKProject.Levels[g.currentLevel]
+		g.EbitenRenderer.Render(currentLevel)
+
+		// add solid tiles to space
+		entitiesLayer := currentLevel.LayerByIdentifier("Entities")
+		for _, entity := range entitiesLayer.Entities {
+			pos_x, pos_y := float64(entity.Position[0]), float64(entity.Position[1])
+			width, height := float64(entity.Width), float64(entity.Height)
+
+			if entity.Identifier == "Player" {
+				player := NewPlayer(g.Space, pos_x, pos_y)
+				g.Player = player
+				log.Printf("Created player at (%f, %f)", pos_x, pos_y)
+
+			} else if entity.Identifier == "Solid" {
+				g.Space.Add(resolv.NewObject(pos_x, pos_y, width, height, "solid_wall"))
+				log.Printf("Created solid wall at (%f, %f) with width %f and height %f", pos_x, pos_y, width, height)
+
+			} else if entity.Identifier == "Target" {
+				g.Space.Add(resolv.NewObject(pos_x, pos_y, width, height, "target"))
+				log.Printf("Created target at (%f, %f) with width %f and height %f", pos_x, pos_y, width, height)
+			}
+		}
+	})
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, screenHeight int) {
@@ -54,33 +88,40 @@ func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, scr
 }
 
 func (g *Game) Update() error {
-	dt := 1.0 / ebiten.ActualTPS()
+	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
+		syscall.Exit(0)
+	}
+
+	if g.overlayFader != nil {
+		overlayDone := g.overlayFader.Update()
+		if overlayDone {
+			g.overlayFader = nil
+		}
+
+		// skip updating other stuff if the overlay is still doing its thing
+		return nil
+	}
+
+	// https://github.com/hajimehoshi/ebiten/issues/335
+	var dt float64 = 1. / 60.
 
 	g.Player.update(dt)
+
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.Buffer.Fill(color.RGBA{31, 14, 28, 255})
+	screen.Fill(color.RGBA{31, 14, 28, 255})
 
 	for _, layer := range g.EbitenRenderer.RenderedLayers {
-		// TODO this is rendering outside, the reason is the scale below. It is
-		// rendering the left and right walls between bounds, only the bottom
-		// wall is rendered outside.
-		g.Buffer.DrawImage(layer.Image, &ebiten.DrawImageOptions{})
+		screen.DrawImage(layer.Image, &ebiten.DrawImageOptions{})
 	}
 
-	g.Player.draw(g.Buffer)
-
-	// scale buffer as a square so we fill the screen
-	// scale := float64(g.Width) / float64(g.Buffer.Bounds().Dx())
-	// scale := float64(g.Width) / float64(g.Buffer.Bounds().Dy())
-	scale := 1.0
-
-	geo := ebiten.GeoM{}
-	geo.Scale(scale, scale)
-	ops := ebiten.DrawImageOptions{
-		GeoM: geo,
+	if g.Player != nil {
+		g.Player.draw(screen)
 	}
-	screen.DrawImage(g.Buffer, &ops)
+
+	if g.overlayFader != nil {
+		g.overlayFader.Draw(screen)
+	}
 }
