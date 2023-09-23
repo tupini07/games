@@ -2,12 +2,12 @@ package main
 
 import (
 	_ "image/png"
-	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/solarlune/resolv"
 	"github.com/tupini07/moto-tomo/gmath/vector"
+	"github.com/tupini07/moto-tomo/logging"
 )
 
 type Player struct {
@@ -25,7 +25,7 @@ func NewPlayer(space *resolv.Space, x float64, y float64) *Player {
 	space.Add(physObj)
 
 	if err != nil {
-		log.Fatalf("Could not load player image! %s", err)
+		logging.Errorf("Could not load player image! %s", err)
 	}
 
 	return &Player{
@@ -36,8 +36,9 @@ func NewPlayer(space *resolv.Space, x float64, y float64) *Player {
 	}
 }
 
-func (p *Player) update(dt float64) {
-	speed := 130.0 / 2
+func (p *Player) Update(dt float64) {
+	// speed := 130.0 / 2
+	speed := 90.
 
 	if !p.isMoving {
 		moveVec := vector.Zero()
@@ -84,17 +85,21 @@ func (p *Player) update(dt float64) {
 			// Cells:[]*resolv.Cell{(*resolv.Cell)(0xc0003d0b40)}}
 
 			contactWithObject := collision.ContactWithObject(collision.Objects[0])
-			log.Printf("Contact with object: %#v \n", contactWithObject)
+			logging.Debugf("Contact with object: %#v \n", contactWithObject)
 
 			vel_x = contactWithObject.X()
 			vel_y = contactWithObject.Y()
 
 			p.isMoving = false
 
-			if collision.Objects[0].Tags()[0] == "target" {
-				log.Println("You win!")
-			}
+			otherTag := collision.Objects[0].Tags()[0]
 
+			if otherTag == "target" {
+				logging.Debug("Level won!")
+				GameInstance.GoToNextLevel()
+			} else if otherTag == "mob" {
+				logging.Debug("Ya dead!")
+			}
 		}
 
 		// now, update player's position
@@ -104,7 +109,7 @@ func (p *Player) update(dt float64) {
 	}
 }
 
-func (p *Player) draw(screen *ebiten.Image) {
+func (p *Player) Draw(screen *ebiten.Image) {
 	geo := ebiten.GeoM{}
 	geo.Translate(p.obj.X, p.obj.Y)
 	ops := ebiten.DrawImageOptions{

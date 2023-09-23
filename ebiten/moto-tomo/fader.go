@@ -61,6 +61,12 @@ func (f *OverlayFader) Update() bool {
 
 func (f *OverlayFader) Draw(screen *ebiten.Image) {
 	if f.overlayDirction != 0 {
-		ebivec.DrawFilledRect(screen, 0, 0, 130, 130, color.RGBA{0, 0, 0, f.overlayAlpha}, false)
+		ebivec.DrawFilledRect(screen,
+			0, 0,
+			float32(screen.Bounds().Dx()),
+			float32(screen.Bounds().Dy()),
+			color.RGBA{0, 0, 0, f.overlayAlpha},
+			false,
+		)
 	}
 }

@@ -96,6 +96,10 @@ func (er *EbitenRenderer) beginLayer(layer *ldtkgo.Layer, w, h int) {
 
 }
 
+func (er *EbitenRenderer) getTile(srcX, srcY, srcW, srcH int, flipBit byte) *ebiten.Image {
+	return er.Tilesets[er.CurrentTileset].SubImage(image.Rect(srcX, srcY, srcX+srcW, srcY+srcH)).(*ebiten.Image)
+}
+
 // renderTile gets called by LDtkgo.Layer.RenderTiles(), and is currently provided the following arguments to handle rendering each tile in a Layer:
 // x, y = position of the drawn tile
 // srcX, srcY = position on the source tilesheet of the specified tile
@@ -104,7 +108,8 @@ func (er *EbitenRenderer) beginLayer(layer *ldtkgo.Layer, w, h int) {
 func (er *EbitenRenderer) renderTile(x, y, srcX, srcY, srcW, srcH int, flipBit byte) {
 
 	// Subimage the Tile from the Tileset
-	tile := er.Tilesets[er.CurrentTileset].SubImage(image.Rect(srcX, srcY, srcX+srcW, srcY+srcH)).(*ebiten.Image)
+	// tile := er.Tilesets[er.CurrentTileset].SubImage(image.Rect(srcX, srcY, srcX+srcW, srcY+srcH)).(*ebiten.Image)
+	tile := er.getTile(srcX, srcY, srcW, srcH, flipBit)
 
 	opt := &ebiten.DrawImageOptions{}
 

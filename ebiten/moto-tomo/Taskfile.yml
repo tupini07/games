@@ -16,7 +16,7 @@ tasks:
     - go test -v ./...
 
   run:
-    - go run .
+    - go run -tags="debug" .
 
   fmt:
     - go fmt ./...
