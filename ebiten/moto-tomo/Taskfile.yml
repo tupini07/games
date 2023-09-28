@@ -8,7 +8,11 @@ tasks:
       - task --list-all
     silent: true
 
-  mod-tidy:
+  lint: 
+      staticcheck ./...
+      go vet ./...
+
+  tidy:
     - go mod tidy -v
     - go mod vendor -v
 
@@ -20,3 +24,8 @@ tasks:
 
   fmt:
     - go fmt ./...
+
+  web-serve:
+    - go run github.com/hajimehoshi/wasmserve@latest -tags="debug" . &
+    - sleep 3
+    - watchexec --exts go curl localhost:8080/_notify
