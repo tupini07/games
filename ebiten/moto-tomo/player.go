@@ -4,8 +4,9 @@ import (
 	_ "image/png"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/solarlune/ldtkgo"
 	"github.com/solarlune/resolv"
+	"github.com/tupini07/moto-tomo/controller"
 	"github.com/tupini07/moto-tomo/gmath/vector"
 	"github.com/tupini07/moto-tomo/logging"
 )
@@ -17,23 +18,38 @@ type Player struct {
 	moveVec  vector.Vector2
 }
 
-func NewPlayer(space *resolv.Space, x float64, y float64) *Player {
-	playerImg, _, err := ebitenutil.NewImageFromFile("assets/Dungeon/Characters/Character 01.png")
-
-	// physObj := resolv.NewObject(x, y, 6, 8)
-	physObj := resolv.NewObject(x, y, 10, 10)
-	space.Add(physObj)
-
-	if err != nil {
-		logging.Errorf("Could not load player image! %s", err)
-	}
-
-	return &Player{
-		sprite:   playerImg,
-		obj:      physObj,
+func NewPlayer(space *resolv.Space, entity *ldtkgo.Entity) *Player {
+	player := Player{
 		isMoving: false,
 		moveVec:  vector.Zero(),
+		obj: resolv.NewObject(
+			float64(entity.Position[0]),
+			float64(entity.Position[1]),
+			float64(entity.Width),
+			float64(entity.Height),
+			"player",
+		),
 	}
+
+	space.Add(player.obj)
+
+	for _, property := range entity.Properties {
+		switch property.Identifier {
+		case "Sprite":
+			data := property.Value.(map[string]any)
+			player.sprite = GameInstance.EbitenRenderer.getTile(
+				int(data["x"].(float64)),
+				int(data["y"].(float64)),
+				int(data["w"].(float64)),
+				int(data["h"].(float64)),
+				0,
+			)
+		}
+	}
+
+	logging.Debugf("Created player: %+v", player)
+
+	return &player
 }
 
 func (p *Player) Update(dt float64) {
@@ -43,13 +59,13 @@ func (p *Player) Update(dt float64) {
 	if !p.isMoving {
 		moveVec := vector.Zero()
 
-		if ebiten.IsKeyPressed(ebiten.KeyW) {
+		if controller.IsActionPressed(controller.Up) {
 			moveVec.Y = -1
-		} else if ebiten.IsKeyPressed(ebiten.KeyS) {
+		} else if controller.IsActionPressed(controller.Down) {
 			moveVec.Y = 1
-		} else if ebiten.IsKeyPressed(ebiten.KeyA) {
+		} else if controller.IsActionPressed(controller.Left) {
 			moveVec.X = -1
-		} else if ebiten.IsKeyPressed(ebiten.KeyD) {
+		} else if controller.IsActionPressed(controller.Right) {
 			moveVec.X = 1
 		}
 
@@ -92,13 +108,25 @@ func (p *Player) Update(dt float64) {
 
 			p.isMoving = false
 
-			otherTag := collision.Objects[0].Tags()[0]
+			otherObj := collision.Objects[0]
+			otherTag := otherObj.Tags()[0]
 
 			if otherTag == "target" {
 				logging.Debug("Level won!")
 				GameInstance.GoToNextLevel()
 			} else if otherTag == "mob" {
 				logging.Debug("Ya dead!")
+
+				// find the mob that we collided with
+				var otherSprite *ebiten.Image
+				for _, m := range GameInstance.Mobs {
+					if m.obj == otherObj {
+						otherSprite = m.sprite
+						break
+					}
+				}
+
+				GameInstance.PlayerDied(otherSprite)
 			}
 		}
 
