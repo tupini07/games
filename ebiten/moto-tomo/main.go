@@ -186,8 +186,6 @@ func (g *Game) Update() error {
 	if constants.Debug {
 		// go to next level
 		if !g.Coroutine.Running() && ebiten.IsKeyPressed(ebiten.KeyAltLeft) {
-			logging.Debug("Changing level")
-
 			if inpututil.IsKeyJustPressed(ebiten.KeyN) {
 				logging.Debug("Going to next level")
 
