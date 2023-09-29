@@ -15,6 +15,21 @@ const (
 	Right
 )
 
+func (a Action) String() string {
+	switch a {
+	case Up:
+		return "up"
+	case Down:
+		return "down"
+	case Left:
+		return "left"
+	case Right:
+		return "right"
+	}
+
+	panic("unkno")
+}
+
 var actionToKeysMap = make(map[Action][]ebiten.Key)
 
 func Map(action Action, keys ...ebiten.Key) {

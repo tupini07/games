@@ -112,11 +112,9 @@ func (p *Player) Update(dt float64) {
 			otherTag := otherObj.Tags()[0]
 
 			if otherTag == "target" {
-				logging.Debug("Level won!")
 				GameInstance.GoToNextLevel()
-			} else if otherTag == "mob" {
-				logging.Debug("Ya dead!")
 
+			} else if otherTag == "mob" {
 				// find the mob that we collided with
 				var otherSprite *ebiten.Image
 				for _, m := range GameInstance.Mobs {

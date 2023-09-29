@@ -14,20 +14,22 @@ import (
 type OverlayFader struct {
 	overlayAlpha uint8
 	banner       *ebiten.Image
-	textToDraw   string
+	mainText     string
+	subText      string
 }
 
 func NewOverlayFader() *OverlayFader {
 	return &OverlayFader{
 		overlayAlpha: 0,
-		textToDraw:   "",
+		mainText:     "",
+		subText:      "",
 	}
 }
 
 func overlayCoroutine(exe *gocoro.Execution) {
 	f := GameInstance.overlayFader
 	skipFadeOut := exe.Args[0].(bool)
-	doneCallback := exe.Args[1].(func())
+	doneCallback := exe.Args[1].(func() bool)
 
 	if f.banner != nil {
 		f.banner = ebiten.NewImageFromImage(f.banner)
@@ -58,8 +60,13 @@ func overlayCoroutine(exe *gocoro.Execution) {
 		exe.Yield()
 	}
 
-	// once we're completely "faded" invoke the callback and revert
-	doneCallback()
+	// once we're completely "faded" invoke the callback and revert. This will
+	// yield for as long as the callback returns `false`
+	for !doneCallback() {
+		exe.Yield()
+	}
+
+	exe.YieldTime(500 * time.Millisecond)
 
 	// if there is a banner then yied for bit more to let the player apprciate
 	// it
@@ -71,6 +78,8 @@ func overlayCoroutine(exe *gocoro.Execution) {
 		f.overlayAlpha -= 5
 		exe.Yield()
 	}
+
+	GameInstance.levelStartTime = time.Now()
 }
 
 func (f *OverlayFader) Draw(screen *ebiten.Image) {
@@ -85,15 +94,36 @@ func (f *OverlayFader) Draw(screen *ebiten.Image) {
 	)
 
 	if f.banner != nil {
-		// screen.Fill(color.RGBA{31, 14, 28, 255})
 		ops := &ebiten.DrawImageOptions{}
+
+		// image should be centered on vertical
+		ops.GeoM.Translate(
+			-float64(f.banner.Bounds().Dx()/2),
+			-float64(f.banner.Bounds().Dy()/2),
+		)
+
+		// scale on center
 		ops.GeoM.Scale(4, 4)
+
+		ops.GeoM.Translate(
+			float64(screen.Bounds().Dx()/2),
+			float64(screen.Bounds().Dy()/4),
+		)
+
+		// ops.GeoM.Translate(
+		// 	float64(f.banner.Bounds().Dx()/2),
+		// 	float64(f.banner.Bounds().Dy()/2),
+		// )
 
 		overlayImage.DrawImage(f.banner, ops)
 	}
 
-	if f.textToDraw != "" {
-		text.Draw(overlayImage, f.textToDraw, smallFontFace, 10, 10, color.White)
+	if f.mainText != "" {
+		text.Draw(overlayImage, f.mainText, bigFontFace, 10, 80, color.White)
+	}
+
+	if f.subText != "" {
+		text.Draw(overlayImage, f.subText, smallFontFace, 10, 90, color.White)
 	}
 
 	ops := &ebiten.DrawImageOptions{}

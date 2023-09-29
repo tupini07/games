@@ -4,15 +4,18 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
+	"math/rand"
 	"runtime"
+	"time"
 
 	"image/color"
 	"syscall"
 
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text"
+	ebivec "github.com/hajimehoshi/ebiten/v2/vector"
 
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/solarlune/gocoro"
 	"github.com/solarlune/ldtkgo"
 	"github.com/solarlune/resolv"
@@ -35,6 +38,9 @@ type Game struct {
 	currentLevel int
 	gameWon      bool
 	overlayFader *OverlayFader
+
+	levelStartTime time.Time
+	levelDurations []time.Duration
 
 	worldImage     *ebiten.Image
 	LDTKProject    *ldtkgo.Project
@@ -63,10 +69,15 @@ func main() {
 		currentLevel: -1,
 		gameWon:      false,
 		overlayFader: NewOverlayFader(),
-		worldImage:   ebiten.NewImage(ViewportWidth, ViewportHeight),
-		Coroutine:    gocoro.NewCoroutine(),
-		Space:        resolv.NewSpace(ViewportWidth, ViewportHeight, 5, 5),
-		Mobs:         make([]*Mob, 0),
+
+		// This will get overwritten later when we actually start
+		levelStartTime: time.Now(),
+
+		worldImage: ebiten.NewImage(ViewportWidth, ViewportHeight),
+		Coroutine:  gocoro.NewCoroutine(),
+		Space:      resolv.NewSpace(ViewportWidth, ViewportHeight, 5, 5),
+
+		Mobs: make([]*Mob, 0),
 	}
 
 	var err error
@@ -75,6 +86,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	GameInstance.levelDurations = make([]time.Duration, len(GameInstance.LDTKProject.Levels))
 
 	GameInstance.EbitenRenderer = NewEbitenRenderer(NewDiskLoader("assets/maps"))
 
@@ -98,7 +111,7 @@ func registerKeybindings() {
 }
 
 func (g *Game) initLevel() {
-	logging.Debugf("Initializing level: %d", g.currentLevel)
+	logging.Infof("Initializing level: %d", g.currentLevel)
 
 	var currentLevel = g.LDTKProject.Levels[g.currentLevel]
 	g.EbitenRenderer.Render(currentLevel)
@@ -125,7 +138,6 @@ func (g *Game) initLevel() {
 		if entity.Identifier == "Player" {
 			player := NewPlayer(g.Space, entity)
 			g.Player = player
-			logging.Debugf("Created player at (%f, %f)", pos_x, pos_y)
 
 		} else if entity.Identifier == "Solid" {
 			g.Space.Add(resolv.NewObject(pos_x, pos_y, width, height, "solid_wall"))
@@ -142,37 +154,109 @@ func (g *Game) initLevel() {
 }
 
 func (g *Game) initGameWon() {
-	logging.Debug("Initializing game won scene")
+	logging.Info("Initializing game won scene")
 
 	g.gameWon = true
 	g.Mobs = make([]*Mob, 0)
 }
 
-func showOverlay(skipOverlayFadeOut bool, callback func(), spriteOfKiller *ebiten.Image, textToDraw string) {
+func showOverlay(skipOverlayFadeOut bool, callback func() bool, spriteOfKiller *ebiten.Image, mainText, subText string) {
 	GameInstance.overlayFader.banner = spriteOfKiller
-	GameInstance.overlayFader.textToDraw = textToDraw
+	GameInstance.overlayFader.mainText = mainText
+	GameInstance.overlayFader.subText = subText
 
 	GameInstance.Coroutine.Run(overlayCoroutine, skipOverlayFadeOut, callback)
 }
 
 func (g *Game) PlayerDied(spriteOfKiller *ebiten.Image) {
-	showOverlay(false, g.initLevel, spriteOfKiller, "You died!")
+	callback := func() bool {
+		g.initLevel()
+		return true
+	}
+
+	taunts := []string{
+		"heh",
+		"lol",
+		"come on, you can do better \nthan that",
+		"You can't handle the truth!",
+		"You're going to need a lot \nmore practice",
+		"You're slower than a herd \nof turtles stampeding \nthrough peanut butter",
+
+		// "I've seen better players in my sleep",
+		// "You're a disgrace to gamers everywhere!",
+		// "You're like a one-legged man in an ass-kicking contest",
+		// "You're about as useful as a screen door on a submarine",
+		// "You couldn't hit water if you fell out of a boat",
+	}
+
+	// Pick a random element from the array
+	randomTaunt := taunts[rand.Intn(len(taunts))]
+
+	showOverlay(false, callback, spriteOfKiller, "You died!", randomTaunt)
 }
 
 func (g *Game) GoToNextLevel() {
-	g.currentLevel += 1
-	memory.Save("currentLevel", g.currentLevel)
+	skipOverlayFadeOut := g.currentLevel == -1
 
-	skipOverlayFadeOut := g.currentLevel == 0
-
-	callbackFun := g.initLevel
-	isThereNextLevel := len(g.LDTKProject.Levels) > g.currentLevel
+	levelChangeFun := g.initLevel
+	isThereNextLevel := len(g.LDTKProject.Levels) > (g.currentLevel + 1)
 	if !isThereNextLevel {
-		callbackFun = g.initGameWon
+		levelChangeFun = g.initGameWon
+	}
+
+	durationForLevel := time.Since(g.levelStartTime)
+
+	callback := func() bool {
+		if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+			levelChangeFun()
+			return true
+		}
+
+		if skipOverlayFadeOut || inpututil.IsKeyJustPressed(ebiten.KeyC) {
+			// record time
+			if g.currentLevel > -1 {
+				g.levelDurations[g.currentLevel] = durationForLevel
+			}
+
+			g.currentLevel += 1
+			memory.Save("currentLevel", g.currentLevel)
+
+			levelChangeFun()
+			return true
+		}
+
+		return false
 	}
 
 	lvlStr := fmt.Sprintf("Level: %d", g.currentLevel+1)
-	showOverlay(skipOverlayFadeOut, callbackFun, nil, lvlStr)
+
+	subText := ""
+	if g.currentLevel > -1 {
+		totalTime := 0.
+		for _, duration := range g.levelDurations {
+			totalTime += duration.Seconds()
+		}
+
+		subText = fmt.Sprintf(
+			"took %.2f seconds\n",
+			durationForLevel.Seconds(),
+		)
+
+		if totalTime > 0. {
+			subText += fmt.Sprintf(
+				"total until now: %.2f\n",
+				totalTime,
+			)
+		}
+
+		if !isThereNextLevel {
+			subText += ">> this is the last level\n"
+		}
+
+		subText += "\npress C to continue\nor R to retry"
+	}
+
+	showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText)
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, screenHeight int) {
@@ -221,7 +305,7 @@ func (g *Game) Update() error {
 	// If coroutine is running then it means we don't want to update the player
 	if g.Coroutine.Running() {
 		g.Coroutine.Update()
-	} else {
+	} else if g.Player != nil {
 		g.Player.Update(dt)
 	}
 
@@ -271,8 +355,23 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	screen.DrawImage(g.worldImage, ops)
 
-	if g.overlayFader != nil {
+	if g.overlayFader.overlayAlpha > 0 {
+		logging.Debug("Drawing overlay")
 		g.overlayFader.Draw(screen)
+	} else {
+		durationForLevel := time.Since(g.levelStartTime)
+		durationStr := fmt.Sprintf("%4.2f", durationForLevel.Seconds())
+
+		// draw level background for contrast
+		ebivec.DrawFilledRect(screen,
+			3, 3,
+			float32(len(durationStr))*5, 10,
+			color.RGBA{0, 0, 0, 132},
+			false,
+		)
+
+		// draw level timer
+		text.Draw(screen, durationStr, smallFontFace, 6, 10, color.White)
 	}
 
 }

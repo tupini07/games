@@ -4,13 +4,17 @@ version: '3'
 
 tasks:
   default:
-    cmds:
-      - task --list-all
-    silent: true
+    - task --list-all
 
   lint: 
-      staticcheck ./...
-      go vet ./...
+    - go run github.com/nishanths/exhaustive/cmd/exhaustive@latest ./...
+    - go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+    - go vet ./...
+
+  release:
+    deps: [tidy, lint, test, fmt]
+    cmds:
+      - go build -tags="release"
 
   tidy:
     - go mod tidy -v
@@ -20,12 +24,12 @@ tasks:
     - go test -v ./...
 
   run:
-    - go run -tags="debug" .
+    - go run .
 
   fmt:
     - go fmt ./...
 
   web-serve:
-    - go run github.com/hajimehoshi/wasmserve@latest -tags="debug" . &
+    - go run github.com/hajimehoshi/wasmserve@latest . &
     - sleep 3
     - watchexec --exts go curl localhost:8080/_notify

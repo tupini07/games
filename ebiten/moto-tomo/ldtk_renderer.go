@@ -100,42 +100,42 @@ func (er *EbitenRenderer) getTile(srcX, srcY, srcW, srcH int, flipBit byte) *ebi
 	return er.Tilesets[er.CurrentTileset].SubImage(image.Rect(srcX, srcY, srcX+srcW, srcY+srcH)).(*ebiten.Image)
 }
 
-// renderTile gets called by LDtkgo.Layer.RenderTiles(), and is currently provided the following arguments to handle rendering each tile in a Layer:
-// x, y = position of the drawn tile
-// srcX, srcY = position on the source tilesheet of the specified tile
-// srcW, srcH = width and height of the tile
-// flipBit = the flip bit of the tile; if the first bit is set, it should flip horizontally. If the second is set, it should flip vertically.
-func (er *EbitenRenderer) renderTile(x, y, srcX, srcY, srcW, srcH int, flipBit byte) {
+// // renderTile gets called by LDtkgo.Layer.RenderTiles(), and is currently provided the following arguments to handle rendering each tile in a Layer:
+// // x, y = position of the drawn tile
+// // srcX, srcY = position on the source tilesheet of the specified tile
+// // srcW, srcH = width and height of the tile
+// // flipBit = the flip bit of the tile; if the first bit is set, it should flip horizontally. If the second is set, it should flip vertically.
+// func (er *EbitenRenderer) renderTile(x, y, srcX, srcY, srcW, srcH int, flipBit byte) {
 
-	// Subimage the Tile from the Tileset
-	// tile := er.Tilesets[er.CurrentTileset].SubImage(image.Rect(srcX, srcY, srcX+srcW, srcY+srcH)).(*ebiten.Image)
-	tile := er.getTile(srcX, srcY, srcW, srcH, flipBit)
+// 	// Subimage the Tile from the Tileset
+// 	// tile := er.Tilesets[er.CurrentTileset].SubImage(image.Rect(srcX, srcY, srcX+srcW, srcY+srcH)).(*ebiten.Image)
+// 	tile := er.getTile(srcX, srcY, srcW, srcH, flipBit)
 
-	opt := &ebiten.DrawImageOptions{}
+// 	opt := &ebiten.DrawImageOptions{}
 
-	// We have to offset the tile to be centered before flipping
-	opt.GeoM.Translate(float64(-srcW/2), float64(-srcH/2))
+// 	// We have to offset the tile to be centered before flipping
+// 	opt.GeoM.Translate(float64(-srcW/2), float64(-srcH/2))
 
-	// Handle flipping; first bit in byte is horizontal flipping, second is vertical flipping.
+// 	// Handle flipping; first bit in byte is horizontal flipping, second is vertical flipping.
 
-	if flipBit&1 > 0 {
-		opt.GeoM.Scale(-1, 1)
-	}
-	if flipBit&2 > 0 {
-		opt.GeoM.Scale(1, -1)
-	}
+// 	if flipBit&1 > 0 {
+// 		opt.GeoM.Scale(-1, 1)
+// 	}
+// 	if flipBit&2 > 0 {
+// 		opt.GeoM.Scale(1, -1)
+// 	}
 
-	// Undo offsetting
-	opt.GeoM.Translate(float64(srcW/2), float64(srcH/2))
+// 	// Undo offsetting
+// 	opt.GeoM.Translate(float64(srcW/2), float64(srcH/2))
 
-	// Move tile to final position; note that slightly unlike LDtk, layer offsets in LDtk-Go are added directly into the final tiles' X and Y positions. This means that with this renderer,
-	// if a layer's offset pushes tiles outside of the layer's render Result image, they will be cut off. On LDtk, the tiles are still rendered, of course.
-	opt.GeoM.Translate(float64(x), float64(y))
+// 	// Move tile to final position; note that slightly unlike LDtk, layer offsets in LDtk-Go are added directly into the final tiles' X and Y positions. This means that with this renderer,
+// 	// if a layer's offset pushes tiles outside of the layer's render Result image, they will be cut off. On LDtk, the tiles are still rendered, of course.
+// 	opt.GeoM.Translate(float64(x), float64(y))
 
-	// Finally, draw the tile to the Result image.
-	er.RenderedLayers[len(er.RenderedLayers)-1].Image.DrawImage(tile, opt)
+// 	// Finally, draw the tile to the Result image.
+// 	er.RenderedLayers[len(er.RenderedLayers)-1].Image.DrawImage(tile, opt)
 
-}
+// }
 
 // Render clears, and then renders out each visible Layer in an ldtgo.Level instance.
 func (er *EbitenRenderer) Render(level *ldtkgo.Level) {
