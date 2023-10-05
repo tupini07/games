@@ -30,7 +30,7 @@ import (
 //go:embed assets/maps/world.ldtk
 var ldtkMapBytes []byte
 
-const WorldCellSize = 10
+const WorldCellSize = 5
 const ViewportWidth = 130
 const ViewportHeight = 130
 
@@ -160,14 +160,6 @@ func (g *Game) initGameWon() {
 	g.Mobs = make([]*Mob, 0)
 }
 
-func showOverlay(skipOverlayFadeOut bool, callback func() bool, spriteOfKiller *ebiten.Image, mainText, subText string) {
-	GameInstance.overlayFader.banner = spriteOfKiller
-	GameInstance.overlayFader.mainText = mainText
-	GameInstance.overlayFader.subText = subText
-
-	GameInstance.Coroutine.Run(overlayCoroutine, skipOverlayFadeOut, callback)
-}
-
 func (g *Game) PlayerDied(spriteOfKiller *ebiten.Image) {
 	callback := func() bool {
 		g.initLevel()
@@ -196,7 +188,8 @@ func (g *Game) PlayerDied(spriteOfKiller *ebiten.Image) {
 }
 
 func (g *Game) GoToNextLevel() {
-	skipOverlayFadeOut := g.currentLevel == -1
+	levelThatWillBePlayed := g.currentLevel + 1
+	skipOverlayFadeOut := levelThatWillBePlayed == 0
 
 	levelChangeFun := g.initLevel
 	isThereNextLevel := len(g.LDTKProject.Levels) > (g.currentLevel + 1)
@@ -208,11 +201,21 @@ func (g *Game) GoToNextLevel() {
 
 	callback := func() bool {
 		if inpututil.IsKeyJustPressed(ebiten.KeyR) {
+			// this means player is retrying the level
 			levelChangeFun()
+
+			// don't show story if we're retrying
+			if GameInstance.overlayFader.storyFader != nil {
+				GameInstance.overlayFader.storyFader = nil
+				GameInstance.overlayFader.displayingStory = false
+			}
+
 			return true
 		}
 
 		if skipOverlayFadeOut || inpututil.IsKeyJustPressed(ebiten.KeyC) {
+			// player is continuing on to the next level
+
 			// record time
 			if g.currentLevel > -1 {
 				g.levelDurations[g.currentLevel] = durationForLevel
@@ -256,7 +259,36 @@ func (g *Game) GoToNextLevel() {
 		subText += "\npress C to continue\nor R to retry"
 	}
 
-	showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText)
+	// is there a story to tell for this level?
+
+	if storyFrames, ok := storyNodes[levelThatWillBePlayed]; ok {
+		showOverlay(
+			skipOverlayFadeOut,
+			callback,
+			nil,
+			lvlStr,
+			subText,
+			storyFrames...,
+		)
+	} else {
+		showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText)
+	}
+
+	// if isFirstLevel {
+	// 	showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText,
+	// 		"have you heard about the AMULET OF YENDOR? well, this is not that story.\n\nlet me tell you of the events as i understand them.",
+	// 		"you arrived late last night with a package for the wizard.\n\nhe invited you to stay for the night since it was pouring rain outside.",
+	// 		"you woke up in the middle of the night with a pressing need to go to the bathroom. but you soon got lost.\n\nthe corridors were all wrong, not at all how you remembered them.",
+	// 		"\n\n\n\neventually you opened a door and fell into a dark pit.\n\n\nand now here you are!",
+	// 		"it's nice to receive visitors in the dungeon. i'm supposed to make sure you never escape.\n\nbut that's not very fun, is it?",
+	// 		"so i'll tell you what.\n\ni'll give you a chance to escape.\n\nif you can find your way out, i'll let you go!",
+	// 		"\n\n\n\nbut if you die, i'll have to take your soul. deal?",
+	// 		"don't worry, i'll let you retry each room as many times as you want.\n\n\ni'm not a monster.",
+	// 		"you'll only really die when you give up.\n\nso don't give up!",
+	// 	)
+	// } else {
+	// 	showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText)
+	// }
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, screenHeight int) {
@@ -356,7 +388,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.worldImage, ops)
 
 	if g.overlayFader.overlayAlpha > 0 {
-		logging.Debug("Drawing overlay")
 		g.overlayFader.Draw(screen)
 	} else {
 		durationForLevel := time.Since(g.levelStartTime)
