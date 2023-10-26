@@ -9,5 +9,8 @@ tasks:
   default:
     - task --list-all 
 
+  open-mgcb:
+    - dotnet mgcb-editor
+
   update-deps:
     - dotnet outdated -u

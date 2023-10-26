@@ -26,6 +26,8 @@ gsmBuilder
         new FontMeta("Font", "Graphics/Font", 6, 8),
         new PictureMeta("Cursor", "Graphics/Cursor", true),
 
+        new SpriteSheetMeta("Button", "Graphics/Button", 14, 14),
+
         // new FontMeta(...)
         // new PictureMeta(...)
         // new SpriteSheetMeta(...)
