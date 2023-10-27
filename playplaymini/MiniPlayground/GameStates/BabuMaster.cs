@@ -8,15 +8,13 @@ namespace MiniPlayground.GameStates;
 
 
 public sealed class BabuMaster(
-    GraphicsManager graphics,
-    GameStateManager gsm,
-    KeyboardManager keyboard
+    GraphicsManager _graphics,
+    GameStateManager _gsm,
+    KeyboardManager _keyboard
 ) : GameState
 {
-    private GraphicsManager _graphics { get; } = graphics;
-    private KeyboardManager _keyboard { get; } = keyboard;
-    private GameStateManager _GSM { get; } = gsm;
     private List<Circle> circles = new();
+    private Vector2 _origScreenSize = new(_graphics.Width, _graphics.Height);
 
 
     public override void Enter()
@@ -112,14 +110,17 @@ public sealed class BabuMaster(
         circles.RemoveAll(c => c.isDead);
 
 
-        if (_keyboard.KeyDown(Keys.LeftControl) && _keyboard.PressedKey(Keys.F4))
+        if (_keyboard.KeyDown(Keys.LeftControl))
         {
-            _GSM.ChangeState<Playing>();
-        }
+            if (_keyboard.PressedKey(Keys.F4))
+            {
+                _gsm.ChangeState<Playing>();
+            }
 
-        if (_keyboard.PressedKey(Keys.F11))
-        {
-            _graphics.SetFullscreen(!_graphics.FullScreen);
+            if (_keyboard.PressedKey(Keys.F11))
+            {
+                _graphics.SetFullscreen(!_graphics.FullScreen);
+            }
         }
     }
 }
