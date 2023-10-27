@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using BenMakesGames.PlayPlayMini.UI.UIElements;
 using BenMakesGames.PlayPlayMini.UI.Model;
 using BenMakesGames.PlayPlayMini.Attributes.DI;
+using MiniPlayground.Entities;
 
 namespace MiniPlayground.GameStates;
 
@@ -33,46 +34,82 @@ public sealed class Playing(
 ) : GameState
 {
 
-    // overriding lifecycle methods is optional; feel free to delete any overrides you're not using.
-    // note: you do NOT need to call the `base.` for lifecycle methods. so save some CPU cycles,
-    // and don't call them :P
+    private readonly SimpleCamera _camera = new(_graphics);
 
     public override void Draw(GameTime gameTime)
     {
-        // TODO: draw game scene (refer to PlayPlayMini documentation for more info)
-
         _graphics.Clear(Color.DarkSlateGray);
-
-        _graphics.DrawText("Font", _graphics.Width / 2 - 30, _graphics.Height / 2 - 4, "Oh, hi! :D", Color.White);
-        _graphics.DrawText("Font", 10, (_graphics.Height / 3) * 2, "Press X to continue", Color.FloralWhite);
-
-        _graphics.DrawWavyText("Font", _mouse.X - 35, _mouse.Y - 10, gameTime, $"x:{_mouse.X}, y:{_mouse.Y}", Color.White);
+        _graphics.DrawWavyText("Font", 4, 16, gameTime, $"Select one!", Color.Gray);
 
         _ui.AlwaysDraw(gameTime);
         _ui.AlwaysDraw(gameTime);
 
+        _graphics.DrawWavyText(
+            "Font",
+            _mouse.X - 35,
+            _mouse.Y - 10,
+            gameTime,
+            $"x:{_mouse.X}, y:{_mouse.Y}",
+            Color.White
+        );
         _mouse.Draw(gameTime);
     }
 
     public override void Update(GameTime gameTime)
     {
-        if (_keyboard.PressedKey(Keys.X))
+        _ui.ActiveUpdate(gameTime);
+
+        if (_keyboard.KeyDown(Keys.Left))
         {
-            Console.WriteLine("Hey! You just pressed the X key! Good for you");
-            _gsm.ChangeState<BabuMaster>();
-            return;
+            _camera.position.X -= 0.2f;
+        }
+        else if (_keyboard.KeyDown(Keys.Right))
+        {
+            _camera.position.X += 0.2f;
         }
 
-        _ui.ActiveUpdate(gameTime);
+        if (_keyboard.KeyDown(Keys.Up))
+        {
+            _camera.position.Y -= 0.2f;
+        }
+        else if (_keyboard.KeyDown(Keys.Down))
+        {
+            _camera.position.Y += 0.2f;
+        }
+
+        if (_keyboard.KeyDown(Keys.Q))
+        {
+            _camera.rotation -= 0.001f;
+        }
+        else if (_keyboard.KeyDown(Keys.E))
+        {
+            _camera.rotation += 0.001f;
+        }
+
+        if (_keyboard.KeyDown(Keys.W))
+        {
+            _camera.zoom += 0.001f;
+        }
+        else if (_keyboard.KeyDown(Keys.S))
+        {
+            _camera.zoom -= 0.001f;
+        }
+
+        if (_keyboard.PressedKey(Keys.R))
+        {
+            _camera.ResetTransform();
+        }
+
+        _camera.SetTransformMatrix();
     }
 
     public override void Enter()
     {
         _mouse.UseCustomCursor("Cursor", (3, 1));
 
-        var title = new Label(_ui, 4, 16, "Select one!", Color.WhiteSmoke);
+        var title = new Label(_ui, 4, 16, "Select one!", Color.White);
 
-        var printSomething = new Button(_ui, 4, title.Y + title.Height + 2, "Print something!",
+        var printSomething = new Button(_ui, 4, title.Y + title.Height + 8, "Print something!",
             clickHandler: (e) =>
             {
                 Console.WriteLine("Hey! You just pressed the resume button! Good for you");
@@ -91,5 +128,6 @@ public sealed class Playing(
 
     public override void Leave()
     {
+        _camera.UnsetTransform();
     }
 }
