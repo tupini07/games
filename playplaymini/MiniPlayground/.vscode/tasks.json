@@ -9,6 +9,18 @@
 			"group": "build",
 			"label": "build",
 			"detail": "Build the MiniPlayground.csproj project using dotnet build"
+		},
+		{
+			"label": "Upgrade Dependencies",
+			"type": "shell",
+			"command": "dotnet outdated -u",
+			"problemMatcher": []
+		},
+		{
+			"label": "Launch MGCB Editor",
+			"type": "shell",
+			"command": "dotnet mgcb-editor",
+			"problemMatcher": []
 		}
 	]
 }
