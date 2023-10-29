@@ -12,6 +12,7 @@ import (
 )
 
 type OverlayFader struct {
+	Active          bool
 	overlayAlpha    uint8
 	displayingStory bool
 	banner          *ebiten.Image
@@ -22,6 +23,7 @@ type OverlayFader struct {
 
 func NewOverlayFader() *OverlayFader {
 	return &OverlayFader{
+		Active:          false,
 		overlayAlpha:    0,
 		displayingStory: false,
 		mainText:        "",
@@ -53,21 +55,7 @@ func overlayCoroutine(exe *gocoro.Execution) {
 	skipFadeOut := exe.Args[0].(bool)
 	doneCallback := exe.Args[1].(func() bool)
 
-	if f.banner != nil {
-		f.banner = ebiten.NewImageFromImage(f.banner)
-
-		// replace all `RGBA{31, 14, 28, 255}` with `RGBA{0, 0, 0, 255}`
-		// this is a hack to make the banner background transparent
-		toReplace := color.RGBA{31, 14, 28, 255}
-		replaceWith := color.RGBA{0, 0, 0, 255}
-		for x := 0; x < f.banner.Bounds().Dx(); x++ {
-			for y := 0; y < f.banner.Bounds().Dy(); y++ {
-				if f.banner.At(x, y) == toReplace {
-					f.banner.Set(x, y, replaceWith)
-				}
-			}
-		}
-	}
+	f.Active = true
 
 	// suppse we need to fade out
 	f.overlayAlpha = 0
@@ -111,6 +99,7 @@ func overlayCoroutine(exe *gocoro.Execution) {
 	f.storyFader = nil
 	GameInstance.levelStartTime = time.Now()
 	f.displayingStory = false
+	f.Active = false
 }
 
 func (f *OverlayFader) Draw(screen *ebiten.Image) {
@@ -140,11 +129,6 @@ func (f *OverlayFader) Draw(screen *ebiten.Image) {
 			float64(screen.Bounds().Dx()/2),
 			float64(screen.Bounds().Dy()/4),
 		)
-
-		// ops.GeoM.Translate(
-		// 	float64(f.banner.Bounds().Dx()/2),
-		// 	float64(f.banner.Bounds().Dy()/2),
-		// )
 
 		overlayImage.DrawImage(f.banner, ops)
 	}
