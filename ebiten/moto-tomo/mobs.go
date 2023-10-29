@@ -70,6 +70,8 @@ func NewMob(space *resolv.Space, entity *ldtkgo.Entity) *Mob {
 				float64(entity.Position[0]),
 				float64(entity.Position[1]),
 			)
+		default:
+			logging.Warnf("NewMob: Unknown mob property: %s", property.Identifier)
 		}
 	}
 
