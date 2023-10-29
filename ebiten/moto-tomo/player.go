@@ -28,8 +28,10 @@ func NewPlayer(space *resolv.Space, entity *ldtkgo.Entity) *Player {
 		obj: resolv.NewObject(
 			float64(entity.Position[0]),
 			float64(entity.Position[1]),
-			float64(entity.Width),
-			float64(entity.Height),
+			6,
+			8,
+			// float64(entity.Width),
+			// float64(entity.Height),
 			"player",
 		),
 	}
@@ -190,9 +192,11 @@ func (p *Player) Update(dt float64) {
 
 func (p *Player) Draw(screen *ebiten.Image) {
 	geo := ebiten.GeoM{}
-	geo.Translate(p.obj.X, p.obj.Y)
+	geo.Translate(p.obj.X-2, p.obj.Y-2)
 	ops := ebiten.DrawImageOptions{
 		GeoM: geo,
 	}
 	screen.DrawImage(p.sprite, &ops)
+
+	DrawObjCollider(screen, p.obj)
 }

@@ -107,4 +107,5 @@ func (s *Spike) Draw(screen *ebiten.Image) {
 
 	screen.DrawImage(sprite, &ops)
 
+	DrawObjCollider(screen, s.obj)
 }

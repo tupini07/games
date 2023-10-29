@@ -26,8 +26,10 @@ func NewMob(space *resolv.Space, entity *ldtkgo.Entity) *Mob {
 		obj: resolv.NewObject(
 			float64(entity.Position[0]),
 			float64(entity.Position[1]),
-			float64(entity.Width),
-			float64(entity.Height),
+			6,
+			8,
+			// float64(entity.Width),
+			// float64(entity.Height),
 			"mob",
 		),
 	}
@@ -130,10 +132,11 @@ func (m *Mob) Update(dt float64) {
 
 func (m *Mob) Draw(screen *ebiten.Image) {
 	geo := ebiten.GeoM{}
-	geo.Translate(m.obj.X, m.obj.Y)
+	geo.Translate(m.obj.X-2, m.obj.Y-2)
 	ops := ebiten.DrawImageOptions{
 		GeoM: geo,
 	}
 	screen.DrawImage(m.sprite, &ops)
 
+	DrawObjCollider(screen, m.obj)
 }
