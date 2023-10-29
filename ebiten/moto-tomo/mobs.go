@@ -94,9 +94,20 @@ func (m *Mob) Update(dt float64) {
 	}
 
 	if m.isMoving {
-		m.obj.X += m.moveVec.X * m.walkSpeed * dt
-		m.obj.Y += m.moveVec.Y * m.walkSpeed * dt
+		vel_x := m.moveVec.X * m.walkSpeed * dt
+		vel_y := m.moveVec.Y * m.walkSpeed * dt
 
+		// it could be that the mob collides with the player
+		if collision := m.obj.Check(vel_x, vel_y, "player"); collision != nil {
+			contactVec := collision.ContactWithObject(collision.Objects[0])
+			vel_x = contactVec.X()
+			vel_y = contactVec.Y()
+
+			GameInstance.PlayerDied(m.sprite)
+		}
+
+		m.obj.X += vel_x
+		m.obj.Y += vel_y
 		m.obj.Update()
 	}
 
