@@ -9,7 +9,7 @@ import (
 )
 
 func DrawObjCollider(screen *ebiten.Image, obj *resolv.Object) {
-	if constants.Debug {
+	if constants.Debug && constants.DrawColliders {
 		// draw green rectangle outline for the object
 		transparentGreen := colornames.Green
 		transparentGreen.A = 0x10

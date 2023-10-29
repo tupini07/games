@@ -3,3 +3,5 @@
 package constants
 
 const Debug = true
+
+const DrawColliders = true
