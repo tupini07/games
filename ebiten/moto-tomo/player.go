@@ -7,6 +7,7 @@ import (
 	"github.com/solarlune/ldtkgo"
 	"github.com/solarlune/resolv"
 	"github.com/tupini07/moto-tomo/controller"
+	"github.com/tupini07/moto-tomo/gmath/physics"
 	"github.com/tupini07/moto-tomo/gmath/vector"
 	"github.com/tupini07/moto-tomo/logging"
 )
@@ -16,6 +17,8 @@ type Player struct {
 	obj      *resolv.Object
 	isMoving bool
 	moveVec  vector.Vector2
+
+	standingOnSpike *Spike
 }
 
 func NewPlayer(space *resolv.Space, entity *ldtkgo.Entity) *Player {
@@ -56,6 +59,17 @@ func (p *Player) Update(dt float64) {
 	// speed := 130.0 / 2
 	speed := 90.
 
+	// check if we're standing on a spike that is active
+	if p.standingOnSpike != nil {
+		if p.standingOnSpike.obj.Overlaps(p.obj) {
+			if p.standingOnSpike.isActive {
+				GameInstance.PlayerDied(p.standingOnSpike.spriteActive)
+			}
+		} else {
+			p.standingOnSpike = nil
+		}
+	}
+
 	if !p.isMoving {
 		moveVec := vector.Zero()
 
@@ -74,6 +88,7 @@ func (p *Player) Update(dt float64) {
 			p.isMoving = true
 			p.moveVec = moveVec
 		}
+
 	} else {
 		vel_x := p.moveVec.X * dt
 		vel_y := p.moveVec.Y * dt
@@ -100,28 +115,66 @@ func (p *Player) Update(dt float64) {
 			// dx:0, dy:1, Objects:[]*resolv.Object{(*resolv.Object)(0xc0000b8600)},
 			// Cells:[]*resolv.Cell{(*resolv.Cell)(0xc0003d0b40)}}
 
-			contactWithObject := collision.ContactWithObject(collision.Objects[0])
-			logging.Debugf("Contact with object: %#v \n", contactWithObject)
+			collidingWithSpike := physics.CollisionGetObjectWithTag(collision, "spike")
 
-			vel_x = contactWithObject.X()
-			vel_y = contactWithObject.Y()
+			// if we're colliding with a spike then we don't necessarily want to
+			// stop
+			if collidingWithSpike != nil {
+				var otherSpike *Spike
+				for _, s := range GameInstance.Spikes {
+					if s.obj == collidingWithSpike {
+						otherSpike = s
+						break
+					}
+				}
 
-			p.isMoving = false
+				if otherSpike == nil {
+					panic("Could not find spike that we collided with")
+				}
 
-			otherObj := collision.Objects[0]
-			otherTag := otherObj.Tags()[0]
+				// if the spike is inactive then we can move through it (and we
+				// need to activate it). But if it is active then we need to
+				// die
+				p.standingOnSpike = otherSpike
+				otherSpike.Activate()
+			}
 
-			if otherTag == "target" {
+			collidingWithSolid := physics.CollisionGetObjectWithTag(collision, "solid_wall")
+			collidingWithTarget := physics.CollisionGetObjectWithTag(collision, "target")
+			collidingWithMob := physics.CollisionGetObjectWithTag(collision, "mob")
+
+			// if we collided with multiple objects then we resolve by priority
+			var prirityObject *resolv.Object
+			if collidingWithSolid != nil {
+				prirityObject = collidingWithSolid
+			} else if collidingWithTarget != nil {
+				prirityObject = collidingWithTarget
+			} else if collidingWithMob != nil {
+				prirityObject = collidingWithMob
+			}
+
+			if prirityObject != nil {
+				contactVec := collision.ContactWithObject(prirityObject)
+				vel_x = contactVec.X()
+				vel_y = contactVec.Y()
+				p.isMoving = false
+			}
+
+			if collidingWithTarget != nil {
 				GameInstance.GoToNextLevel()
+			}
 
-			} else if otherTag == "mob" {
-				// find the mob that we collided with
+			// if we're colliding with a mob AND we haven't won the level then stop
+			if collidingWithMob != nil && collidingWithTarget == nil {
 				var otherSprite *ebiten.Image
 				for _, m := range GameInstance.Mobs {
-					if m.obj == otherObj {
+					if m.obj == collidingWithMob {
 						otherSprite = m.sprite
 						break
 					}
+				}
+				if otherSprite == nil {
+					panic("Could not find mob that we collided with")
 				}
 
 				GameInstance.PlayerDied(otherSprite)
