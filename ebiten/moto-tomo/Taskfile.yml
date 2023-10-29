@@ -20,6 +20,12 @@ tasks:
     - go mod tidy -v
     - go mod vendor -v
 
+  update-deps:
+    cmds:
+      - go get -u
+      - go clean -modcache
+      - task tidy
+
   test:
     - go test -v ./...
 

@@ -51,6 +51,7 @@ type Game struct {
 
 	Player *Player
 	Mobs   []*Mob
+	Spikes []*Spike
 }
 
 var GameInstance *Game = nil
@@ -77,7 +78,8 @@ func main() {
 		Coroutine:  gocoro.NewCoroutine(),
 		Space:      resolv.NewSpace(ViewportWidth, ViewportHeight, 5, 5),
 
-		Mobs: make([]*Mob, 0),
+		Mobs:   make([]*Mob, 0),
+		Spikes: make([]*Spike, 0),
 	}
 
 	var err error
@@ -128,6 +130,7 @@ func (g *Game) initLevel() {
 	)
 
 	g.Mobs = make([]*Mob, 0)
+	g.Spikes = make([]*Spike, 0)
 
 	// add solid tiles to space
 	entitiesLayer := currentLevel.LayerByIdentifier("Entities")
@@ -149,6 +152,14 @@ func (g *Game) initLevel() {
 
 		} else if entity.Identifier == "Mob" {
 			g.Mobs = append(g.Mobs, NewMob(g.Space, entity))
+		} else if entity.Identifier == "Spike" {
+			g.Spikes = append(g.Spikes, NewSpike(g.Space, entity))
+		} else {
+			logging.Warnf(
+				"Initializing ldTK leve %d. Unknown entity type: %s",
+				g.currentLevel,
+				entity.Identifier,
+			)
 		}
 	}
 }
@@ -273,22 +284,6 @@ func (g *Game) GoToNextLevel() {
 	} else {
 		showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText)
 	}
-
-	// if isFirstLevel {
-	// 	showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText,
-	// 		"have you heard about the AMULET OF YENDOR? well, this is not that story.\n\nlet me tell you of the events as i understand them.",
-	// 		"you arrived late last night with a package for the wizard.\n\nhe invited you to stay for the night since it was pouring rain outside.",
-	// 		"you woke up in the middle of the night with a pressing need to go to the bathroom. but you soon got lost.\n\nthe corridors were all wrong, not at all how you remembered them.",
-	// 		"\n\n\n\neventually you opened a door and fell into a dark pit.\n\n\nand now here you are!",
-	// 		"it's nice to receive visitors in the dungeon. i'm supposed to make sure you never escape.\n\nbut that's not very fun, is it?",
-	// 		"so i'll tell you what.\n\ni'll give you a chance to escape.\n\nif you can find your way out, i'll let you go!",
-	// 		"\n\n\n\nbut if you die, i'll have to take your soul. deal?",
-	// 		"don't worry, i'll let you retry each room as many times as you want.\n\n\ni'm not a monster.",
-	// 		"you'll only really die when you give up.\n\nso don't give up!",
-	// 	)
-	// } else {
-	// 	showOverlay(skipOverlayFadeOut, callback, nil, lvlStr, subText)
-	// }
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, screenHeight int) {
@@ -330,8 +325,15 @@ func (g *Game) Update() error {
 		return nil
 	}
 
-	for _, mob := range g.Mobs {
-		mob.Update(dt)
+	// only update mobs and spikes if the level has actually started
+	if !g.overlayFader.Active {
+		for _, mob := range g.Mobs {
+			mob.Update(dt)
+		}
+
+		for _, spike := range g.Spikes {
+			spike.Update(dt)
+		}
 	}
 
 	// If coroutine is running then it means we don't want to update the player
@@ -356,6 +358,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	g.worldImage.Fill(color.RGBA{31, 14, 28, 255})
 
+	for _, spike := range g.Spikes {
+		spike.Draw(g.worldImage)
+	}
+
+	for _, mob := range g.Mobs {
+		mob.Draw(g.worldImage)
+	}
+
 	for _, layer := range g.EbitenRenderer.RenderedLayers {
 		g.worldImage.DrawImage(layer.Image, &ebiten.DrawImageOptions{})
 	}
@@ -376,10 +386,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		ty = math.Round(ty)
 
 		geo.Translate(-tx, -ty)
-	}
-
-	for _, mob := range g.Mobs {
-		mob.Draw(g.worldImage)
 	}
 
 	ops := &ebiten.DrawImageOptions{
