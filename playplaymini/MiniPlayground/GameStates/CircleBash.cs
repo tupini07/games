@@ -2,18 +2,19 @@ using BenMakesGames.PlayPlayMini;
 using BenMakesGames.PlayPlayMini.GraphicsExtensions;
 using BenMakesGames.PlayPlayMini.Services;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
+using MiniPlayground.Extensions;
+using MiniPlayground.Utils;
 
 namespace MiniPlayground.GameStates;
 
 
-public sealed class BabuMaster(
+public sealed class CircleBash(
     GraphicsManager _graphics,
     GameStateManager _gsm,
     KeyboardManager _keyboard
 ) : GameState
 {
-    private List<Circle> circles = new();
+    private readonly List<Circle> circles = [];
     private Vector2 _origScreenSize = new(_graphics.Width, _graphics.Height);
 
 
@@ -29,7 +30,7 @@ public sealed class BabuMaster(
 
     class Circle(int x, int y, float radius, double decreaseSpeed, Color inner, Color outline)
     {
-        public bool isDead { get { return radius <= 0; } }
+        public bool IsDead { get { return radius <= 0; } }
 
         public void Update(GameTime gameTime)
         {
@@ -93,8 +94,8 @@ public sealed class BabuMaster(
                 new Color(0xFF, 0xCC, 0xAA),
             ];
 
-            var colorFill = palette[Random.Shared.Next(0, palette.Length)];
-            var colorOutline = palette[Random.Shared.Next(0, palette.Length)];
+            var colorFill = Random.Shared.Sample(palette);
+            var colorOutline = Random.Shared.Sample(palette);
 
             circles.Add(new Circle(
                 randomPosX,
@@ -107,20 +108,8 @@ public sealed class BabuMaster(
         }
 
         circles.ForEach(c => c.Update(gameTime));
-        circles.RemoveAll(c => c.isDead);
+        circles.RemoveAll(c => c.IsDead);
 
-
-        if (_keyboard.KeyDown(Keys.LeftControl))
-        {
-            if (_keyboard.PressedKey(Keys.F4))
-            {
-                _gsm.ChangeState<Playing>();
-            }
-
-            if (_keyboard.PressedKey(Keys.F11))
-            {
-                _graphics.SetFullscreen(!_graphics.FullScreen);
-            }
-        }
+        GameStateUtils.HandleCommonKeybindings(_gsm, _keyboard, _graphics);
     }
 }

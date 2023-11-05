@@ -115,14 +115,26 @@ public sealed class Playing(
                 Console.WriteLine("Hey! You just pressed the resume button! Good for you");
             });
 
-        var goToBabu = new Button(_ui, 4, printSomething.Y + printSomething.Height + 2, "Go to Babu!",
+        var goToBabu = new Button(_ui, 4, printSomething.Y + printSomething.Height + 2, "Circle bash",
             clickHandler: (e) =>
             {
-                _gsm.ChangeState<BabuMaster>();
+                _gsm.ChangeState<CircleBash>();
+            });
+
+        var goToParade = new Button(_ui, 4, goToBabu.Y + goToBabu.Height + 2, "Parade",
+            clickHandler: (e) =>
+            {
+                _gsm.ChangeState<CircleParade>();
+            });
+
+        var goToSandbox = new Button(_ui, 4, goToParade.Y + goToParade.Height + 2, "Sandbox",
+            clickHandler: (e) =>
+            {
+                _gsm.ChangeState<PhysicsSandbox>();
             });
 
         // and the window to the UI canvas:
-        _ui.Canvas.AddUIElements(title, printSomething, goToBabu);
+        _ui.Canvas.AddUIElements(title, printSomething, goToBabu, goToParade, goToSandbox);
     }
 
 
