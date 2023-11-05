@@ -35,30 +35,30 @@ class PhysicsSandbox(
     {
         // create ceiling
         CreateRectangleBody(
-            new Vector2(_graphics.Width / 2, 5), 
+            new Vector2(_graphics.Width / 2, 5),
             new Vector2(_graphics.Width, 10));
 
         // create a floor
         CreateRectangleBody(
-            new Vector2(_graphics.Width / 2, _graphics.Height - 5), 
+            new Vector2(_graphics.Width / 2, _graphics.Height - 5),
             new Vector2(_graphics.Width, 10));
 
         // create left wall
         CreateRectangleBody(
-            new Vector2(5, _graphics.Height / 2), 
+            new Vector2(5, _graphics.Height / 2),
             new Vector2(10, _graphics.Height));
 
         // create right wall
         CreateRectangleBody(
-            new Vector2(_graphics.Width - 5, _graphics.Height / 2), 
+            new Vector2(_graphics.Width - 5, _graphics.Height / 2),
             new Vector2(10, _graphics.Height));
 
         // create 20 random positioned balls
         for (int i = 0; i < 20; i++)
         {
             CreateCircleBody(
-                new Vector2(Random.Shared.Next(0, _graphics.Width), Random.Shared.Next(0, _graphics.Height)), 
-                (float)Random.Shared.NextInt64(10, 30));
+                new Vector2(Random.Shared.Next(0, _graphics.Width), Random.Shared.Next(0, _graphics.Height)),
+                (float)Random.Shared.NextInt64(5, 20));
         }
     }
 
@@ -74,10 +74,15 @@ class PhysicsSandbox(
         {
             // apply random force to random body
             Console.WriteLine("Applying random force to random body");
-            
+
             // TODO should only pick from Circle bodies, not the walls
             var body = Random.Shared.Sample(_world.BodyList);
-            body.ApplyForce(new Vector2(0, -100000000));
+            body.LinearVelocity = new Vector2(
+                Random.Shared.Sample([
+                    -500, -400, -300, -200, -100, 0, 100, 200, 300, 400, 500
+                ]),
+                -1000
+            );
         }
 
         GameStateUtils.HandleCommonKeybindings(_gsm, _keyboard, _graphics);
@@ -85,7 +90,10 @@ class PhysicsSandbox(
 
     public override void Draw(GameTime gameTime)
     {
-        _graphics.Clear(Color.Wheat);
+
+        // _graphics.Clear(Color.BlueViolet);
+        // _graphics.Clear(Color.CadetBlue);
+        _graphics.Clear(Color.DarkSlateGray);
 
         foreach (var body in _world.BodyList)
         {
@@ -142,7 +150,7 @@ class PhysicsSandbox(
     {
         var body = BodyFactory.CreateCircle(
             world: _world,
-            radius: 10,
+            radius: radius,
             density: 1f,
             position: position,
             bodyType: BodyType.Dynamic
@@ -158,8 +166,12 @@ class PhysicsSandbox(
 
         body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
         {
-            ((BodyUserData)body.UserData).InnerColor = Random.Shared.Sample(Pallette.Pico8Pallette);
-            ((BodyUserData)body.UserData).OuterColor = Random.Shared.Sample(Pallette.Pico8Pallette);
+            // only change color if there's any relevant linear velocity
+            if (body.LinearVelocity.Length() > 50)
+            {
+                ((BodyUserData)body.UserData).InnerColor = Random.Shared.Sample(Pallette.Pico8Pallette);
+                ((BodyUserData)body.UserData).OuterColor = Random.Shared.Sample(Pallette.Pico8Pallette);
+            }
         };
     }
 }
