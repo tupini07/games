@@ -2,13 +2,13 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "msbuild",
+			"type": "dotnet",
+			"task": "build",
 			"problemMatcher": [
 				"$msCompile"
 			],
 			"group": "build",
-			"label": "build",
-			"detail": "Build the MiniPlayground.csproj project using dotnet build"
+			"label": "build"
 		},
 		{
 			"label": "Upgrade Dependencies",
@@ -21,6 +21,14 @@
 			"type": "shell",
 			"command": "dotnet mgcb-editor",
 			"problemMatcher": []
-		}
+		},
+		{
+			"label": "Publish Release",
+			"type": "shell",
+			"command": [
+				"dotnet publish -c Release -r win-x64 /p:PublishReadyToRun=false /p:TieredCompilation=false /p:PublishSingleFile=true --self-contained"
+			],
+			"problemMatcher": []
+		},
 	]
 }
