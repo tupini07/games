@@ -1,0 +1,28 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list-all
+
+  run: 
+    desc: Run the game
+    cmds:
+      - love .
+
+  build: 
+    desc: Build the game as a .love file
+    cmds:
+      - rm -rf roris-collection.love | true
+      - zip -r roris-collection.love .
+
+  get-deps:
+    desc: Download dependencies
+    cmds:
+      - rm -rf game/vendor/ | true
+      - mkdir game/vendor/
+      - git clone https://github.com/flamendless/Slab.git game/vendor/Slab
+  

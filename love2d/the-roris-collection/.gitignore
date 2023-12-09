@@ -1,0 +1,4 @@
+*.love
+node_modules/
+
+game/*

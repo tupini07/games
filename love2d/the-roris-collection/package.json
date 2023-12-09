@@ -1,0 +1,37 @@
+{
+  "name": "the-roris-collection",
+  "version": "1.0.0",
+  "description": "A collection of small games.",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "love game --console",
+    "build": "npm run build:tstl && npm run build:copy",
+    "lint": "npm run lint:prettier && npm run lint:eslint",
+    "build:tstl": "tstl -p tsconfig.json",
+    "build:copy": "copyfiles --all \"res/**/*\" game",
+    "build:watch": "tstl -w -p tsconfig.json",
+    "lint:eslint": "eslint -c .eslintrc src/**",
+    "lint:prettier": "prettier \"**/*.{js,ts,ym,md}\" --check",
+    "fix:prettier": "prettier \"**/*.{js,ts,ym,md}\" --check --write"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "typescript-to-lua": "^1.22.0"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-to-lua/language-extensions": "^1.19.0",
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "love-typescript-definitions": "^11.4.2",
+    "lua-types": "^2.13.1",
+    "prettier": "^3.1.0",
+    "prettier-plugin-organize-imports": "^3.2.4"
+  }
+}
