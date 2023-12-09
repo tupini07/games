@@ -25,9 +25,7 @@ static class GameStateUtils
             if (keyboard.PressedKey(Keys.F5))
             {
                 // reload the current state
-                Type currentState = gsm.CurrentState.GetType();
-                MethodInfo method = typeof(GameStateManager)!.GetMethod("ChangeState", [typeof(Type)])!;
-                method.Invoke(gsm, [currentState]);
+                gsm.ChangeState(gsm.CurrentState.GetType());
             }
         }
     }
