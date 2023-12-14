@@ -13,16 +13,43 @@ tasks:
     cmds:
       - love .
 
+  watch:
+    desc: Run the game in dev mode
+    deps: [build]
+    cmds:
+      - npm run build:watch
+
+  clean: 
+    desc: Clean the game
+    cmds:
+      - rm -rf game/vendor/ | true
+      - rm -rf roris-collection.love | true
+
   build: 
     desc: Build the game as a .love file
+    precondition: test -f game/vendor/
+    deps: [get-deps]
+    cmds:
+      - npm run build
+      - cp -r assets game/
+
+  dist:
+    desc: Builds and packages the game for distribution
+    deps: [build]
     cmds:
       - rm -rf roris-collection.love | true
-      - zip -r roris-collection.love .
+      - cd game && zip -9 -r ../roris-collection.love .
+      - du -sh roris-collection.love
 
   get-deps:
     desc: Download dependencies
+    status:
+      - test -d game/vendor
     cmds:
       - rm -rf game/vendor/ | true
-      - mkdir game/vendor/
+      - mkdir -p game/vendor/
       - git clone https://github.com/flamendless/Slab.git game/vendor/Slab
+      - cd game/vendor/Slab && git checkout 352069096795e0823c1f31e48c4bb5053a14b2e1 
+      
+      - cd game/ && rm -rf $(find . -name ".git" -type d) | true
   

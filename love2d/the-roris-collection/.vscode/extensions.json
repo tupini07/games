@@ -3,5 +3,6 @@
         "tomblind.local-lua-debugger-vscode",
         "sumneko.lua",
         "typescript-to-lua.vscode-typescript-to-lua",
+        "esbenp.prettier-vscode",
     ]
 }

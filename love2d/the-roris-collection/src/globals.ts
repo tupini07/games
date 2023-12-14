@@ -1,6 +1,11 @@
-import { IntroScene } from "./scenes/intro_scene";
+import { IScene } from "./scenes/iscene";
 
-export let globals = {
-    currentScene: new IntroScene(),
+interface Globals {
+    currentScene: IScene;
+    isDebug: boolean;
+}
+
+export let globals: Globals = {
+    currentScene: null as any,
     isDebug: false,
 }

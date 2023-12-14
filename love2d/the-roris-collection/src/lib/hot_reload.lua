@@ -37,8 +37,17 @@ local function find_recursive_with_extension(folder, file_tree, extension)
     return file_tree
 end
 
-function exports.reload_all_packages(active_scene_name)
+function exports.reload_all_packages()
     print("")
+
+    print("Reloading Slab")
+    -- TODO: Slab will stop working after hot-reload!
+    -- exports.reload_package("./vendor/" .. "Slab.API")
+    exports.reload_package("./vendor/" .. "Slab")
+    exports.reload_package("./vendor/" .. "Slab.SlabDebug")
+
+    print("Reloading globals")
+    exports.reload_package("globals")
 
     -- reload all utilitis
     local utilities = find_recursive_with_extension("utilities", {}, ".lua")
@@ -68,13 +77,10 @@ function exports.reload_all_packages(active_scene_name)
 
         print("Reloading package: " .. package_name)
         exports.reload_package(package_name)
-
-        -- if the scene is the active scene, then we need to reinitialize it
-        if package_name == active_scene_name then
-            print("Reloading init function for scene: " .. package_name)
-            require(package_name).init()
-        end
     end
+
+    -- print("Reloading Main")
+    -- exports.reload_package("main")
 
     print("")
 end

@@ -1,21 +1,20 @@
 import { IScene } from "./iscene";
+import { Scene, switchScene } from "./scene_manager";
 
 export class IntroScene implements IScene {
     name: string = "intro_scene";
 
-    init(): void {
-    }
+    init(): void {}
 
     draw(): void {
-        love.graphics.clear(0.83, 0.8, 0.8)
+        love.graphics.clear(0.83, 0.8, 0.8);
     }
 
-    exit(): void {
-    }
+    exit(): void {}
 
     update(dt: number): void {
-        Slab.BeginWindow('MyFirstWindow', {
-            Title: "Roris Minigames",
+        Slab.BeginWindow("MenuWindow", {
+            Title: "Roris Mini Games",
             X: 0,
             Y: 0,
             W: love.graphics.getWidth(),
@@ -30,15 +29,13 @@ export class IntroScene implements IScene {
         Slab.Text("Select a minigame!");
         Slab.BeginListBox("MinigamesList", { StretchW: true, StretchH: true });
 
-        const minigames: [string, string][] = [
-            ["Funny Pics", "funny_pics"],
-        ];
+        const minigames: [string, Scene][] = [["Ball Smash", Scene.BallSmash]];
 
         for (const minigame of minigames) {
             Slab.BeginListBoxItem(minigame[0]);
             Slab.Text(minigame[0]);
             if (Slab.IsListBoxItemClicked(1)) {
-                print(minigame[1]);
+                switchScene(minigame[1]);
             }
             Slab.EndListBoxItem();
         }

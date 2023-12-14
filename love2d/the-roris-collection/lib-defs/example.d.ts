@@ -1,3 +1,3 @@
-declare namespace Ssslab {
+declare namespace Example {
     function Begin(): void;
 }   
