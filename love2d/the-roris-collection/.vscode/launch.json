@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lua-local",
+            "request": "launch",
+            "name": "Debug LOVE",
+            "program": {
+                "command": "love"
+            },
+            "cwd": "${workspaceFolder}/game",
+            "args": [
+                "${workspaceFolder}/game",
+                "vsc_debug"
+            ],
+        },
+    ],
+}
