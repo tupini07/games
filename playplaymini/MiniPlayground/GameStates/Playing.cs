@@ -107,34 +107,33 @@ public sealed class Playing(
     {
         _mouse.UseCustomCursor("Cursor", (3, 1));
 
-        var title = new Label(_ui, 4, 16, "Select one!", Color.White);
+        List<IUIElement> elements = [
+            new Label(_ui, 4, 16, "Select one!", Color.White)
+        ];
 
-        var printSomething = new Button(_ui, 4, title.Y + title.Height + 8, "Print something!",
-            clickHandler: (e) =>
-            {
-                Console.WriteLine("Hey! You just pressed the resume button! Good for you");
-            });
-
-        var goToBabu = new Button(_ui, 4, printSomething.Y + printSomething.Height + 2, "Circle bash",
+        elements.Add(new Button(_ui, 4, elements.Last().Y + elements.Last().Height + 8, "Circle bash",
             clickHandler: (e) =>
             {
                 _gsm.ChangeState<CircleBash>();
-            });
+            }
+        ));
 
-        var goToParade = new Button(_ui, 4, goToBabu.Y + goToBabu.Height + 2, "Parade",
+        elements.Add(new Button(_ui, 4, elements.Last().Y + elements.Last().Height + 2, "Parade",
             clickHandler: (e) =>
             {
                 _gsm.ChangeState<CircleParade>();
-            });
+            }
+        ));
 
-        var goToSandbox = new Button(_ui, 4, goToParade.Y + goToParade.Height + 2, "Sandbox",
+        elements.Add(new Button(_ui, 4, elements.Last().Y + elements.Last().Height + 2, "Sandbox",
             clickHandler: (e) =>
             {
                 _gsm.ChangeState<PhysicsSandbox>();
-            });
+            }
+        ));
 
         // and the window to the UI canvas:
-        _ui.Canvas.AddUIElements(title, printSomething, goToBabu, goToParade, goToSandbox);
+        _ui.Canvas.AddUIElements(elements);
     }
 
 
