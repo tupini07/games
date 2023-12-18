@@ -1,16 +1,17 @@
 import { globals } from "../globals";
 import { IScene } from "./iscene";
 
-
 export enum Scene {
     Intro = "intro_scene",
-    BallSmash = 'ball_smash',
+    BallSmash = "ball_smash",
+    Duck = "duck_scene",
 }
 
 const sceneConstructors: { [key in Scene]: new () => IScene } = {
     [Scene.Intro]: null as any,
     [Scene.BallSmash]: null as any,
-}
+    [Scene.Duck]: null as any,
+};
 
 export function registerScene(scene: Scene, constructor: new () => IScene) {
     sceneConstructors[scene] = constructor;

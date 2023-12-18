@@ -22,7 +22,7 @@ tasks:
   clean: 
     desc: Clean the game
     cmds:
-      - rm -rf game/vendor/ | true
+      - rm -rf game/ | true
       - rm -rf roris-collection.love | true
 
   build: 

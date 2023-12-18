@@ -8,11 +8,7 @@ export class IntroScene implements IScene {
 
     draw(): void {
         love.graphics.clear(0.83, 0.8, 0.8);
-    }
 
-    exit(): void {}
-
-    update(dt: number): void {
         Slab.BeginWindow("MenuWindow", {
             Title: "Roris Mini Games",
             X: 0,
@@ -29,7 +25,10 @@ export class IntroScene implements IScene {
         Slab.Text("Select a minigame!");
         Slab.BeginListBox("MinigamesList", { StretchW: true, StretchH: true });
 
-        const minigames: [string, Scene][] = [["Ball Smash", Scene.BallSmash]];
+        const minigames: [string, Scene][] = [
+            ["Ball Smash", Scene.BallSmash],
+            ["Duck duck", Scene.Duck],
+        ];
 
         for (const minigame of minigames) {
             Slab.BeginListBoxItem(minigame[0]);
@@ -43,4 +42,8 @@ export class IntroScene implements IScene {
         Slab.EndListBox();
         Slab.EndWindow();
     }
+
+    exit(): void {}
+
+    update(dt: number): void {}
 }

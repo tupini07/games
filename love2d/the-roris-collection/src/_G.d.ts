@@ -1,16 +1,16 @@
 declare namespace SlabType {
     interface WindowOptions {
-        Title: string;
-        X: number;
-        Y: number;
-        W: number;
-        H: number;
-        ShowMinimize: boolean;
-        AllowMove: boolean;
-        AllowResize: boolean;
-        AutoSizeWindow: boolean;
-        ResetPosition: boolean;
-        ResetSize: boolean;
+        Title?: string;
+        X?: number;
+        Y?: number;
+        W?: number;
+        H?: number;
+        ShowMinimize?: boolean;
+        AllowMove?: boolean;
+        AllowResize?: boolean;
+        AutoSizeWindow?: boolean;
+        ResetPosition?: boolean;
+        ResetSize?: boolean;
     }
 
     interface ListBoxOptions {
@@ -18,8 +18,31 @@ declare namespace SlabType {
         StretchH: boolean;
     }
 
+    function InputNumberSlider(
+        id: string,
+        value: number,
+        min?: number,
+        max?: number,
+        options?: {
+            Precision?: number;
+            NeedDrag?: boolean;
+        },
+    ): boolean;
+
+    function BeginComboBox(
+        id: string,
+        options?: {
+            Tooltip?: string;
+            Selected?: string;
+            W?: number;
+            Rounding?: number;
+        },
+    ): boolean;
+    function EndComboBox(): void;
+    function TextSelectable(text: string): boolean;
+
     function Initialize(args: any): void;
-    function BeginWindow(id: string, options: WindowOptions): void;
+    function BeginWindow(id: string, options?: WindowOptions): void;
     function Text(text: string): void;
     function BeginListBox(id: string, options: ListBoxOptions): void;
     function BeginListBoxItem(id: string): void;
@@ -34,6 +57,10 @@ declare namespace SlabType {
     function BeginMenu(label: string): boolean;
     function MenuItem(label: string): boolean;
     function EndMenu(): void;
+    function Properties(propsTable: object, options?: object): void;
+    function GetInputText(): string;
+    function GetInputNumber(): number;
+    function SameLine(): void;
 }
 
 declare namespace SlabDebugType {

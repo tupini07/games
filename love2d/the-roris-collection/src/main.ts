@@ -2,6 +2,7 @@ import { KeyConstant, Scancode } from "love.keyboard";
 import { globals } from "./globals";
 import * as Input from "./lib/input";
 import { BallSmash } from "./scenes/ball_smash";
+import { DuckScene } from "./scenes/duck_scene";
 import { IntroScene } from "./scenes/intro_scene";
 import {
     Scene,
@@ -11,6 +12,14 @@ import {
     updateActiveScene,
 } from "./scenes/scene_manager";
 import hot_reload = require("./lib/hot_reload");
+
+if (os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") === "1") {
+    require("" + "lldebugger").start();
+}
+
+// if os.getenv("LOCAL_LUA_DEBUGGER_VSCODE") == "1" then
+//     require("lldebugger").start()
+// end
 
 // ugly hack to avoid the TS compiler resolving this to a single file
 Slab = require("./vendor/" + "Slab");
@@ -26,6 +35,7 @@ let initializeScenes = () => {
     registerScenes([
         [Scene.Intro, IntroScene],
         [Scene.BallSmash, BallSmash],
+        [Scene.Duck, DuckScene],
     ]);
 
     switchScene(Scene.Intro);
@@ -53,8 +63,6 @@ love.update = (dt: number) => {
 
     Slab.Update(dt);
 
-    updateActiveScene(dt);
-
     if (globals.isDebug) {
         if (Slab.BeginMainMenuBar()) {
             if (Slab.BeginMenu("File")) {
@@ -70,6 +78,8 @@ love.update = (dt: number) => {
 
         SlabDebug.Begin();
     }
+
+    updateActiveScene(dt);
 
     Input.updateInput();
 };

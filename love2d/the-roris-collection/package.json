@@ -32,6 +32,7 @@
     "love-typescript-definitions": "^11.4.2",
     "lua-types": "^2.13.1",
     "prettier": "^3.1.0",
-    "prettier-plugin-organize-imports": "^3.2.4"
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "typescript-fsm": "^1.4.5"
   }
 }

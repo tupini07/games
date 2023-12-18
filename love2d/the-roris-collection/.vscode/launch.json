@@ -11,7 +11,6 @@
             "cwd": "${workspaceFolder}/game",
             "args": [
                 "${workspaceFolder}/game",
-                "vsc_debug"
             ],
         },
     ],
