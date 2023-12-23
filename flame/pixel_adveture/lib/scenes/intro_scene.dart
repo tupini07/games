@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
 
@@ -9,57 +8,46 @@ class IntroScene extends Component with HasGameRef<PixelAdventure> {
   @override
   FutureOr<void> onLoad() {
     game.customBackgroundColor = const Color.fromARGB(255, 230, 225, 214);
+    game.overlays.addEntry(
+        "intro_scene_menu",
+        (context, ogGame) => Scaffold(
+              backgroundColor: const Color.fromARGB(255, 230, 225, 214),
+              body: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '🦆 Select Minigame',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => game.router.pushReplacementNamed("babu"),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.cyan),
+                      child: const Text('Go to babu scene'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () => game.router.pushReplacementNamed("duck"),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.cyan),
+                      child: const Text('Go to duck scene'),
+                    ),
+                  ],
+                ),
+              ),
+            ));
 
-    // Add the title
-    var title = TextComponent(
-        text: '🦆 Select Minigame',
-        position: Vector2(10, 10),
-        textRenderer: TextPaint(
-            style: const TextStyle(
-                fontSize: 22,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.none)));
-    add(title);
-
-    // Add a button
-    var buttonText = TextComponent(
-        text: 'Go to babu scene',
-        textRenderer: TextPaint(
-            style: const TextStyle(
-                fontSize: 12,
-                color: Colors.cyan,
-                decoration: TextDecoration.none)));
-
-    var button = ButtonComponent(
-      button: PositionComponent(
-        size: buttonText.size,
-      ),
-      position: (title.position.clone()..y += title.size.y + 10),
-      children: [buttonText],
-      onPressed: () => game.router.pushNamed("babu"),
-    );
-    add(button);
-
-    // duck
-    var duckText = TextComponent(
-        text: 'Go to duck scene',
-        textRenderer: TextPaint(
-            style: const TextStyle(
-                fontSize: 12,
-                color: Colors.cyan,
-                decoration: TextDecoration.none)));
-
-    var duckButton = ButtonComponent(
-      button: PositionComponent(
-        size: duckText.size,
-      ),
-      position: (button.position.clone()..y += button.size.y + 10),
-      children: [duckText],
-      onPressed: () => game.router.pushNamed("duck"),
-    );
-    add(duckButton);
-
+    game.overlays.add("intro_scene_menu");
     return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    game.overlays.remove("intro_scene_menu");
+    super.onRemove();
   }
 }

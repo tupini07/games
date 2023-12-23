@@ -13,10 +13,10 @@ class EnumDropdown<T> extends StatefulWidget {
   });
 
   @override
-  _EnumDropdownState<T> createState() => _EnumDropdownState<T>();
+  EnumDropdownState<T> createState() => EnumDropdownState<T>();
 }
 
-class _EnumDropdownState<T> extends State<EnumDropdown<T>> {
+class EnumDropdownState<T> extends State<EnumDropdown<T>> {
   T? _selectedValue;
 
   @override

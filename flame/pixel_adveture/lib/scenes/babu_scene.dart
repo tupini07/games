@@ -45,10 +45,10 @@ class BallComponent extends CircleComponent with HasGameRef<PixelAdventure> {
   }
 
   @override
-  void render(Canvas c) {
+  void render(Canvas canvas) {
     var centerOffset = Offset(size.x / 2, size.y / 2);
-    c.drawCircle(centerOffset, radius, _fillPaint);
-    c.drawCircle(centerOffset, radius, _outlinePaint);
+    canvas.drawCircle(centerOffset, radius, _fillPaint);
+    canvas.drawCircle(centerOffset, radius, _outlinePaint);
   }
 
   @override
@@ -77,24 +77,13 @@ class BabuScene extends Component
 
   @override
   void onMount() async {
-    await FlameAudio.audioCache.loadAll(audios);
-
     super.onMount();
-  }
-
-  @override
-  void onRemove() async {
-    for (var file in audios) {
-      await FlameAudio.audioCache.clear(file);
-    }
-
-    super.onRemove();
   }
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (event.isKeyPressed(LogicalKeyboardKey.escape)) {
-      game.router.pop();
+      game.router.pushReplacementNamed("intro");
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -102,7 +91,9 @@ class BabuScene extends Component
 
   @override
   void onTapDown(TapDownEvent event) async {
-    await FlameAudio.play(audios[Random().nextInt(audios.length)]);
+    if (game.playSounds) {
+      await FlameAudio.play(audios[Random().nextInt(audios.length)]);
+    }
 
     var ball = BallComponent(event.localPosition);
     add(ball);

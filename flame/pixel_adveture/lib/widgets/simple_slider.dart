@@ -13,10 +13,10 @@ class SimpleSlider extends StatefulWidget {
   });
 
   @override
-  _SimpleSliderState createState() => _SimpleSliderState();
+  SimpleSliderState createState() => SimpleSliderState();
 }
 
-class _SimpleSliderState extends State<SimpleSlider> {
+class SimpleSliderState extends State<SimpleSlider> {
   double _currentValue = 0;
 
   @override
