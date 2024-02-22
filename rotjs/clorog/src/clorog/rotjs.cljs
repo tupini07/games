@@ -14,9 +14,10 @@
   ([x y char] (draw x y char nil nil)))
 
 (defn draw-text
-  ([x y text fg bg] (.drawText DISPLAY x y text fg bg))
-  ([x y text fg] (draw-text x y text fg nil))
-  ([x y text] (draw-text x y text nil nil)))
+  "Draws text on the screen. If wrap-width is nil, it will wrap
+   to the screen width."
+  ([x y text wrap-width] (.drawText DISPLAY x y text wrap-width))
+  ([x y text] (draw-text x y text nil)))
 
 (defn clear
   ([] (.clear DISPLAY))
