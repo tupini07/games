@@ -132,6 +132,13 @@ public sealed class Playing(
             }
         ));
 
+        elements.Add(new Button(_ui, 4, elements.Last().Y + elements.Last().Height + 2, "Particles",
+            clickHandler: (e) =>
+            {
+                _gsm.ChangeState<Particles>();
+            }
+        ));
+
         // and the window to the UI canvas:
         _ui.Canvas.AddUIElements(elements);
     }

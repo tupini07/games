@@ -13,6 +13,7 @@ using MiniPlayground.GameStates;
 
 var gsmBuilder = new GameStateManagerBuilder();
 
+
 gsmBuilder
     .SetWindowSize(1920 / 4, 1080 / 4, 2) // this is using a 2x zoom
     .SetInitialGameState<Startup>()
