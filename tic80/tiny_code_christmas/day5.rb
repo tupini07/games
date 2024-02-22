@@ -6,6 +6,7 @@
 # version: 0.1
 # script:  ruby
 
+
 def TIC
   for y in -68..67 do
     for x in -120..119 do

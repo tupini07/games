@@ -9,13 +9,8 @@
 def TIC
   for y in -68..67 do
     for x in -120..119 do
-      # 16 colors in pallet divided by 2pi
-      angle = 16 / (2 * Math::PI)
-      dist = Math.sqrt(x**2 + y**2)
       dist = Math.sqrt((x / 2)**2 + (y / 2)**2)
-
-      c = (dist / 4 + 2 * Math.cos(time / (2500 * 4))) % 3 + 9
-      # c = (Math.atan2(y, x) + Math::PI) * (angle + dist + (time / 100))
+      c = (dist / 4 + 2 * Math.cos(time / (500 * 4))) % 3 + 9
       pix(120 + x, 68 + y, c)
     end
   end
