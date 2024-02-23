@@ -119,7 +119,7 @@ end
 #     alias $foo $bar
 #     ^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#97
+# source://prism//lib/prism/node.rb#98
 class Prism::AliasGlobalVariableNode < ::Prism::Node
   # def initialize: (Node new_name, Node old_name, Location keyword_loc, Location location) -> void
   #
@@ -238,7 +238,7 @@ end
 #     alias foo bar
 #     ^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#209
+# source://prism//lib/prism/node.rb#210
 class Prism::AliasMethodNode < ::Prism::Node
   # def initialize: (Node new_name, Node old_name, Location keyword_loc, Location location) -> void
   #
@@ -357,7 +357,7 @@ end
 #     foo => bar | baz
 #            ^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#321
+# source://prism//lib/prism/node.rb#322
 class Prism::AlternationPatternNode < ::Prism::Node
   # def initialize: (Node left, Node right, Location operator_loc, Location location) -> void
   #
@@ -476,7 +476,7 @@ end
 #     left and right
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#433
+# source://prism//lib/prism/node.rb#434
 class Prism::AndNode < ::Prism::Node
   # def initialize: (Node left, Node right, Location operator_loc, Location location) -> void
   #
@@ -610,7 +610,7 @@ end
 #     return foo, bar, baz
 #            ^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#560
+# source://prism//lib/prism/node.rb#561
 class Prism::ArgumentsNode < ::Prism::Node
   # def initialize: (Integer flags, Array[Node] arguments, Location location) -> void
   #
@@ -737,7 +737,7 @@ Prism::ArgumentsNodeFlags::CONTAINS_KEYWORD_SPLAT = T.let(T.unsafe(nil), Integer
 #     [1, 2, 3]
 #     ^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#663
+# source://prism//lib/prism/node.rb#664
 class Prism::ArrayNode < ::Prism::Node
   # def initialize: (Integer flags, Array[Node] elements, Location? opening_loc, Location? closing_loc, Location location) -> void
   #
@@ -900,7 +900,7 @@ Prism::ArrayNodeFlags::CONTAINS_SPLAT = T.let(T.unsafe(nil), Integer)
 #     foo in Bar[1, 2, 3]
 #     ^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#818
+# source://prism//lib/prism/node.rb#819
 class Prism::ArrayPatternNode < ::Prism::Node
   # def initialize: (Node? constant, Array[Node] requireds, Node? rest, Array[Node] posts, Location? opening_loc, Location? closing_loc, Location location) -> void
   #
@@ -1043,7 +1043,7 @@ end
 #     { a => b }
 #       ^^^^^^
 #
-# source://prism//lib/prism/node.rb#981
+# source://prism//lib/prism/node.rb#982
 class Prism::AssocNode < ::Prism::Node
   # def initialize: (Node key, Node value, Location? operator_loc, Location location) -> void
   #
@@ -1180,7 +1180,7 @@ end
 #     { **foo }
 #       ^^^^^
 #
-# source://prism//lib/prism/node.rb#1117
+# source://prism//lib/prism/node.rb#1118
 class Prism::AssocSplatNode < ::Prism::Node
   # def initialize: (Node? value, Location operator_loc, Location location) -> void
   #
@@ -1301,7 +1301,7 @@ Prism::BACKEND = T.let(T.unsafe(nil), Symbol)
 #     $'
 #     ^^
 #
-# source://prism//lib/prism/node.rb#1234
+# source://prism//lib/prism/node.rb#1235
 class Prism::BackReferenceReadNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -1435,7 +1435,7 @@ end
 #     end
 #     ^^^^^
 #
-# source://prism//lib/prism/node.rb#1330
+# source://prism//lib/prism/node.rb#1331
 class Prism::BeginNode < ::Prism::Node
   # def initialize: (Location? begin_keyword_loc, StatementsNode? statements, RescueNode? rescue_clause, ElseNode? else_clause, EnsureNode? ensure_clause, Location? end_keyword_loc, Location location) -> void
   #
@@ -1581,7 +1581,7 @@ end
 #     bar(&args)
 #     ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#1507
+# source://prism//lib/prism/node.rb#1508
 class Prism::BlockArgumentNode < ::Prism::Node
   # def initialize: (Node? expression, Location operator_loc, Location location) -> void
   #
@@ -1694,7 +1694,7 @@ end
 #     a { |; b| }
 #            ^
 #
-# source://prism//lib/prism/node.rb#1618
+# source://prism//lib/prism/node.rb#1619
 class Prism::BlockLocalVariableNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol name, Location location) -> void
   #
@@ -1811,7 +1811,7 @@ end
 #     [1, 2, 3].each { |i| puts x }
 #                    ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#1721
+# source://prism//lib/prism/node.rb#1722
 class Prism::BlockNode < ::Prism::Node
   # def initialize: (Array[Symbol] locals, Node? parameters, Node? body, Location opening_loc, Location closing_loc, Location location) -> void
   #
@@ -1949,7 +1949,7 @@ end
 #           ^^
 #     end
 #
-# source://prism//lib/prism/node.rb#1865
+# source://prism//lib/prism/node.rb#1866
 class Prism::BlockParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol? name, Location? name_loc, Location operator_loc, Location location) -> void
   #
@@ -2088,7 +2088,7 @@ end
 #            ^^^^^^^^^^^^^^^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#2005
+# source://prism//lib/prism/node.rb#2006
 class Prism::BlockParametersNode < ::Prism::Node
   # def initialize: (ParametersNode? parameters, Array[Node] locals, Location? opening_loc, Location? closing_loc, Location location) -> void
   #
@@ -2219,7 +2219,7 @@ end
 #     break foo
 #     ^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#2149
+# source://prism//lib/prism/node.rb#2150
 class Prism::BreakNode < ::Prism::Node
   # def initialize: (ArgumentsNode? arguments, Location keyword_loc, Location location) -> void
   #
@@ -2332,7 +2332,7 @@ end
 #     foo.bar &&= value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#2260
+# source://prism//lib/prism/node.rb#2261
 class Prism::CallAndWriteNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Location? message_loc, Symbol read_name, Symbol write_name, Location operator_loc, Node value, Location location) -> void
   #
@@ -2542,7 +2542,7 @@ end
 #     foo&.bar
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#2474
+# source://prism//lib/prism/node.rb#2475
 class Prism::CallNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Symbol name, Location? message_loc, Location? opening_loc, ArgumentsNode? arguments, Location? closing_loc, Node? block, Location location) -> void
   #
@@ -2783,7 +2783,7 @@ Prism::CallNodeFlags::VARIABLE_CALL = T.let(T.unsafe(nil), Integer)
 #     foo.bar += baz
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#2718
+# source://prism//lib/prism/node.rb#2719
 class Prism::CallOperatorWriteNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Location? message_loc, Symbol read_name, Symbol write_name, Symbol operator, Location operator_loc, Node value, Location location) -> void
   #
@@ -2978,7 +2978,7 @@ end
 #     foo.bar ||= value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#2918
+# source://prism//lib/prism/node.rb#2919
 class Prism::CallOrWriteNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Location? message_loc, Symbol read_name, Symbol write_name, Location operator_loc, Node value, Location location) -> void
   #
@@ -3181,7 +3181,7 @@ end
 #     for foo.bar in baz do end
 #         ^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3125
+# source://prism//lib/prism/node.rb#3126
 class Prism::CallTargetNode < ::Prism::Node
   # def initialize: (Integer flags, Node receiver, Location call_operator_loc, Symbol name, Location message_loc, Location location) -> void
   #
@@ -3352,7 +3352,7 @@ end
 #     foo => [bar => baz]
 #            ^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3278
+# source://prism//lib/prism/node.rb#3279
 class Prism::CapturePatternNode < ::Prism::Node
   # def initialize: (Node value, Node target, Location operator_loc, Location location) -> void
   #
@@ -3473,7 +3473,7 @@ end
 #     end
 #     ^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3392
+# source://prism//lib/prism/node.rb#3393
 class Prism::CaseMatchNode < ::Prism::Node
   # def initialize: (Node? predicate, Array[Node] conditions, ElseNode? consequent, Location case_keyword_loc, Location end_keyword_loc, Location location) -> void
   #
@@ -3612,7 +3612,7 @@ end
 #     end
 #     ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3538
+# source://prism//lib/prism/node.rb#3539
 class Prism::CaseNode < ::Prism::Node
   # def initialize: (Node? predicate, Array[Node] conditions, ElseNode? consequent, Location case_keyword_loc, Location end_keyword_loc, Location location) -> void
   #
@@ -3749,7 +3749,7 @@ end
 #     class Foo end
 #     ^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3682
+# source://prism//lib/prism/node.rb#3683
 class Prism::ClassNode < ::Prism::Node
   # def initialize: (Array[Symbol] locals, Location class_keyword_loc, Node constant_path, Location? inheritance_operator_loc, Node? superclass, Node? body, Location end_keyword_loc, Symbol name, Location location) -> void
   #
@@ -3910,7 +3910,7 @@ end
 #     @@target &&= value
 #     ^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3859
+# source://prism//lib/prism/node.rb#3860
 class Prism::ClassVariableAndWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -4038,7 +4038,7 @@ end
 #     @@target += value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#3979
+# source://prism//lib/prism/node.rb#3980
 class Prism::ClassVariableOperatorWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Symbol operator, Location location) -> void
   #
@@ -4166,7 +4166,7 @@ end
 #     @@target ||= value
 #     ^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#4100
+# source://prism//lib/prism/node.rb#4101
 class Prism::ClassVariableOrWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -4294,7 +4294,7 @@ end
 #     @@foo
 #     ^^^^^
 #
-# source://prism//lib/prism/node.rb#4220
+# source://prism//lib/prism/node.rb#4221
 class Prism::ClassVariableReadNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -4399,7 +4399,7 @@ end
 #     @@foo, @@bar = baz
 #     ^^^^^  ^^^^^
 #
-# source://prism//lib/prism/node.rb#4314
+# source://prism//lib/prism/node.rb#4315
 class Prism::ClassVariableTargetNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -4500,7 +4500,7 @@ end
 #     @@foo = 1
 #     ^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#4404
+# source://prism//lib/prism/node.rb#4405
 class Prism::ClassVariableWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Node value, Location? operator_loc, Location location) -> void
   #
@@ -5575,7 +5575,7 @@ end
 #     Target &&= value
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#4530
+# source://prism//lib/prism/node.rb#4531
 class Prism::ConstantAndWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -5703,7 +5703,7 @@ end
 #     Target += value
 #     ^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#4650
+# source://prism//lib/prism/node.rb#4651
 class Prism::ConstantOperatorWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Symbol operator, Location location) -> void
   #
@@ -5831,7 +5831,7 @@ end
 #     Target ||= value
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#4771
+# source://prism//lib/prism/node.rb#4772
 class Prism::ConstantOrWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -5959,7 +5959,7 @@ end
 #     Parent::Child &&= value
 #     ^^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#4891
+# source://prism//lib/prism/node.rb#4892
 class Prism::ConstantPathAndWriteNode < ::Prism::Node
   # def initialize: (ConstantPathNode target, Location operator_loc, Node value, Location location) -> void
   #
@@ -6078,7 +6078,7 @@ end
 #     Foo::Bar
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5003
+# source://prism//lib/prism/node.rb#5004
 class Prism::ConstantPathNode < ::Prism::Node
   # def initialize: (Node? parent, Node child, Location delimiter_loc, Location location) -> void
   #
@@ -6218,7 +6218,7 @@ class Prism::ConstantPathNode::DynamicPartsInConstantPathError < ::StandardError
 #     Parent::Child += value
 #     ^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5122
+# source://prism//lib/prism/node.rb#5123
 class Prism::ConstantPathOperatorWriteNode < ::Prism::Node
   # def initialize: (ConstantPathNode target, Location operator_loc, Node value, Symbol operator, Location location) -> void
   #
@@ -6337,7 +6337,7 @@ end
 #     Parent::Child ||= value
 #     ^^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5235
+# source://prism//lib/prism/node.rb#5236
 class Prism::ConstantPathOrWriteNode < ::Prism::Node
   # def initialize: (ConstantPathNode target, Location operator_loc, Node value, Location location) -> void
   #
@@ -6456,7 +6456,7 @@ end
 #     Foo::Foo, Bar::Bar = baz
 #     ^^^^^^^^  ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5347
+# source://prism//lib/prism/node.rb#5348
 class Prism::ConstantPathTargetNode < ::Prism::Node
   # def initialize: (Node? parent, Node child, Location delimiter_loc, Location location) -> void
   #
@@ -6592,7 +6592,7 @@ end
 #     ::Foo::Bar = 1
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5472
+# source://prism//lib/prism/node.rb#5473
 class Prism::ConstantPathWriteNode < ::Prism::Node
   # def initialize: (ConstantPathNode target, Location operator_loc, Node value, Location location) -> void
   #
@@ -6711,7 +6711,7 @@ end
 #     Foo
 #     ^^^
 #
-# source://prism//lib/prism/node.rb#5584
+# source://prism//lib/prism/node.rb#5585
 class Prism::ConstantReadNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -6827,7 +6827,7 @@ end
 #     Foo, Bar = baz
 #     ^^^  ^^^
 #
-# source://prism//lib/prism/node.rb#5678
+# source://prism//lib/prism/node.rb#5679
 class Prism::ConstantTargetNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -6939,7 +6939,7 @@ end
 #     Foo = 1
 #     ^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5768
+# source://prism//lib/prism/node.rb#5769
 class Prism::ConstantWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Node value, Location operator_loc, Location location) -> void
   #
@@ -7925,7 +7925,7 @@ end
 #     end
 #     ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#5889
+# source://prism//lib/prism/node.rb#5890
 class Prism::DefNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Node? receiver, ParametersNode? parameters, Node? body, Array[Symbol] locals, Location def_keyword_loc, Location? operator_loc, Location? lparen_loc, Location? rparen_loc, Location? equal_loc, Location? end_keyword_loc, Location location) -> void
   #
@@ -8128,7 +8128,7 @@ end
 #     defined?(a)
 #     ^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#6145
+# source://prism//lib/prism/node.rb#6146
 class Prism::DefinedNode < ::Prism::Node
   # def initialize: (Location? lparen_loc, Node value, Location? rparen_loc, Location keyword_loc, Location location) -> void
   #
@@ -8301,7 +8301,7 @@ end
 # DesugarCompiler is a compiler that desugars Ruby code into a more primitive
 # form. This is useful for consumers that want to deal with fewer node types.
 #
-# source://prism//lib/prism/desugar_compiler.rb#216
+# source://prism//lib/prism/desugar_compiler.rb#221
 class Prism::DesugarCompiler < ::Prism::MutationCompiler
   # @@foo &&= bar
   #
@@ -8572,7 +8572,7 @@ end
 #     integer = result.value.statements.body.first.receiver.receiver
 #     dispatcher.dispatch_once(integer)
 #
-# source://prism//lib/prism/dispatcher.rb#40
+# source://prism//lib/prism/dispatcher.rb#41
 class Prism::Dispatcher < ::Prism::Visitor
   # Initialize a new dispatcher.
   #
@@ -11186,7 +11186,7 @@ end
 #     if a then b else c end
 #                 ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#6290
+# source://prism//lib/prism/node.rb#6291
 class Prism::ElseNode < ::Prism::Node
   # def initialize: (Location else_keyword_loc, StatementsNode? statements, Location? end_keyword_loc, Location location) -> void
   #
@@ -11309,7 +11309,7 @@ end
 # EmbDocComment objects correspond to comments that are surrounded by =begin
 # and =end.
 #
-# source://prism//lib/prism/parse_result.rb#290
+# source://prism//lib/prism/parse_result.rb#291
 class Prism::EmbDocComment < ::Prism::Comment
   # Returns a string representation of this comment.
   #
@@ -11329,7 +11329,7 @@ end
 #     "foo #{bar}"
 #          ^^^^^^
 #
-# source://prism//lib/prism/node.rb#6421
+# source://prism//lib/prism/node.rb#6422
 class Prism::EmbeddedStatementsNode < ::Prism::Node
   # def initialize: (Location opening_loc, StatementsNode? statements, Location closing_loc, Location location) -> void
   #
@@ -11454,7 +11454,7 @@ end
 #     "foo #@bar"
 #          ^^^^^
 #
-# source://prism//lib/prism/node.rb#6546
+# source://prism//lib/prism/node.rb#6547
 class Prism::EmbeddedVariableNode < ::Prism::Node
   # def initialize: (Location operator_loc, Node variable, Location location) -> void
   #
@@ -11586,7 +11586,7 @@ Prism::EncodingFlags::FORCED_UTF8_ENCODING = T.let(T.unsafe(nil), Integer)
 #       bar
 #     end
 #
-# source://prism//lib/prism/node.rb#6655
+# source://prism//lib/prism/node.rb#6656
 class Prism::EnsureNode < ::Prism::Node
   # def initialize: (Location ensure_keyword_loc, StatementsNode? statements, Location end_keyword_loc, Location location) -> void
   #
@@ -11711,7 +11711,7 @@ end
 #     false
 #     ^^^^^
 #
-# source://prism//lib/prism/node.rb#6780
+# source://prism//lib/prism/node.rb#6781
 class Prism::FalseNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -11812,7 +11812,7 @@ end
 #     foo in Foo(*bar, baz, *qux)
 #            ^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#6870
+# source://prism//lib/prism/node.rb#6871
 class Prism::FindPatternNode < ::Prism::Node
   # def initialize: (Node? constant, Node left, Array[Node] requireds, Node right, Location? opening_loc, Location? closing_loc, Location location) -> void
   #
@@ -11955,7 +11955,7 @@ end
 #     baz if foo .. bar
 #            ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#7030
+# source://prism//lib/prism/node.rb#7031
 class Prism::FlipFlopNode < ::Prism::Node
   # def initialize: (Integer flags, Node? left, Node? right, Location operator_loc, Location location) -> void
   #
@@ -12090,7 +12090,7 @@ end
 #     1.0
 #     ^^^
 #
-# source://prism//lib/prism/node.rb#7166
+# source://prism//lib/prism/node.rb#7167
 class Prism::FloatNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -12190,7 +12190,7 @@ end
 #     for i in a end
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#7250
+# source://prism//lib/prism/node.rb#7251
 class Prism::ForNode < ::Prism::Node
   # def initialize: (Node index, Node collection, StatementsNode? statements, Location for_keyword_loc, Location in_keyword_loc, Location? do_keyword_loc, Location end_keyword_loc, Location location) -> void
   #
@@ -12353,7 +12353,7 @@ end
 #           ^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#7427
+# source://prism//lib/prism/node.rb#7428
 class Prism::ForwardingArgumentsNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -12449,7 +12449,7 @@ end
 #             ^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#7512
+# source://prism//lib/prism/node.rb#7513
 class Prism::ForwardingParameterNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -12544,7 +12544,7 @@ end
 #     super
 #     ^^^^^
 #
-# source://prism//lib/prism/node.rb#7596
+# source://prism//lib/prism/node.rb#7597
 class Prism::ForwardingSuperNode < ::Prism::Node
   # def initialize: (BlockNode? block, Location location) -> void
   #
@@ -12645,7 +12645,7 @@ end
 #     $target &&= value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#7693
+# source://prism//lib/prism/node.rb#7694
 class Prism::GlobalVariableAndWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -12773,7 +12773,7 @@ end
 #     $target += value
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#7813
+# source://prism//lib/prism/node.rb#7814
 class Prism::GlobalVariableOperatorWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Symbol operator, Location location) -> void
   #
@@ -12901,7 +12901,7 @@ end
 #     $target ||= value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#7934
+# source://prism//lib/prism/node.rb#7935
 class Prism::GlobalVariableOrWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -13029,7 +13029,7 @@ end
 #     $foo
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#8054
+# source://prism//lib/prism/node.rb#8055
 class Prism::GlobalVariableReadNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -13134,7 +13134,7 @@ end
 #     $foo, $bar = baz
 #     ^^^^  ^^^^
 #
-# source://prism//lib/prism/node.rb#8148
+# source://prism//lib/prism/node.rb#8149
 class Prism::GlobalVariableTargetNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -13235,7 +13235,7 @@ end
 #     $foo = 1
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#8238
+# source://prism//lib/prism/node.rb#8239
 class Prism::GlobalVariableWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Node value, Location operator_loc, Location location) -> void
   #
@@ -13360,7 +13360,7 @@ end
 #     { a => b }
 #     ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#8358
+# source://prism//lib/prism/node.rb#8359
 class Prism::HashNode < ::Prism::Node
   # def initialize: (Location opening_loc, Array[Node] elements, Location closing_loc, Location location) -> void
   #
@@ -13500,7 +13500,7 @@ end
 #     foo => { a: 1, b: 2, **c }
 #            ^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#8491
+# source://prism//lib/prism/node.rb#8492
 class Prism::HashPatternNode < ::Prism::Node
   # def initialize: (Node? constant, Array[Node] elements, Node? rest, Location? opening_loc, Location? closing_loc, Location location) -> void
   #
@@ -13650,7 +13650,7 @@ end
 #     if foo then bar end
 #     ^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#8650
+# source://prism//lib/prism/node.rb#8651
 class Prism::IfNode < ::Prism::Node
   # def initialize: (Location? if_keyword_loc, Node predicate, Location? then_keyword_loc, StatementsNode? statements, Node? consequent, Location? end_keyword_loc, Location location) -> void
   #
@@ -13802,7 +13802,7 @@ end
 #     1.0i
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#8831
+# source://prism//lib/prism/node.rb#8832
 class Prism::ImaginaryNode < ::Prism::Node
   # def initialize: (Node numeric, Location location) -> void
   #
@@ -13914,7 +13914,7 @@ end
 #     foo in { bar: }
 #              ^^^^
 #
-# source://prism//lib/prism/node.rb#8928
+# source://prism//lib/prism/node.rb#8929
 class Prism::ImplicitNode < ::Prism::Node
   # def initialize: (Node value, Location location) -> void
   #
@@ -14024,7 +14024,7 @@ end
 #     foo, = bar
 #        ^
 #
-# source://prism//lib/prism/node.rb#9028
+# source://prism//lib/prism/node.rb#9029
 class Prism::ImplicitRestNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -14119,7 +14119,7 @@ end
 #     case a; in b then c end
 #             ^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#9112
+# source://prism//lib/prism/node.rb#9113
 class Prism::InNode < ::Prism::Node
   # def initialize: (Node pattern, StatementsNode? statements, Location in_loc, Location? then_loc, Location location) -> void
   #
@@ -14250,7 +14250,7 @@ end
 #     foo.bar[baz] &&= value
 #     ^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#9251
+# source://prism//lib/prism/node.rb#9252
 class Prism::IndexAndWriteNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Location opening_loc, ArgumentsNode? arguments, Location closing_loc, Node? block, Location operator_loc, Node value, Location location) -> void
   #
@@ -14457,7 +14457,7 @@ end
 #     foo.bar[baz] += value
 #     ^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#9470
+# source://prism//lib/prism/node.rb#9471
 class Prism::IndexOperatorWriteNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Location opening_loc, ArgumentsNode? arguments, Location closing_loc, Node? block, Symbol operator, Location operator_loc, Node value, Location location) -> void
   #
@@ -14664,7 +14664,7 @@ end
 #     foo.bar[baz] ||= value
 #     ^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#9690
+# source://prism//lib/prism/node.rb#9691
 class Prism::IndexOrWriteNode < ::Prism::Node
   # def initialize: (Integer flags, Node? receiver, Location? call_operator_loc, Location opening_loc, ArgumentsNode? arguments, Location closing_loc, Node? block, Location operator_loc, Node value, Location location) -> void
   #
@@ -14879,7 +14879,7 @@ end
 #     for foo[bar] in baz do end
 #         ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#9917
+# source://prism//lib/prism/node.rb#9918
 class Prism::IndexTargetNode < ::Prism::Node
   # def initialize: (Integer flags, Node receiver, Location opening_loc, ArgumentsNode? arguments, Location closing_loc, Node? block, Location location) -> void
   #
@@ -15054,7 +15054,7 @@ end
 # InlineComment objects are the most common. They correspond to comments in
 # the source file like this one that start with #.
 #
-# source://prism//lib/prism/parse_result.rb#275
+# source://prism//lib/prism/parse_result.rb#277
 class Prism::InlineComment < ::Prism::Comment
   # Returns a string representation of this comment.
   #
@@ -15076,7 +15076,7 @@ end
 #     @target &&= value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#10090
+# source://prism//lib/prism/node.rb#10091
 class Prism::InstanceVariableAndWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -15204,7 +15204,7 @@ end
 #     @target += value
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#10210
+# source://prism//lib/prism/node.rb#10211
 class Prism::InstanceVariableOperatorWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Symbol operator, Location location) -> void
   #
@@ -15332,7 +15332,7 @@ end
 #     @target ||= value
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#10331
+# source://prism//lib/prism/node.rb#10332
 class Prism::InstanceVariableOrWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -15460,7 +15460,7 @@ end
 #     @foo
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#10451
+# source://prism//lib/prism/node.rb#10452
 class Prism::InstanceVariableReadNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -15565,7 +15565,7 @@ end
 #     @foo, @bar = baz
 #     ^^^^  ^^^^
 #
-# source://prism//lib/prism/node.rb#10545
+# source://prism//lib/prism/node.rb#10546
 class Prism::InstanceVariableTargetNode < ::Prism::Node
   # def initialize: (Symbol name, Location location) -> void
   #
@@ -15666,7 +15666,7 @@ end
 #     @foo = 1
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#10635
+# source://prism//lib/prism/node.rb#10636
 class Prism::InstanceVariableWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Location name_loc, Node value, Location operator_loc, Location location) -> void
   #
@@ -15816,7 +15816,7 @@ Prism::IntegerBaseFlags::OCTAL = T.let(T.unsafe(nil), Integer)
 #     1
 #     ^
 #
-# source://prism//lib/prism/node.rb#10755
+# source://prism//lib/prism/node.rb#10756
 class Prism::IntegerNode < ::Prism::Node
   # def initialize: (Integer flags, Location location) -> void
   #
@@ -15956,7 +15956,7 @@ end
 #     if /foo #{bar} baz/ then end
 #        ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#10867
+# source://prism//lib/prism/node.rb#10868
 class Prism::InterpolatedMatchLastLineNode < ::Prism::Node
   include ::Prism::RegularExpressionOptions
 
@@ -16182,7 +16182,7 @@ end
 #     /foo #{bar} baz/
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#11053
+# source://prism//lib/prism/node.rb#11054
 class Prism::InterpolatedRegularExpressionNode < ::Prism::Node
   include ::Prism::RegularExpressionOptions
 
@@ -16408,7 +16408,7 @@ end
 #     "foo #{bar} baz"
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#11239
+# source://prism//lib/prism/node.rb#11240
 class Prism::InterpolatedStringNode < ::Prism::Node
   include ::Prism::HeredocQuery
 
@@ -16538,7 +16538,7 @@ end
 #     :"foo #{bar} baz"
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#11374
+# source://prism//lib/prism/node.rb#11375
 class Prism::InterpolatedSymbolNode < ::Prism::Node
   # def initialize: (Location? opening_loc, Array[Node] parts, Location? closing_loc, Location location) -> void
   #
@@ -16666,7 +16666,7 @@ end
 #     `foo #{bar} baz`
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#11509
+# source://prism//lib/prism/node.rb#11510
 class Prism::InterpolatedXStringNode < ::Prism::Node
   include ::Prism::HeredocQuery
 
@@ -16796,7 +16796,7 @@ end
 #     foo(a: b)
 #         ^^^^
 #
-# source://prism//lib/prism/node.rb#11632
+# source://prism//lib/prism/node.rb#11633
 class Prism::KeywordHashNode < ::Prism::Node
   # def initialize: (Integer flags, Array[Node] elements, Location location) -> void
   #
@@ -16924,7 +16924,7 @@ Prism::KeywordHashNodeFlags::SYMBOL_KEYS = T.let(T.unsafe(nil), Integer)
 #           ^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#11736
+# source://prism//lib/prism/node.rb#11737
 class Prism::KeywordRestParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol? name, Location? name_loc, Location operator_loc, Location location) -> void
   #
@@ -17059,7 +17059,7 @@ end
 #     ->(value) { value * 2 }
 #     ^^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#11872
+# source://prism//lib/prism/node.rb#11873
 class Prism::LambdaNode < ::Prism::Node
   # def initialize: (Array[Symbol] locals, Location operator_loc, Location opening_loc, Location closing_loc, Node? parameters, Node? body, Location location) -> void
   #
@@ -17407,7 +17407,7 @@ Prism::LexCompat::RIPPER = T.let(T.unsafe(nil), Hash)
 # However, we add a couple of convenience methods onto them to make them a
 # little easier to work with. We delegate all other methods to the array.
 #
-# source://prism//lib/prism/lex_compat.rb#187
+# source://prism//lib/prism/lex_compat.rb#188
 class Prism::LexCompat::Token < ::SimpleDelegator
   # The type of the token.
   #
@@ -17457,7 +17457,7 @@ end
 #     target &&= value
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#12029
+# source://prism//lib/prism/node.rb#12030
 class Prism::LocalVariableAndWriteNode < ::Prism::Node
   # def initialize: (Location name_loc, Location operator_loc, Node value, Symbol name, Integer depth, Location location) -> void
   #
@@ -17591,7 +17591,7 @@ end
 #     target += value
 #     ^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#12155
+# source://prism//lib/prism/node.rb#12156
 class Prism::LocalVariableOperatorWriteNode < ::Prism::Node
   # def initialize: (Location name_loc, Location operator_loc, Node value, Symbol name, Symbol operator, Integer depth, Location location) -> void
   #
@@ -17725,7 +17725,7 @@ end
 #     target ||= value
 #     ^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#12282
+# source://prism//lib/prism/node.rb#12283
 class Prism::LocalVariableOrWriteNode < ::Prism::Node
   # def initialize: (Location name_loc, Location operator_loc, Node value, Symbol name, Integer depth, Location location) -> void
   #
@@ -17859,7 +17859,7 @@ end
 #     foo
 #     ^^^
 #
-# source://prism//lib/prism/node.rb#12408
+# source://prism//lib/prism/node.rb#12409
 class Prism::LocalVariableReadNode < ::Prism::Node
   # def initialize: (Symbol name, Integer depth, Location location) -> void
   #
@@ -17984,7 +17984,7 @@ end
 #     foo, bar = baz
 #     ^^^  ^^^
 #
-# source://prism//lib/prism/node.rb#12522
+# source://prism//lib/prism/node.rb#12523
 class Prism::LocalVariableTargetNode < ::Prism::Node
   # def initialize: (Symbol name, Integer depth, Location location) -> void
   #
@@ -18091,7 +18091,7 @@ end
 #     foo = 1
 #     ^^^^^^^
 #
-# source://prism//lib/prism/node.rb#12618
+# source://prism//lib/prism/node.rb#12619
 class Prism::LocalVariableWriteNode < ::Prism::Node
   # def initialize: (Symbol name, Integer depth, Location name_loc, Node value, Location operator_loc, Location location) -> void
   #
@@ -18445,7 +18445,7 @@ end
 #     if /foo/i then end
 #        ^^^^^^
 #
-# source://prism//lib/prism/node.rb#12744
+# source://prism//lib/prism/node.rb#12745
 class Prism::MatchLastLineNode < ::Prism::Node
   include ::Prism::RegularExpressionOptions
 
@@ -18680,7 +18680,7 @@ end
 #     foo in bar
 #     ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#12939
+# source://prism//lib/prism/node.rb#12940
 class Prism::MatchPredicateNode < ::Prism::Node
   # def initialize: (Node value, Node pattern, Location operator_loc, Location location) -> void
   #
@@ -18799,7 +18799,7 @@ end
 #     foo => bar
 #     ^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#13051
+# source://prism//lib/prism/node.rb#13052
 class Prism::MatchRequiredNode < ::Prism::Node
   # def initialize: (Node value, Node pattern, Location operator_loc, Location location) -> void
   #
@@ -18918,7 +18918,7 @@ end
 #     /(?<foo>bar)/ =~ baz
 #     ^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#13163
+# source://prism//lib/prism/node.rb#13164
 class Prism::MatchWriteNode < ::Prism::Node
   # def initialize: (CallNode call, Array[Node] targets, Location location) -> void
   #
@@ -19022,7 +19022,7 @@ end
 
 # Represents a node that is missing from the source and results in a syntax error.
 #
-# source://prism//lib/prism/node.rb#13257
+# source://prism//lib/prism/node.rb#13258
 class Prism::MissingNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -19117,7 +19117,7 @@ end
 #     module Foo end
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#13341
+# source://prism//lib/prism/node.rb#13342
 class Prism::ModuleNode < ::Prism::Node
   # def initialize: (Array[Symbol] locals, Location module_keyword_loc, Node constant_path, Node? body, Location end_keyword_loc, Symbol name, Location location) -> void
   #
@@ -19260,7 +19260,7 @@ end
 #     a, (b, c) = 1, 2, 3
 #        ^^^^^^
 #
-# source://prism//lib/prism/node.rb#13486
+# source://prism//lib/prism/node.rb#13487
 class Prism::MultiTargetNode < ::Prism::Node
   # def initialize: (Array[Node] lefts, Node? rest, Array[Node] rights, Location? lparen_loc, Location? rparen_loc, Location location) -> void
   #
@@ -19397,7 +19397,7 @@ end
 #     a, b, c = 1, 2, 3
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#13637
+# source://prism//lib/prism/node.rb#13638
 class Prism::MultiWriteNode < ::Prism::Node
   # def initialize: (Array[Node] lefts, Node? rest, Array[Node] rights, Location? lparen_loc, Location? rparen_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -19551,7 +19551,7 @@ end
 # visited. This is useful for consumers that want to mutate the tree, as you
 # can change subtrees in place without effecting the rest of the tree.
 #
-# source://prism//lib/prism/mutation_compiler.rb#12
+# source://prism//lib/prism/mutation_compiler.rb#13
 class Prism::MutationCompiler < ::Prism::Compiler
   # Copy a AliasGlobalVariableNode node
   #
@@ -20299,7 +20299,7 @@ end
 #     next 1
 #     ^^^^^^
 #
-# source://prism//lib/prism/node.rb#13810
+# source://prism//lib/prism/node.rb#13811
 class Prism::NextNode < ::Prism::Node
   # def initialize: (ArgumentsNode? arguments, Location keyword_loc, Location location) -> void
   #
@@ -20412,7 +20412,7 @@ end
 #     nil
 #     ^^^
 #
-# source://prism//lib/prism/node.rb#13921
+# source://prism//lib/prism/node.rb#13922
 class Prism::NilNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -20508,7 +20508,7 @@ end
 #           ^^^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#14006
+# source://prism//lib/prism/node.rb#14007
 class Prism::NoKeywordsParameterNode < ::Prism::Node
   # def initialize: (Location operator_loc, Location keyword_loc, Location location) -> void
   #
@@ -20790,7 +20790,7 @@ end
 #     -> { _1 + _2 }
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#14118
+# source://prism//lib/prism/node.rb#14119
 class Prism::NumberedParametersNode < ::Prism::Node
   # def initialize: (Integer maximum, Location location) -> void
   #
@@ -20891,7 +20891,7 @@ end
 #     $1
 #     ^^
 #
-# source://prism//lib/prism/node.rb#14208
+# source://prism//lib/prism/node.rb#14209
 class Prism::NumberedReferenceReadNode < ::Prism::Node
   # def initialize: (Integer number, Location location) -> void
   #
@@ -20999,7 +20999,7 @@ end
 #           ^^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#14305
+# source://prism//lib/prism/node.rb#14306
 class Prism::OptionalKeywordParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol name, Location name_loc, Node value, Location location) -> void
   #
@@ -21129,7 +21129,7 @@ end
 #           ^^^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#14425
+# source://prism//lib/prism/node.rb#14426
 class Prism::OptionalParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol name, Location name_loc, Location operator_loc, Node value, Location location) -> void
   #
@@ -21270,7 +21270,7 @@ end
 #     left or right
 #     ^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#14558
+# source://prism//lib/prism/node.rb#14559
 class Prism::OrNode < ::Prism::Node
   # def initialize: (Node left, Node right, Location operator_loc, Location location) -> void
   #
@@ -21657,7 +21657,7 @@ Prism::ParameterFlags::REPEATED_PARAMETER = T.let(T.unsafe(nil), Integer)
 #           ^^^^^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#14686
+# source://prism//lib/prism/node.rb#14687
 class Prism::ParametersNode < ::Prism::Node
   # def initialize: (Array[Node] requireds, Array[Node] optionals, Node? rest, Array[Node] posts, Array[Node] keywords, Node? keyword_rest, BlockParameterNode? block, Location location) -> void
   #
@@ -21799,7 +21799,7 @@ end
 #     (10 + 34)
 #     ^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#14835
+# source://prism//lib/prism/node.rb#14836
 class Prism::ParenthesesNode < ::Prism::Node
   # def initialize: (Node? body, Location opening_loc, Location closing_loc, Location location) -> void
   #
@@ -22167,7 +22167,7 @@ end
 # MarkNewlinesVisitor, since that visitor is responsible for marking the
 # newlines for JRuby/TruffleRuby.
 #
-# source://prism//lib/prism/parse_result/newlines.rb#20
+# source://prism//lib/prism/parse_result/newlines.rb#21
 class Prism::ParseResult::Newlines < ::Prism::Visitor
   # Create a new Newlines visitor with the given newline offsets.
   #
@@ -22384,7 +22384,7 @@ end
 # Raised when the query given to a pattern is either invalid Ruby syntax or
 # is using syntax that we don't yet support.
 #
-# source://prism//lib/prism/pattern.rb#40
+# source://prism//lib/prism/pattern.rb#42
 class Prism::Pattern::CompilationError < ::StandardError
   # Create a new CompilationError with the given representation of the node
   # that caused the error.
@@ -22400,7 +22400,7 @@ end
 #     foo in ^(bar)
 #            ^^^^^^
 #
-# source://prism//lib/prism/node.rb#14964
+# source://prism//lib/prism/node.rb#14965
 class Prism::PinnedExpressionNode < ::Prism::Node
   # def initialize: (Node expression, Location operator_loc, Location lparen_loc, Location rparen_loc, Location location) -> void
   #
@@ -22537,7 +22537,7 @@ end
 #     foo in ^bar
 #            ^^^^
 #
-# source://prism//lib/prism/node.rb#15097
+# source://prism//lib/prism/node.rb#15098
 class Prism::PinnedVariableNode < ::Prism::Node
   # def initialize: (Node variable, Location operator_loc, Location location) -> void
   #
@@ -22650,7 +22650,7 @@ end
 #     END { foo }
 #     ^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#15202
+# source://prism//lib/prism/node.rb#15203
 class Prism::PostExecutionNode < ::Prism::Node
   # def initialize: (StatementsNode? statements, Location keyword_loc, Location opening_loc, Location closing_loc, Location location) -> void
   #
@@ -22787,7 +22787,7 @@ end
 #     BEGIN { foo }
 #     ^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#15341
+# source://prism//lib/prism/node.rb#15342
 class Prism::PreExecutionNode < ::Prism::Node
   # def initialize: (StatementsNode? statements, Location keyword_loc, Location opening_loc, Location closing_loc, Location location) -> void
   #
@@ -22921,7 +22921,7 @@ end
 
 # The top level node of any parse tree.
 #
-# source://prism//lib/prism/node.rb#15477
+# source://prism//lib/prism/node.rb#15478
 class Prism::ProgramNode < ::Prism::Node
   # def initialize: (Array[Symbol] locals, StatementsNode statements, Location location) -> void
   #
@@ -23041,7 +23041,7 @@ Prism::RangeFlags::EXCLUDE_END = T.let(T.unsafe(nil), Integer)
 #     c if a =~ /left/ ... b =~ /right/
 #          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#15577
+# source://prism//lib/prism/node.rb#15578
 class Prism::RangeNode < ::Prism::Node
   # def initialize: (Integer flags, Node? left, Node? right, Location operator_loc, Location location) -> void
   #
@@ -23189,7 +23189,7 @@ end
 #     1.0r
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#15726
+# source://prism//lib/prism/node.rb#15727
 class Prism::RationalNode < ::Prism::Node
   # def initialize: (Node numeric, Location location) -> void
   #
@@ -23295,7 +23295,7 @@ end
 #     redo
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#15817
+# source://prism//lib/prism/node.rb#15818
 class Prism::RedoNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -23450,7 +23450,7 @@ Prism::RegularExpressionFlags::WINDOWS_31J = T.let(T.unsafe(nil), Integer)
 #     /foo/i
 #     ^^^^^^
 #
-# source://prism//lib/prism/node.rb#15901
+# source://prism//lib/prism/node.rb#15902
 class Prism::RegularExpressionNode < ::Prism::Node
   include ::Prism::RegularExpressionOptions
 
@@ -23695,7 +23695,7 @@ end
 #           ^^
 #     end
 #
-# source://prism//lib/prism/node.rb#16097
+# source://prism//lib/prism/node.rb#16098
 class Prism::RequiredKeywordParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol name, Location name_loc, Location location) -> void
   #
@@ -23819,7 +23819,7 @@ end
 #           ^
 #     end
 #
-# source://prism//lib/prism/node.rb#16210
+# source://prism//lib/prism/node.rb#16211
 class Prism::RequiredParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol name, Location location) -> void
   #
@@ -23936,7 +23936,7 @@ end
 #     foo rescue nil
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#16313
+# source://prism//lib/prism/node.rb#16314
 class Prism::RescueModifierNode < ::Prism::Node
   # def initialize: (Node expression, Location keyword_loc, Node rescue_expression, Location location) -> void
   #
@@ -24063,7 +24063,7 @@ end
 #
 # `Foo, *splat, Bar` are in the `exceptions` field. `ex` is in the `exception` field.
 #
-# source://prism//lib/prism/node.rb#16434
+# source://prism//lib/prism/node.rb#16435
 class Prism::RescueNode < ::Prism::Node
   # def initialize: (Location keyword_loc, Array[Node] exceptions, Location? operator_loc, Node? reference, StatementsNode? statements, RescueNode? consequent, Location location) -> void
   #
@@ -24207,7 +24207,7 @@ end
 #           ^^
 #     end
 #
-# source://prism//lib/prism/node.rb#16597
+# source://prism//lib/prism/node.rb#16598
 class Prism::RestParameterNode < ::Prism::Node
   # def initialize: (Integer flags, Symbol? name, Location? name_loc, Location operator_loc, Location location) -> void
   #
@@ -24342,7 +24342,7 @@ end
 #     retry
 #     ^^^^^
 #
-# source://prism//lib/prism/node.rb#16733
+# source://prism//lib/prism/node.rb#16734
 class Prism::RetryNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -24437,7 +24437,7 @@ end
 #     return 1
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#16817
+# source://prism//lib/prism/node.rb#16818
 class Prism::ReturnNode < ::Prism::Node
   # def initialize: (Location keyword_loc, ArgumentsNode? arguments, Location location) -> void
   #
@@ -24550,7 +24550,7 @@ end
 #     self
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#16928
+# source://prism//lib/prism/node.rb#16929
 class Prism::SelfNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -24811,7 +24811,7 @@ Prism::Serialize::TOKEN_TYPES = T.let(T.unsafe(nil), Array)
 #     class << self end
 #     ^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#17012
+# source://prism//lib/prism/node.rb#17013
 class Prism::SingletonClassNode < ::Prism::Node
   # def initialize: (Array[Symbol] locals, Location class_keyword_loc, Location operator_loc, Node expression, Node? body, Location end_keyword_loc, Location location) -> void
   #
@@ -25051,7 +25051,7 @@ end
 #     __ENCODING__
 #     ^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#17165
+# source://prism//lib/prism/node.rb#17166
 class Prism::SourceEncodingNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -25146,7 +25146,7 @@ end
 #     __FILE__
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#17249
+# source://prism//lib/prism/node.rb#17250
 class Prism::SourceFileNode < ::Prism::Node
   # def initialize: (String filepath, Location location) -> void
   #
@@ -25247,7 +25247,7 @@ end
 #     __LINE__
 #     ^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#17339
+# source://prism//lib/prism/node.rb#17340
 class Prism::SourceLineNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -25342,7 +25342,7 @@ end
 #     [*a]
 #      ^^
 #
-# source://prism//lib/prism/node.rb#17423
+# source://prism//lib/prism/node.rb#17424
 class Prism::SplatNode < ::Prism::Node
   # def initialize: (Location operator_loc, Node? expression, Location location) -> void
   #
@@ -25455,7 +25455,7 @@ end
 #     foo; bar; baz
 #     ^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#17534
+# source://prism//lib/prism/node.rb#17535
 class Prism::StatementsNode < ::Prism::Node
   # def initialize: (Array[Node] body, Location location) -> void
   #
@@ -25582,7 +25582,7 @@ Prism::StringFlags::FROZEN = T.let(T.unsafe(nil), Integer)
 #     "foo #{bar} baz"
 #      ^^^^      ^^^^
 #
-# source://prism//lib/prism/node.rb#17630
+# source://prism//lib/prism/node.rb#17631
 class Prism::StringNode < ::Prism::Node
   include ::Prism::HeredocQuery
 
@@ -25756,7 +25756,7 @@ end
 #     super foo, bar
 #     ^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#17800
+# source://prism//lib/prism/node.rb#17801
 class Prism::SuperNode < ::Prism::Node
   # def initialize: (Location keyword_loc, Location? lparen_loc, ArgumentsNode? arguments, Location? rparen_loc, Node? block, Location location) -> void
   #
@@ -25922,7 +25922,7 @@ Prism::SymbolFlags::FORCED_UTF8_ENCODING = T.let(T.unsafe(nil), Integer)
 #     %i[foo]
 #        ^^^
 #
-# source://prism//lib/prism/node.rb#17966
+# source://prism//lib/prism/node.rb#17967
 class Prism::SymbolNode < ::Prism::Node
   # def initialize: (Integer flags, Location? opening_loc, Location? value_loc, Location? closing_loc, String unescaped, Location location) -> void
   #
@@ -26152,7 +26152,7 @@ module Prism::Translation; end
 # the parser gem, and overrides the parse* methods to parse with prism and
 # then translate.
 #
-# source://prism//lib/prism/translation/parser.rb#11
+# source://prism//lib/prism/translation/parser.rb#14
 class Prism::Translation::Parser < ::Parser::Base
   # The default encoding for Ruby files is UTF-8.
   #
@@ -26243,7 +26243,7 @@ end
 # A visitor that knows how to convert a prism syntax tree into the
 # whitequark/parser gem's syntax tree.
 #
-# source://prism//lib/prism/translation/parser/compiler.rb#8
+# source://prism//lib/prism/translation/parser/compiler.rb#9
 class Prism::Translation::Parser::Compiler < ::Prism::Compiler
   # Initialize a new compiler with the given parser, offset cache, and
   # options.
@@ -27371,7 +27371,7 @@ Prism::Translation::Parser::Compiler::Range = Parser::Source::Range
 # messages. We create our own diagnostic class in order to set our own
 # error messages.
 #
-# source://prism//lib/prism/translation/parser.rb#15
+# source://prism//lib/prism/translation/parser.rb#16
 class Prism::Translation::Parser::Diagnostic < ::Parser::Diagnostic
   # Initialize a new diagnostic with the given message and location.
   #
@@ -27458,7 +27458,7 @@ Prism::Translation::Parser::Racc_debug_parser = T.let(T.unsafe(nil), FalseClass)
 # To use this class, you treat `Prism::Translation::Ripper` effectively as you would
 # treat the `Ripper` class.
 #
-# source://prism//lib/prism/translation/ripper.rb#21
+# source://prism//lib/prism/translation/ripper.rb#23
 class Prism::Translation::Ripper < ::Prism::Compiler
   # Create a new Translation::Ripper object with the given source.
   #
@@ -29041,7 +29041,7 @@ end
 #     true
 #     ^^^^
 #
-# source://prism//lib/prism/node.rb#18139
+# source://prism//lib/prism/node.rb#18140
 class Prism::TrueNode < ::Prism::Node
   # def initialize: (Location location) -> void
   #
@@ -29136,7 +29136,7 @@ end
 #     undef :foo, :bar, :baz
 #     ^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#18223
+# source://prism//lib/prism/node.rb#18224
 class Prism::UndefNode < ::Prism::Node
   # def initialize: (Array[Node] names, Location keyword_loc, Location location) -> void
   #
@@ -29252,7 +29252,7 @@ end
 #     unless foo then bar end
 #     ^^^^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#18330
+# source://prism//lib/prism/node.rb#18331
 class Prism::UnlessNode < ::Prism::Node
   # def initialize: (Location keyword_loc, Node predicate, Location? then_keyword_loc, StatementsNode? statements, ElseNode? consequent, Location? end_keyword_loc, Location location) -> void
   #
@@ -29407,7 +29407,7 @@ end
 #     until foo do bar end
 #     ^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#18508
+# source://prism//lib/prism/node.rb#18509
 class Prism::UntilNode < ::Prism::Node
   # def initialize: (Integer flags, Location keyword_loc, Location? closing_loc, Node predicate, StatementsNode? statements, Location location) -> void
   #
@@ -29574,7 +29574,7 @@ Prism::VERSION = T.let(T.unsafe(nil), String)
 #       end
 #     end
 #
-# source://prism//lib/prism/visitor.rb#50
+# source://prism//lib/prism/visitor.rb#51
 class Prism::Visitor < ::Prism::BasicVisitor
   # Visit a AliasGlobalVariableNode node
   #
@@ -30472,7 +30472,7 @@ end
 #     ^^^^^^^^^
 #     end
 #
-# source://prism//lib/prism/node.rb#18666
+# source://prism//lib/prism/node.rb#18667
 class Prism::WhenNode < ::Prism::Node
   # def initialize: (Location keyword_loc, Array[Node] conditions, StatementsNode? statements, Location location) -> void
   #
@@ -30594,7 +30594,7 @@ end
 #     while foo do bar end
 #     ^^^^^^^^^^^^^^^^^^^^
 #
-# source://prism//lib/prism/node.rb#18787
+# source://prism//lib/prism/node.rb#18788
 class Prism::WhileNode < ::Prism::Node
   # def initialize: (Integer flags, Location keyword_loc, Location? closing_loc, Node predicate, StatementsNode? statements, Location location) -> void
   #
@@ -30744,7 +30744,7 @@ end
 #     `foo`
 #     ^^^^^
 #
-# source://prism//lib/prism/node.rb#18943
+# source://prism//lib/prism/node.rb#18944
 class Prism::XStringNode < ::Prism::Node
   include ::Prism::HeredocQuery
 
@@ -30907,7 +30907,7 @@ end
 #     yield 1
 #     ^^^^^^^
 #
-# source://prism//lib/prism/node.rb#19093
+# source://prism//lib/prism/node.rb#19094
 class Prism::YieldNode < ::Prism::Node
   # def initialize: (Location keyword_loc, Location? lparen_loc, ArgumentsNode? arguments, Location? rparen_loc, Location location) -> void
   #

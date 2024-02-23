@@ -69,7 +69,7 @@ class Player < Entity
   end
 
   def draw
-    spr 0, @x, @y, 14, 3, 0, 0, 2, 2
+    spr 256, @x, @y, 14, 3, 0, 0, 2, 2
   end
 end
 
@@ -77,19 +77,35 @@ end
 
 $player = Player.new(96, 24)
 
+def potato(hehe)
+  print hehe
+end
+
+trace "Running with Ruby: #{RUBY_VERSION}"
+
+# fiber = Fiber.new do
+#   a = 1
+#   loop do
+#     potato 'hehe'
+#     Fiber.yield a
+#     a += 1
+#   end
+# end
+
+# trace fiber.resume
+# trace fiber.resume
+# trace fiber.resume
+# trace fiber.resume
+
 def TIC
   cls Color::BLACK
   $player.update
   $player.draw
 end
 
-def potato(hehe)
-  print hehe
-end
-
-# <TILES>
-# 000:00000000000aaa000aaa0a0000000aa000a00a0000a0aa0000a0a00000000000
-# </TILES>
+# <SPRITES>
+# 000:0000aa00000000a00aaa00aa000000a000a0000000a0aa0000a0a00000000000
+# </SPRITES>
 
 # <WAVES>
 # 000:00000000ffffffff00000000ffffffff

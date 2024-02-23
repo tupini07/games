@@ -208,7 +208,7 @@ class RBI::TypedParam < ::T::Struct
   const :type, ::String
 
   class << self
-    # source://sorbet-runtime/0.5.11264/lib/types/struct.rb#13
+    # source://sorbet-runtime/0.5.11266/lib/types/struct.rb#13
     def inherited(s); end
   end
 end
@@ -257,60 +257,6 @@ module T::Private::Methods
   class << self
     # source://tapioca//lib/tapioca/sorbet_ext/proc_bind_patch.rb#30
     def finalize_proc(decl); end
-  end
-end
-
-class T::Private::Methods::Declaration < ::Struct
-  def bind; end
-  def bind=(_); end
-  def checked; end
-  def checked=(_); end
-  def finalized; end
-  def finalized=(_); end
-  def mod; end
-  def mod=(_); end
-  def mode; end
-  def mode=(_); end
-  def on_failure; end
-  def on_failure=(_); end
-  def override_allow_incompatible; end
-  def override_allow_incompatible=(_); end
-  def params; end
-  def params=(_); end
-  def raw; end
-  def raw=(_); end
-  def returns; end
-  def returns=(_); end
-  def type_parameters; end
-  def type_parameters=(_); end
-
-  class << self
-    def [](*_arg0); end
-    def inspect; end
-    def keyword_init?; end
-    def members; end
-    def new(*_arg0); end
-  end
-end
-
-class T::Private::Methods::DeclarationBlock < ::Struct
-  def blk; end
-  def blk=(_); end
-  def final; end
-  def final=(_); end
-  def loc; end
-  def loc=(_); end
-  def mod; end
-  def mod=(_); end
-  def raw; end
-  def raw=(_); end
-
-  class << self
-    def [](*_arg0); end
-    def inspect; end
-    def keyword_init?; end
-    def members; end
-    def new(*_arg0); end
   end
 end
 
@@ -1125,7 +1071,7 @@ class Tapioca::ConfigHelper::ConfigError < ::T::Struct
   const :message_parts, T::Array[::Tapioca::ConfigHelper::ConfigErrorMessagePart]
 
   class << self
-    # source://sorbet-runtime/0.5.11264/lib/types/struct.rb#13
+    # source://sorbet-runtime/0.5.11266/lib/types/struct.rb#13
     def inherited(s); end
   end
 end
@@ -1136,7 +1082,7 @@ class Tapioca::ConfigHelper::ConfigErrorMessagePart < ::T::Struct
   const :colors, T::Array[::Symbol]
 
   class << self
-    # source://sorbet-runtime/0.5.11264/lib/types/struct.rb#13
+    # source://sorbet-runtime/0.5.11266/lib/types/struct.rb#13
     def inherited(s); end
   end
 end
@@ -2436,8 +2382,8 @@ class Tapioca::Loaders::Loader
   # @param engine [T.class_of(Rails::Engine)]
   # @return [Array<String>]
   #
-  # source://sorbet-runtime/0.5.11264/lib/types/private/methods/_methods.rb#257
-  def eager_load_paths(*args, **_arg1, &blk); end
+  # source://sorbet-runtime/0.5.11266/lib/types/private/methods/_methods.rb#257
+  def eager_load_paths(*args, &blk); end
 
   # source://tapioca//lib/tapioca/loaders/loader.rb#198
   sig { void }
@@ -2712,7 +2658,7 @@ module Tapioca::Runtime; end
 # available, it implements finding the attached class of a singleton
 # class by iterating through ObjectSpace.
 module Tapioca::Runtime::AttachedClassOf
-  # source://tapioca//lib/tapioca/runtime/attached_class_of_32.rb#14
+  # source://tapioca//lib/tapioca/runtime/attached_class_of_legacy.rb#17
   sig { params(singleton_class: ::Class).returns(T.nilable(::Module)) }
   def attached_class_of(singleton_class); end
 end
@@ -3344,8 +3290,8 @@ module Tapioca::Static::SymbolLoader
 
     # @return [Array<T.class_of(Rails::Engine)>]
     #
-    # source://sorbet-runtime/0.5.11264/lib/types/private/methods/_methods.rb#257
-    def engines(*args, **_arg1, &blk); end
+    # source://sorbet-runtime/0.5.11266/lib/types/private/methods/_methods.rb#257
+    def engines(*args, &blk); end
 
     # source://tapioca//lib/tapioca/static/symbol_loader.rb#82
     sig { params(input: ::String, table_type: ::String).returns(::String) }
@@ -3467,14 +3413,14 @@ class URI::Source < ::URI::File
   sig { params(v: T.nilable(::String)).returns(T::Boolean) }
   def check_host(v); end
 
-  # source://uri/0.13.0/uri/generic.rb#243
+  # source://uri/0.10.2/uri/generic.rb#243
   def gem_name; end
 
   # source://tapioca//lib/tapioca/helpers/source_uri.rb#25
   sig { returns(T.nilable(::String)) }
   def gem_version; end
 
-  # source://uri/0.13.0/uri/generic.rb#283
+  # source://uri/0.10.2/uri/generic.rb#283
   def line_number; end
 
   # source://tapioca//lib/tapioca/helpers/source_uri.rb#51

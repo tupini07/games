@@ -527,7 +527,7 @@ end
 #
 # @api private
 #
-# source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#11
+# source://rubocop//lib/rubocop/cli/command/suggest_extensions.rb#12
 class RuboCop::CLI::Command::SuggestExtensions < ::RuboCop::CLI::Command::Base
   # @api private
   #
@@ -757,8 +757,8 @@ class RuboCop::CommentConfig
   # source://rubocop//lib/rubocop/comment_config.rb#63
   def comment_only_line?(line_number); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def config(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def config(*args, &block); end
 
   # source://rubocop//lib/rubocop/comment_config.rb#51
   def cop_disabled_line_ranges; end
@@ -781,8 +781,8 @@ class RuboCop::CommentConfig
   # source://rubocop//lib/rubocop/comment_config.rb#30
   def processed_source; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def registry(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def registry(*args, &block); end
 
   private
 
@@ -874,12 +874,13 @@ class RuboCop::CommentConfig::ConfigDisabledCopDirectiveComment::Expression < ::
   #
   # @param value [Object] the value to set the attribute line to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/comment_config.rb#19
   def line=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -896,12 +897,13 @@ class RuboCop::CommentConfig::ConfigDisabledCopDirectiveComment::Loc < ::Struct
   #
   # @param value [Object] the value to set the attribute expression to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/comment_config.rb#18
   def expression=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -918,6 +920,8 @@ class RuboCop::CommentConfig::CopAnalysis < ::Struct
   #
   # @param value [Object] the value to set the attribute line_ranges to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/comment_config.rb#28
   def line_ranges=(_); end
 
   # Returns the value of attribute start_line_number
@@ -929,12 +933,13 @@ class RuboCop::CommentConfig::CopAnalysis < ::Struct
   #
   # @param value [Object] the value to set the attribute start_line_number to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/comment_config.rb#28
   def start_line_number=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -957,11 +962,11 @@ class RuboCop::Config
   # source://rubocop//lib/rubocop/config.rb#30
   def initialize(hash = T.unsafe(nil), loaded_path = T.unsafe(nil)); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def [](*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def [](*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def []=(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def []=(*args, &block); end
 
   # @return [Boolean]
   #
@@ -997,33 +1002,33 @@ class RuboCop::Config
   # source://rubocop//lib/rubocop/config.rb#142
   def clusivity_config_for_badge?(badge); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def delete(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def delete(*args, &block); end
 
   # source://rubocop//lib/rubocop/config.rb#108
   def deprecation_check; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def dig(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def dig(*args, &block); end
 
   # @return [Boolean]
   #
   # source://rubocop//lib/rubocop/config.rb#162
   def disabled_new_cops?; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def each(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def each(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def each_key(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def each_key(*args, &block); end
 
   # @return [Boolean]
   #
   # source://rubocop//lib/rubocop/config.rb#166
   def enabled_new_cops?; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def fetch(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def fetch(*args, &block); end
 
   # @return [Boolean]
   #
@@ -1071,11 +1076,11 @@ class RuboCop::Config
   # source://rubocop//lib/rubocop/config.rb#76
   def internal?; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def key?(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def key?(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def keys(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def keys(*args, &block); end
 
   # source://rubocop//lib/rubocop/config.rb#47
   def loaded_features; end
@@ -1088,11 +1093,11 @@ class RuboCop::Config
   # source://rubocop//lib/rubocop/config.rb#81
   def make_excludes_absolute; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def map(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def map(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def merge(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def merge(*args, &block); end
 
   # source://rubocop//lib/rubocop/config.rb#228
   def path_relative_to_config(path); end
@@ -1114,8 +1119,8 @@ class RuboCop::Config
   # source://rubocop//lib/rubocop/config.rb#207
   def possibly_include_hidden?; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def replace(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def replace(*args, &block); end
 
   # source://rubocop//lib/rubocop/config.rb#71
   def signature; end
@@ -1126,23 +1131,23 @@ class RuboCop::Config
   # source://rubocop//lib/rubocop/config.rb#247
   def target_rails_version; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def target_ruby_version(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def target_ruby_version(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def to_h(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def to_h(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def to_hash(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def to_hash(*args, &block); end
 
   # source://rubocop//lib/rubocop/config.rb#67
   def to_s; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def transform_values(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def transform_values(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def validate(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def validate(*args, &block); end
 
   # source://rubocop//lib/rubocop/config.rb#58
   def validate_after_resolution; end
@@ -1180,6 +1185,8 @@ class RuboCop::Config::CopConfig < ::Struct
   #
   # @param value [Object] the value to set the attribute metadata to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/config.rb#17
   def metadata=(_); end
 
   # Returns the value of attribute name
@@ -1191,12 +1198,13 @@ class RuboCop::Config::CopConfig < ::Struct
   #
   # @param value [Object] the value to set the attribute name to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/config.rb#17
   def name=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -2216,11 +2224,11 @@ class RuboCop::ConfigValidator
   # source://rubocop//lib/rubocop/config_validator.rb#25
   def initialize(config); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def for_all_cops(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def for_all_cops(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def smart_loaded_path(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def smart_loaded_path(*args, &block); end
 
   # source://rubocop//lib/rubocop/config_validator.rb#61
   def target_ruby_version; end
@@ -3231,6 +3239,8 @@ class RuboCop::Cop::Base::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute cop to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/base.rb#48
   def cop=(_); end
 
   # Returns the value of attribute corrector
@@ -3242,6 +3252,8 @@ class RuboCop::Cop::Base::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute corrector to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/base.rb#48
   def corrector=(_); end
 
   # Returns the value of attribute offenses
@@ -3253,6 +3265,8 @@ class RuboCop::Cop::Base::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute offenses to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/base.rb#48
   def offenses=(_); end
 
   # Returns the value of attribute processed_source
@@ -3264,12 +3278,13 @@ class RuboCop::Cop::Base::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute processed_source to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/base.rb#48
   def processed_source=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -4616,6 +4631,8 @@ class RuboCop::Cop::Commissioner::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute cop_reports to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/commissioner.rb#18
   def cop_reports=(_); end
 
   # source://rubocop//lib/rubocop/cop/commissioner.rb#19
@@ -4633,6 +4650,8 @@ class RuboCop::Cop::Commissioner::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute errors to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/commissioner.rb#18
   def errors=(_); end
 
   # source://rubocop//lib/rubocop/cop/commissioner.rb#35
@@ -4653,12 +4672,13 @@ class RuboCop::Cop::Commissioner::InvestigationReport < ::Struct
   #
   # @param value [Object] the value to set the attribute processed_source to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/commissioner.rb#18
   def processed_source=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -4926,6 +4946,8 @@ class RuboCop::Cop::Cop::Correction < ::Struct
   #
   # @param value [Object] the value to set the attribute cop to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/cop.rb#17
   def cop=(_); end
 
   # Returns the value of attribute lambda
@@ -4937,6 +4959,8 @@ class RuboCop::Cop::Cop::Correction < ::Struct
   #
   # @param value [Object] the value to set the attribute lambda to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/cop.rb#17
   def lambda=(_); end
 
   # Returns the value of attribute node
@@ -4948,12 +4972,13 @@ class RuboCop::Cop::Cop::Correction < ::Struct
   #
   # @param value [Object] the value to set the attribute node to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/cop.rb#17
   def node=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -6648,6 +6673,8 @@ class RuboCop::Cop::HashShorthandSyntax::DefNode < ::Struct
   #
   # @param value [Object] the value to set the attribute node to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_shorthand_syntax.rb#209
   def node=(_); end
 
   # source://rubocop//lib/rubocop/cop/mixin/hash_shorthand_syntax.rb#210
@@ -6656,7 +6683,6 @@ class RuboCop::Cop::HashShorthandSyntax::DefNode < ::Struct
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -6750,6 +6776,8 @@ class RuboCop::Cop::HashTransformMethod::Autocorrection < ::Struct
   #
   # @param value [Object] the value to set the attribute block_node to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#136
   def block_node=(_); end
 
   # Returns the value of attribute leading
@@ -6761,6 +6789,8 @@ class RuboCop::Cop::HashTransformMethod::Autocorrection < ::Struct
   #
   # @param value [Object] the value to set the attribute leading to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#136
   def leading=(_); end
 
   # Returns the value of attribute match
@@ -6772,6 +6802,8 @@ class RuboCop::Cop::HashTransformMethod::Autocorrection < ::Struct
   #
   # @param value [Object] the value to set the attribute match to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#136
   def match=(_); end
 
   # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#177
@@ -6795,6 +6827,8 @@ class RuboCop::Cop::HashTransformMethod::Autocorrection < ::Struct
   #
   # @param value [Object] the value to set the attribute trailing to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#136
   def trailing=(_); end
 
   class << self
@@ -6813,7 +6847,6 @@ class RuboCop::Cop::HashTransformMethod::Autocorrection < ::Struct
     def from_to_h(node, match); end
 
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -6842,6 +6875,8 @@ class RuboCop::Cop::HashTransformMethod::Captures < ::Struct
   #
   # @param value [Object] the value to set the attribute transformed_argname to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#118
   def transformed_argname=(_); end
 
   # Returns the value of attribute transforming_body_expr
@@ -6853,6 +6888,8 @@ class RuboCop::Cop::HashTransformMethod::Captures < ::Struct
   #
   # @param value [Object] the value to set the attribute transforming_body_expr to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#118
   def transforming_body_expr=(_); end
 
   # Returns the value of attribute unchanged_body_expr
@@ -6864,6 +6901,8 @@ class RuboCop::Cop::HashTransformMethod::Captures < ::Struct
   #
   # @param value [Object] the value to set the attribute unchanged_body_expr to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/mixin/hash_transform_method.rb#118
   def unchanged_body_expr=(_); end
 
   # @return [Boolean]
@@ -6874,7 +6913,6 @@ class RuboCop::Cop::HashTransformMethod::Captures < ::Struct
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -19216,7 +19254,7 @@ RuboCop::Cop::Lint::FloatOutOfRange::MSG = T.let(T.unsafe(nil), String)
 #
 #   format('Numbered format: %1$s and numbered %2$s', a_value, another)
 #
-# source://rubocop//lib/rubocop/cop/lint/format_parameter_mismatch.rb#37
+# source://rubocop//lib/rubocop/cop/lint/format_parameter_mismatch.rb#38
 class RuboCop::Cop::Lint::FormatParameterMismatch < ::RuboCop::Cop::Base
   # source://rubocop//lib/rubocop/cop/lint/format_parameter_mismatch.rb#100
   def called_on_string?(param0 = T.unsafe(nil)); end
@@ -28034,6 +28072,8 @@ class RuboCop::Cop::Naming::InclusiveLanguage::WordLocation < ::Struct
   #
   # @param value [Object] the value to set the attribute position to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/naming/inclusive_language.rb#82
   def position=(_); end
 
   # Returns the value of attribute word
@@ -28045,12 +28085,13 @@ class RuboCop::Cop::Naming::InclusiveLanguage::WordLocation < ::Struct
   #
   # @param value [Object] the value to set the attribute word to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/naming/inclusive_language.rb#82
   def word=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -28988,6 +29029,8 @@ class RuboCop::Cop::Offense::PseudoSourceRange < ::Struct
   #
   # @param value [Object] the value to set the attribute begin_pos to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/offense.rb#64
   def begin_pos=(_); end
 
   # Returns the value of attribute column
@@ -28999,6 +29042,8 @@ class RuboCop::Cop::Offense::PseudoSourceRange < ::Struct
   #
   # @param value [Object] the value to set the attribute column to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/offense.rb#64
   def column=(_); end
 
   # source://rubocop//lib/rubocop/cop/offense.rb#70
@@ -29013,6 +29058,8 @@ class RuboCop::Cop::Offense::PseudoSourceRange < ::Struct
   #
   # @param value [Object] the value to set the attribute end_pos to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/offense.rb#64
   def end_pos=(_); end
 
   # Returns the value of attribute line
@@ -29042,6 +29089,8 @@ class RuboCop::Cop::Offense::PseudoSourceRange < ::Struct
   #
   # @param value [Object] the value to set the attribute line to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/offense.rb#64
   def line=(_); end
 
   # source://rubocop//lib/rubocop/cop/offense.rb#74
@@ -29056,12 +29105,13 @@ class RuboCop::Cop::Offense::PseudoSourceRange < ::Struct
   #
   # @param value [Object] the value to set the attribute source_line to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/offense.rb#64
   def source_line=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -39519,11 +39569,11 @@ class RuboCop::Cop::Style::MagicCommentFormat::CommentRange
   # source://rubocop//lib/rubocop/cop/style/magic_comment_format.rb#125
   def directives; end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def loc(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def loc(*args, &block); end
 
-  # source://forwardable/1.3.3/forwardable.rb#231
-  def text(*args, **_arg1, &block); end
+  # source://forwardable/1.3.2/forwardable.rb#229
+  def text(*args, &block); end
 
   # A magic comment can contain one value (normal style) or
   # multiple directives (emacs style)
@@ -41549,7 +41599,7 @@ RuboCop::Cop::Style::MultipleComparison::MSG = T.let(T.unsafe(nil), String)
 #   # shareable_constant_value: literal
 #   CONST = [1, 2, 3]
 #
-# source://rubocop//lib/rubocop/cop/style/mutable_constant.rb#83
+# source://rubocop//lib/rubocop/cop/style/mutable_constant.rb#87
 class RuboCop::Cop::Style::MutableConstant < ::RuboCop::Cop::Base
   include ::RuboCop::Cop::Style::MutableConstant::ShareableConstantValue
   include ::RuboCop::Cop::FrozenStringLiteral
@@ -43438,7 +43488,7 @@ class RuboCop::Cop::Style::ParallelAssignment::AssignmentSorter
   def tsort_each_child(assignment); end
 
   # source://rubocop//lib/rubocop/cop/style/parallel_assignment.rb#145
-  def tsort_each_node(*_arg0, **_arg1, &_arg2); end
+  def tsort_each_node(*_arg0, &_arg1); end
 
   # source://rubocop//lib/rubocop/cop/style/parallel_assignment.rb#136
   def uses_var?(param0, param1); end
@@ -52722,12 +52772,13 @@ class RuboCop::Cop::VariableForce::AssignmentReference < ::Struct
   #
   # @param value [Object] the value to set the attribute node to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/variable_force.rb#65
   def node=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -52801,6 +52852,8 @@ class RuboCop::Cop::VariableForce::Branch::Base < ::Struct
   #
   # @param value [Object] the value to set the attribute child_node to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/variable_force/branch.rb#42
   def child_node=(_); end
 
   # source://rubocop//lib/rubocop/cop/variable_force/branch.rb#70
@@ -52845,6 +52898,8 @@ class RuboCop::Cop::VariableForce::Branch::Base < ::Struct
   #
   # @param value [Object] the value to set the attribute scope to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/variable_force/branch.rb#42
   def scope=(_); end
 
   private
@@ -52867,7 +52922,6 @@ class RuboCop::Cop::VariableForce::Branch::Base < ::Struct
     def inherited(subclass); end
 
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
 
@@ -53473,12 +53527,13 @@ class RuboCop::Cop::VariableForce::VariableReference < ::Struct
   #
   # @param value [Object] the value to set the attribute name to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/cop/variable_force.rb#59
   def name=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -54667,6 +54722,8 @@ class RuboCop::Formatter::HTMLFormatter::Color < ::Struct
   #
   # @param value [Object] the value to set the attribute alpha to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#13
   def alpha=(_); end
 
   # Returns the value of attribute blue
@@ -54678,6 +54735,8 @@ class RuboCop::Formatter::HTMLFormatter::Color < ::Struct
   #
   # @param value [Object] the value to set the attribute blue to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#13
   def blue=(_); end
 
   # source://rubocop//lib/rubocop/formatter/html_formatter.rb#18
@@ -54692,6 +54751,8 @@ class RuboCop::Formatter::HTMLFormatter::Color < ::Struct
   #
   # @param value [Object] the value to set the attribute green to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#13
   def green=(_); end
 
   # Returns the value of attribute red
@@ -54703,6 +54764,8 @@ class RuboCop::Formatter::HTMLFormatter::Color < ::Struct
   #
   # @param value [Object] the value to set the attribute red to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#13
   def red=(_); end
 
   # source://rubocop//lib/rubocop/formatter/html_formatter.rb#14
@@ -54711,7 +54774,6 @@ class RuboCop::Formatter::HTMLFormatter::Color < ::Struct
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -54789,6 +54851,8 @@ class RuboCop::Formatter::HTMLFormatter::FileOffenses < ::Struct
   #
   # @param value [Object] the value to set the attribute offenses to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#24
   def offenses=(_); end
 
   # Returns the value of attribute path
@@ -54800,12 +54864,13 @@ class RuboCop::Formatter::HTMLFormatter::FileOffenses < ::Struct
   #
   # @param value [Object] the value to set the attribute path to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#24
   def path=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end
@@ -54822,6 +54887,8 @@ class RuboCop::Formatter::HTMLFormatter::Summary < ::Struct
   #
   # @param value [Object] the value to set the attribute inspected_files to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#23
   def inspected_files=(_); end
 
   # Returns the value of attribute offense_count
@@ -54833,6 +54900,8 @@ class RuboCop::Formatter::HTMLFormatter::Summary < ::Struct
   #
   # @param value [Object] the value to set the attribute offense_count to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#23
   def offense_count=(_); end
 
   # Returns the value of attribute target_files
@@ -54844,12 +54913,13 @@ class RuboCop::Formatter::HTMLFormatter::Summary < ::Struct
   #
   # @param value [Object] the value to set the attribute target_files to.
   # @return [Object] the newly set value
+  #
+  # source://rubocop//lib/rubocop/formatter/html_formatter.rb#23
   def target_files=(_); end
 
   class << self
     def [](*_arg0); end
     def inspect; end
-    def keyword_init?; end
     def members; end
     def new(*_arg0); end
   end

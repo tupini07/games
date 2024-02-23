@@ -661,6 +661,35 @@ class WEBrick::HTTPAuth::DigestAuth
   end
 end
 
+# Struct containing the opaque portion of the digest authentication
+#
+# source://webrick//lib/webrick/httpauth/digestauth.rb#54
+class WEBrick::HTTPAuth::DigestAuth::OpaqueInfo < ::Struct
+  # Sets the attribute nc
+  #
+  # @param value [Object] the value to set the attribute nc to.
+  # @return [Object] the newly set value
+  #
+  # source://webrick//lib/webrick/httpauth/digestauth.rb#54
+  def nc=(_); end
+
+  # Sets the attribute nonce
+  #
+  # @param value [Object] the value to set the attribute nonce to.
+  # @return [Object] the newly set value
+  #
+  # source://webrick//lib/webrick/httpauth/digestauth.rb#54
+  def nonce=(_); end
+
+  # Sets the attribute time
+  #
+  # @param value [Object] the value to set the attribute time to.
+  # @return [Object] the newly set value
+  #
+  # source://webrick//lib/webrick/httpauth/digestauth.rb#54
+  def time=(_); end
+end
+
 # Htdigest accesses apache-compatible digest password files.  Passwords are
 # matched to a realm where they are valid.  For security, the path for a
 # digest password database should be stored outside of the paths available
@@ -1484,7 +1513,7 @@ end
 
 # An HTTP Server
 #
-# source://webrick//lib/webrick/httpserver.rb#27
+# source://webrick//lib/webrick/httpserver.rb#44
 class WEBrick::HTTPServer < ::WEBrick::GenericServer
   # Creates a new HTTP server according to +config+
   #
@@ -1959,7 +1988,7 @@ end
 #     res.status = 200
 #   end
 #
-# source://webrick//lib/webrick/httpservlet/prochandler.rb#28
+# source://webrick//lib/webrick/httpservlet/prochandler.rb#29
 class WEBrick::HTTPServlet::ProcHandler < ::WEBrick::HTTPServlet::AbstractServlet
   # @return [ProcHandler] a new instance of ProcHandler
   #
