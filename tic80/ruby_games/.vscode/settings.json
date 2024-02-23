@@ -1,0 +1,6 @@
+{
+    "rubyLsp.rubyVersionManager": "rbenv",
+    "rdbg.rubyVersionManager": "rbenv",
+    "rubyLsp.customRubyCommand": "/home/vscode/.rbenv/shims/ruby",
+    "sorbet.enabled": true
+}

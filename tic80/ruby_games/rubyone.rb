@@ -19,6 +19,7 @@ module Btn
 end
 
 module Color
+  # PICO-8 color palette
   BLACK = 0
   DARK_BLUE = 1
   DARK_PURPLE = 2
@@ -37,6 +38,46 @@ module Color
   LIGHT_PEACH = 15
 end
 
+# ----------------------------------------------------------------
+
+class Coroutine < Enumerator
+  attr_reader :status
+
+  def initialize(&block)
+    @status = :created
+    super(&block)
+  end
+
+  def resume
+    @status = :running
+    self.next
+  rescue StopIteration
+    @status = :dead
+    nil
+  end
+
+  def self.new_moving_coro(obj, target_x, target_y, speed_per_tick = 2)
+    Coroutine.new do |y|
+      loop do
+        dx = target_x - obj.x
+        dy = target_y - obj.y
+        distance = Math.sqrt(dx**2 + dy**2)
+
+        if distance < speed_per_tick
+          obj.x = target_x
+          obj.y = target_y
+          break
+        end
+
+        angle = Math.atan2(dy, dx)
+        obj.x += Math.cos(angle) * speed_per_tick
+        obj.y += Math.sin(angle) * speed_per_tick
+        y << true
+      end
+    end
+  end
+end
+
 class Map
   @@pror = 534_534
 
@@ -50,6 +91,8 @@ class Map
 end
 
 class Entity
+  attr_accessor :x, :y
+
   def initialize(x, y)
     @x = x
     @y = y
@@ -62,20 +105,34 @@ end
 
 class Player < Entity
   def update
-    @x -= 1 if btn Btn::LEFT
-    @x += 1 if btn Btn::RIGHT
-    @y -= 1 if btn Btn::UP
-    @y += 1 if btn Btn::DOWN
+    if @moving_coro.nil?
+      delta_x = -8 if btnp Btn::LEFT
+      delta_x = +8 if btnp Btn::RIGHT
+      delta_y = -8 if btnp Btn::UP
+      delta_y = +8 if btnp Btn::DOWN
+
+      # TODO don't allow diagonal movement
+
+      if delta_x || delta_y
+        @moving_coro = Coroutine.new_moving_coro(
+          self, @x + (delta_x || 0), @y + (delta_y || 0)
+        )
+      end
+    else
+      @moving_coro.resume
+      trace "End pos: (#{@x}, #{@y})" if @moving_coro.status == :dead
+      @moving_coro = nil if @moving_coro.status == :dead
+    end
   end
 
   def draw
-    spr 256, @x, @y, 14, 3, 0, 0, 2, 2
+    spr 256, @x, @y, 0
   end
 end
 
 # ----------------------------------------------------------------
 
-$player = Player.new(96, 24)
+$player = Player.new(8, 8)
 
 def potato(hehe)
   print hehe
@@ -83,19 +140,29 @@ end
 
 trace "Running with Ruby: #{RUBY_VERSION}"
 
-# fiber = Fiber.new do
-#   a = 1
-#   loop do
-#     potato 'hehe'
-#     Fiber.yield a
-#     a += 1
-#   end
-# end
+eeee = Coroutine.new do |y|
+  q = 100
+  loop do
+    y << q # yield
 
-# trace fiber.resume
-# trace fiber.resume
-# trace fiber.resume
-# trace fiber.resume
+    q += 1
+
+    break if q > 105
+  end
+
+  trace 'done'
+end
+
+trace "Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "resume: #{eeee.resume} - Status: #{eeee.status}"
+trace "Status: #{eeee.status}"
 
 def TIC
   cls Color::BLACK

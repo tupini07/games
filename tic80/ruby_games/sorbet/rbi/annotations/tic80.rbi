@@ -45,7 +45,7 @@ sig do
     period: T.nilable(Integer)
   ).returns(T::Boolean)
 end
-def btnp(id, hold, period); end
+def btnp(id, hold=nil, period=nil); end
 
 # This function clears/fills the entire screen using color. If no parameter is passed, index 0 of the palette is used.
 # The function is often called inside TIC(), clearing the screen before each frame, but this is not mandatory. If you're drawing to the entire screen each frame (for example with sprites, the map or primitive shapes) there is no need to clear the screen beforehand however it can result in annoying artifacts.
