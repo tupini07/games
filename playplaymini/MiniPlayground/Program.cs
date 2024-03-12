@@ -22,8 +22,7 @@ gsmBuilder
     .SetWindowTitle("MiniPlayground")
 
     // TODO: add any resources needed (refer to PlayPlayMini documentation for more info)
-    .AddAssets(new IAsset[]
-    {
+    .AddAssets([
         new FontMeta("Font", "Graphics/Font", 6, 8),
         new PictureMeta("Cursor", "Graphics/Cursor", true),
 
@@ -34,7 +33,7 @@ gsmBuilder
         // new SpriteSheetMeta(...)
         // new SongMeta(...)
         // new SoundEffectMeta(...)
-    })
+    ])
 
     // TODO: any additional service registration (refer to PlayPlayMini and/or Autofac documentation for more info)
     .AddServices((container, config) =>
