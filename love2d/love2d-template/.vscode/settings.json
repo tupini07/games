@@ -1,0 +1,16 @@
+{
+    "Lua.diagnostics.globals": [
+        "love",
+    ],
+    "pixelbyte.love2d.path": "/usr/bin/love",
+    "Lua.codeLens.enable": true,
+    "Lua.hint.enable": true,
+    "Lua.hint.setType": true,
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.type.inferParamType": true,
+    "lua-local.interpreter": "/usr/bin/love",
+    "pixelbyte.love2d.debug": false,
+    "luahelper.Warn.CheckLocalNoUse": true,
+    "luahelper.Warn.CheckNoUseAssign": true,
+    "luahelper.Warn.CheckSelfAssign": true
+}

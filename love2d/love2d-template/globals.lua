@@ -1,0 +1,2 @@
+RELEASE = false
+DEBUG = not RELEASE
