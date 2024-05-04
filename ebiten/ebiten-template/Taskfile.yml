@@ -1,0 +1,39 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    - task --list-all
+
+  tidy:
+    - go mod tidy
+
+  lint:
+    - go run github.com/nishanths/exhaustive/cmd/exhaustive@latest ./...
+    - go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+    - go vet ./...
+
+  release:
+    deps: [tidy, lint, test, fmt]
+    cmds:
+      - go build -ldflags "-s -w" -tags="release"
+
+  update-deps:
+    - go get -u
+    - go clean -modcache
+    - task tidy
+
+  test:
+    - go test -v ./...
+
+  run:
+    - go run .
+
+  fmt:
+    - go fmt ./...
+
+  dev:
+    - go run github.com/hajimehoshi/wasmserve@latest -http=:6254 . &
+    - sleep 3
+    - watchexec --project-origin $(pwd) --exts go curl localhost:6254/_notify
