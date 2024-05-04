@@ -11,6 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/tupini07/ebiten-template/scenes"
 	"github.com/tupini07/ebiten-template/scenes/bouncing_scene"
+	"golang.org/x/image/colornames"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/goregular"
 )
@@ -33,11 +34,7 @@ func (intro_scene *IntroScene) Init() {
 		)),
 	)
 
-	// rootContainer.AddChild(
-	// 	widget.NewText(
-	// 		widget.TextOpts.Text("Potato"),
-	// 	),
-	// )
+	rootContainer.AddChild(makeText("Potato"))
 
 	rootContainer.AddChild(makeButton("Go to bouncing scene", func(args *widget.ButtonClickedEventArgs) {
 		scenes.SetCurrent(&bouncing_scene.BouncingScene{})
@@ -63,6 +60,23 @@ func (intro_scene *IntroScene) Update() {
 
 func (intro_scene *IntroScene) Draw(screen *ebiten.Image) {
 	intro_scene.ui.Draw(screen)
+}
+
+func makeText(text string) *widget.Text {
+	ttfFont, err := truetype.Parse(goregular.TTF)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	face := truetype.NewFace(ttfFont, &truetype.Options{
+		Size:    27,
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+
+	return widget.NewText(
+		widget.TextOpts.Text(text, face, colornames.Gray),
+	)
 }
 
 func makeButton(text string, f widget.ButtonClickedHandlerFunc) *widget.Button {
