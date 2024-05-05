@@ -8,14 +8,14 @@ version 2
 :: libs/
 :: gfx/0.gfx
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA5Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOCIscmV2aXNpb249NDUyXV1sejQAbQAAAAUxAADzFHtbMF09e2JtcD1weHUA
+NS0wNSAyMDo0NTo0OSIscmV2aXNpb249NjU5XV1sejQAbQAAAAUxAADzFHtbMF09e2JtcD1weHUA
 QyAQEATw8CxmbGFncz0wLHBhbl94CADPeT0wLHpvb209OH0sMQD-------------------------
 ---------------------------------------nUG09OH19
 :: gfx/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNSAyMDo0NTo0OSJdXWx6NAAEAAAAAwAAADBuaWw=
 :: libs/gmath.lua
---[[pod_format="raw",created="2024-05-05 19:53:05",modified="2024-05-05 20:06:38",revision=54]]
+--[[pod_format="raw",created="2024-05-05 19:53:05",modified="2024-05-05 20:45:49",revision=127]]
 gmath = {}
 
 function gmath.is_point_in_rect(px, py, rx, ry, rw, rh)
@@ -23,24 +23,106 @@ function gmath.is_point_in_rect(px, py, rx, ry, rw, rh)
 	local is_y = py >= ry and py <= (ry+rh)
 	return is_x and is_y
 end
+
+function gmath.clamp(num, n_min, n_max)
+	if num < n_min then
+		return n_min
+	elseif num > n_max then
+		return n_max
+	else
+		return num
+	end
+end
 :: libs/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjUyOjU4Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNSAyMDo0NTo0OSJdXWx6NAAEAAAAAwAAADBuaWw=
 :: map/0.map
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA4Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOCIscmV2aXNpb249NDQ3XV1sejQAaAAAAFgQAADwCHt7Ym1wPXVzZXJkYXRh
+NS0wNSAyMDo0NTo0OSIscmV2aXNpb249NjU0XV1sejQAaAAAAFgQAADwCHt7Ym1wPXVzZXJkYXRh
 KCJpMTYiLDMyAwAvIjABAP--------------------vxCCIpLGhpZGRlbj1mYWxzZSxwYW5feD0w
 CADSeT0wLHRpbGVfaD0xNgoAEHcKAIB6b29tPTF9fQ==
 :: map/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNSAyMDo0NTo0OSJdXWx6NAAEAAAAAwAAADBuaWw=
+:: scenes/bouncing_scene.lua
+--[[pod_format="raw",created="2024-05-05 19:20:24",modified="2024-05-05 20:45:49",revision=545]]
+-- defines the explosion scene code
+
+function init_bouncing_scene()
+	local ss = {
+		things={}
+	}
+
+	function ss:init()
+		
+	end
+
+	function ss:update()
+		if keyp("q") then
+			for _, t in pairs(self.things) do
+				t.sx *= 1.5
+			end
+		end
+		if keyp("w") then
+			for _, t in pairs(self.things) do
+				t.sx *= 0.2
+			end
+		end
+
+		if keyp("space") then
+			local w = 10 + rnd(30)
+			local h = 10 + rnd(30)
+			local mean = 10
+			local stdev = mean / 2
+		
+			add(self.things, {
+				x = gmath.clamp(rnd(SCREEN_WIDTH), 0, SCREEN_WIDTH-w-1),
+				y = gmath.clamp(rnd(SCREEN_HEIGHT), 0, SCREEN_HEIGHT-h-1),
+				w = w,
+				h = h,
+				sx = rnd(mean) - stdev,
+				sy = rnd(mean) - stdev,
+				c_inner = rnd(4*8),
+				c_outer = rnd(4*8),
+			})
+		end
+		
+		for _, t in pairs(self.things) do
+			t.x += t.sx
+			t.y += t.sy
+			
+			if t.x + t.w >= SCREEN_WIDTH or
+			   t.x <= 0 then
+				t.sx *= -1
+			end
+			
+			if t.y + t.h >= SCREEN_HEIGHT or
+		      t.y <= 0 then
+		      t.sy *= -1
+		   end
+		end
+	end
+	
+	function ss:draw()
+		cls(0)
+		--print(#self.circles, 0,0,0)
+		
+		for _, t in pairs(self.things) do
+			rectfill	(t.x, t.y, t.x+t.w, t.y+t.h, t.c_inner)
+			rect		(t.x, t.y, t.x+t.w, t.y+t.h, t.c_outer)
+		end
+	end
+	
+	return ss
+end
 :: scenes/explosion_scene.lua
---[[pod_format="raw",created="2024-05-05 19:20:24",modified="2024-05-05 20:06:38",revision=290]]
+--[[pod_format="raw",created="2024-05-05 19:20:24",modified="2024-05-05 20:29:33",revision=442]]
 -- defines the explosion scene code
 
 function init_explosion_scene()
 	local exps = {
-	
+		current_direction = "explode",
+		circles={}
 	}
 
 	function exps:init()
@@ -48,17 +130,54 @@ function init_explosion_scene()
 	end
 
 	function exps:update()
-	
+		if keyp("q") then
+			if self.current_direction == "explode" then
+				self.current_direction = "implode"
+			else
+				self.current_direction = "explode"
+			end
+		end
+
+		if keyp("space") then
+			add(self.circles, {
+				x = rnd(SCREEN_WIDTH),
+				y = rnd(SCREEN_HEIGHT),
+				r = rnd(10 + 30),
+				s = rnd(0.4 + 30 / 60),
+				c_inner = rnd(4*8),
+				c_outer = rnd(4*8),
+			})
+		end
+		
+		for _, c in pairs(self.circles) do
+			if self.current_direction == "explode" then
+				c.r -= c.s
+				if c.r <= 0 then
+					del(self.circles, c)
+				end
+			else
+				c.r += c.s
+				if c.r >= SCREEN_WIDTH then
+					del(self.circles, c)
+				end
+			end
+		end
 	end
 	
 	function exps:draw()
-		cls(3)
+		cls(1)
+		--print(#self.circles, 0,0,0)
+		
+		for _, c in pairs(self.circles) do
+			circfill	(c.x, c.y, c.r, c.c_inner)
+			circ		(c.x, c.y, c.r, c.c_outer)
+		end
 	end
 	
 	return exps
 end
 :: scenes/intro_scene.lua
---[[pod_format="raw",created="2024-05-05 19:04:25",modified="2024-05-05 20:06:38",revision=453]]
+--[[pod_format="raw",created="2024-05-05 19:04:25",modified="2024-05-05 20:32:23",revision=467]]
 -- defines the intro scene code
 
 function init_intro_scene()
@@ -67,7 +186,9 @@ function init_intro_scene()
 			{"Explosions", function ()
 				SCENE_MANAGER:chance_scene(init_explosion_scene())
 			  end },
-			{"Potato", function () end},
+			{"Bouncing Things", function ()
+				SCENE_MANAGER:chance_scene(init_bouncing_scene())
+			  end},
 		}
 	}
 
@@ -147,7 +268,7 @@ function init_intro_scene()
 	return intros
 end
 :: scenes/scene_manager.lua
---[[pod_format="raw",created="2024-05-05 19:05:00",modified="2024-05-05 20:06:38",revision=381]]
+--[[pod_format="raw",created="2024-05-05 19:05:00",modified="2024-05-05 20:30:32",revision=386]]
 -- scene manager takes care to properly render the scene that's currently
 -- supposed to be displayed.
 
@@ -188,22 +309,22 @@ function init_scene_manager()
 end
 :: scenes/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjA0OjE2Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNSAyMDo0NTo0OSJdXWx6NAAEAAAAAwAAADBuaWw=
 :: sfx/0.sfx
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA4Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOCIscmV2aXNpb249NDQ4XV1sejQAqQAAAJIXAAD-LHB4dQADKAAABAAED0AQ
+NS0wNSAyMDo0NTo0OSIscmV2aXNpb249NjU1XV1sejQAqQAAAJIXAAD-LHB4dQADKAAABAAED0AQ
 Ag4AAaABIAKgDgAPEAAN8MoBAgMEBQYHAA--kAgJCgsPDA8NDw4PDwAP--D-AQDr-yfSARAGDyAQ
 ASABIAHwAAIQAgwQASAPISABMA9A8MMPKA--8MYP_AoP-w_AD-cPDQHwCQEQBgwwAP------vR--
 AQCsv8gPQAANQP--sPBwCgD-------------------_EUP_w8P85
 :: sfx/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNSAyMDo0NTo0OSJdXWx6NAAEAAAAAwAAADBuaWw=
 :: constants.lua
---[[pod_format="raw",created="2024-05-05 18:56:02",modified="2024-05-05 19:09:28",revision=53]]
+--[[pod_format="raw",created="2024-05-05 18:56:02",modified="2024-05-05 20:45:49",revision=237]]
 SCREEN_WIDTH = 480
 SCREEN_HEIGHT = 270
 :: main.lua
---[[pod_format="raw",created="2024-05-05 18:46:08",modified="2024-05-05 20:06:38",revision=502]]
+--[[pod_format="raw",created="2024-05-05 18:46:08",modified="2024-05-05 20:45:49",revision=725]]
 include "constants.lua"
 
 include "libs/gmath.lua"
@@ -211,11 +332,17 @@ include "libs/gmath.lua"
 include "scenes/scene_manager.lua"
 include "scenes/intro_scene.lua"
 include "scenes/explosion_scene.lua"
+include "scenes/bouncing_scene.lua"
 
 function _init()
+   poke(0x5f5c, 255) -- set the initial delay before repeating. 255 means never repeat (0 is default).
+
 	SCENE_MANAGER = init_scene_manager()
 	SCENE_MANAGER:chance_scene(
-		init_intro_scene()
+		--init_intro_scene()
+		
+		-- init_explosion_scene()	
+		init_bouncing_scene()
 	)
 end
 
@@ -228,12 +355,11 @@ function _draw()
 end
 :: .info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjAzOjIwIixtb2RpZmllZD0iMjAyNC0w
-NS0wNSAyMDowNjozOSIscnVudGltZT03LHdvcmtzcGFjZXM9e3tsb2NhdGlvbj0ibWFpbi5sdWEj
-MSIsd29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ic2NlbmVzL3NjZW5lX21hbmFnZXIubHVh
-IzMyIix3b3Jrc3BhY2VfaW5kZXg9MX0se2xvY2F0aW9uPSJzY2VuZXMvaW50cm9fc2NlbmUubHVh
-IzY1Iix3b3Jrc3BhY2VfaW5kZXg9MX0se2xvY2F0aW9uPSJzY2VuZXMvZXhwbG9zaW9uX3NjZW5l
-Lmx1YSMxNyIsd29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ibGlicy9nbWF0aC5sdWEjNCIs
-d29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0iZ2Z4LzAuZ2Z4Iix3b3Jrc3BhY2VfaW5kZXg9
-Mn0se2xvY2F0aW9uPSJtYXAvMC5tYXAiLHdvcmtzcGFjZV9pbmRleD0zfSx7bG9jYXRpb249InNm
-eC8wLnNmeCIsd29ya3NwYWNlX2luZGV4PTR9fV1dbHo0AAQAAAADAAAAMG5pbA==
+NS0wNSAyMDo0NTo0OSIscnVudGltZT03LHdvcmtzcGFjZXM9e3tsb2NhdGlvbj0ibWFpbi5sdWEj
+MTUiLHdvcmtzcGFjZV9pbmRleD0xfSx7bG9jYXRpb249ImNvbnN0YW50cy5sdWEjMiIsd29ya3Nw
+YWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ic2NlbmVzL2JvdW5jaW5nX3NjZW5lLmx1YSMyMCIsd29y
+a3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ibGlicy9nbWF0aC5sdWEjMTIiLHdvcmtzcGFjZV9p
+bmRleD0xfSx7bG9jYXRpb249ImdmeC8wLmdmeCIsd29ya3NwYWNlX2luZGV4PTJ9LHtsb2NhdGlv
+bj0ibWFwLzAubWFwIix3b3Jrc3BhY2VfaW5kZXg9M30se2xvY2F0aW9uPSJzZngvMC5zZngiLHdv
+cmtzcGFjZV9pbmRleD00fX1dXWx6NAAEAAAAAwAAADBuaWw=
 :: [eoc]
