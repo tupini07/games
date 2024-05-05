@@ -1,0 +1,239 @@
+picotron cartridge // www.picotron.net
+version 2
+
+:: gfx/
+:: map/
+:: sfx/
+:: scenes/
+:: libs/
+:: gfx/0.gfx
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA5Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOCIscmV2aXNpb249NDUyXV1sejQAbQAAAAUxAADzFHtbMF09e2JtcD1weHUA
+QyAQEATw8CxmbGFncz0wLHBhbl94CADPeT0wLHpvb209OH0sMQD-------------------------
+---------------------------------------nUG09OH19
+:: gfx/.info.pod
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+:: libs/gmath.lua
+--[[pod_format="raw",created="2024-05-05 19:53:05",modified="2024-05-05 20:06:38",revision=54]]
+gmath = {}
+
+function gmath.is_point_in_rect(px, py, rx, ry, rw, rh)
+	local is_x = px >= rx and px <= (rx+rw)
+	local is_y = py >= ry and py <= (ry+rh)
+	return is_x and is_y
+end
+:: libs/.info.pod
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjUyOjU4Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+:: map/0.map
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA4Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOCIscmV2aXNpb249NDQ3XV1sejQAaAAAAFgQAADwCHt7Ym1wPXVzZXJkYXRh
+KCJpMTYiLDMyAwAvIjABAP--------------------vxCCIpLGhpZGRlbj1mYWxzZSxwYW5feD0w
+CADSeT0wLHRpbGVfaD0xNgoAEHcKAIB6b29tPTF9fQ==
+:: map/.info.pod
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+:: scenes/explosion_scene.lua
+--[[pod_format="raw",created="2024-05-05 19:20:24",modified="2024-05-05 20:06:38",revision=290]]
+-- defines the explosion scene code
+
+function init_explosion_scene()
+	local exps = {
+	
+	}
+
+	function exps:init()
+		
+	end
+
+	function exps:update()
+	
+	end
+	
+	function exps:draw()
+		cls(3)
+	end
+	
+	return exps
+end
+:: scenes/intro_scene.lua
+--[[pod_format="raw",created="2024-05-05 19:04:25",modified="2024-05-05 20:06:38",revision=453]]
+-- defines the intro scene code
+
+function init_intro_scene()
+	local intros = {
+		buttons={
+			{"Explosions", function ()
+				SCENE_MANAGER:chance_scene(init_explosion_scene())
+			  end },
+			{"Potato", function () end},
+		}
+	}
+
+	function intros:init()
+		self.player = {
+			x=SCREEN_WIDTH/2,
+			y=SCREEN_HEIGHT/2,
+		}
+		
+		-- actually build button definitions
+		local next_btn_x, next_btn_y = 10, 20
+		local btn_height = 14
+		local btn_spacing = 2
+		local padding = 2
+		self.hydrated_btns = {}
+		for _, button_def in pairs(self.buttons) do
+			local btn_name, btn_fn = unpack(button_def)
+		   local curr = {
+		   		x=next_btn_x, y=next_btn_y,
+		   		text=btn_name, fn=btn_fn,
+		   		padding=padding,
+		   		height=btn_height,
+		   		width=nil, -- we set this in the draw later
+		   }
+		   
+		  	next_btn_y += btn_height + btn_spacing + (padding * 2)
+		   
+		  	add(self.hydrated_btns, curr)
+		end
+	end
+
+	function intros:update()
+		-- mouse_b is a bitfield: 0x1 means left mouse button, 0x2 right mouse button
+		local mx, my, mouse_b = mouse()
+		self.player.x = mx
+		self.player.y = my
+		
+		if mouse_b == 1 then
+			-- see if we're clicking one of the buttons
+			for _, bt in pairs(self.hydrated_btns) do
+				local btn_x 			= bt.x
+				local btn_y 			= bt.y	
+				local btn_width 		= bt.width
+				local btn_height 	= bt.height
+				
+				if gmath.is_point_in_rect(mx, my, btn_x, btn_y, btn_width, btn_height) then
+					bt:fn()
+					break
+				end
+			end
+		end
+	end
+	
+	function intros:draw()
+		cls(0)
+		print("Welcome!", 10, 5, 3)
+		
+		-- Actually draw buttons
+		for _, bt in pairs(self.hydrated_btns) do
+			local pd = bt.padding
+			if bt.width == nil then
+				local tw = print(bt.text, 0, -20)
+				local bh = bt.height
+				bt.width = bt.x+tw+pd*2
+				bt.height = bt.y+bh
+			end
+			
+			local btn_width = bt.width
+			local btn_height = bt.height
+			
+			rectfill	(bt.x, bt.y, btn_width, btn_height, 4) 
+			rect		(bt.x, bt.y, btn_width, btn_height, 1)
+			print		(bt.text, bt.x+pd*1.5, bt.y+pd*1.5)
+		end
+	end
+	
+	return intros
+end
+:: scenes/scene_manager.lua
+--[[pod_format="raw",created="2024-05-05 19:05:00",modified="2024-05-05 20:06:38",revision=381]]
+-- scene manager takes care to properly render the scene that's currently
+-- supposed to be displayed.
+
+-- builds and returns a new scene manager
+function init_scene_manager()
+	local scene_manager = {
+		current_scene = nil
+	}
+	
+	-- current scene invoke callbacks
+	function scene_manager:chance_scene(new_scene)
+		assert(new_scene ~= nil, "New scene can't be nil!")
+		assert(new_scene["init"] ~= nil, "New scene does not have init method!")
+		assert(new_scene["draw"] ~= nil, "New scene does not have draw method!")
+		assert(new_scene["update"] ~= nil, "New scene does not have update method!")
+		
+		if self.current_scene ~= nil and self.current_scene["deinit"] ~= nil then
+			self.current_scene:deinit()
+		end
+		
+		self.current_scene = new_scene
+		self.current_scene:init()
+	end
+
+	function scene_manager:update()
+		if self.current_scene ~= nil then
+			self.current_scene:update()
+		end
+	end
+	
+	function scene_manager:draw()
+		if self.current_scene ~= nil then
+			self.current_scene:draw()
+		end
+	end
+	
+	return scene_manager
+end
+:: scenes/.info.pod
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjA0OjE2Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+:: sfx/0.sfx
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA4Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOCIscmV2aXNpb249NDQ4XV1sejQAqQAAAJIXAAD-LHB4dQADKAAABAAED0AQ
+Ag4AAaABIAKgDgAPEAAN8MoBAgMEBQYHAA--kAgJCgsPDA8NDw4PDwAP--D-AQDr-yfSARAGDyAQ
+ASABIAHwAAIQAgwQASAPISABMA9A8MMPKA--8MYP_AoP-w_AD-cPDQHwCQEQBgwwAP------vR--
+AQCsv8gPQAANQP--sPBwCgD-------------------_EUP_w8P85
+:: sfx/.info.pod
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOSJdXWx6NAAEAAAAAwAAADBuaWw=
+:: constants.lua
+--[[pod_format="raw",created="2024-05-05 18:56:02",modified="2024-05-05 19:09:28",revision=53]]
+SCREEN_WIDTH = 480
+SCREEN_HEIGHT = 270
+:: main.lua
+--[[pod_format="raw",created="2024-05-05 18:46:08",modified="2024-05-05 20:06:38",revision=502]]
+include "constants.lua"
+
+include "libs/gmath.lua"
+
+include "scenes/scene_manager.lua"
+include "scenes/intro_scene.lua"
+include "scenes/explosion_scene.lua"
+
+function _init()
+	SCENE_MANAGER = init_scene_manager()
+	SCENE_MANAGER:chance_scene(
+		init_intro_scene()
+	)
+end
+
+function _update()
+	SCENE_MANAGER:update()
+end
+
+function _draw() 
+	SCENE_MANAGER:draw()
+end
+:: .info.pod
+b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjAzOjIwIixtb2RpZmllZD0iMjAyNC0w
+NS0wNSAyMDowNjozOSIscnVudGltZT03LHdvcmtzcGFjZXM9e3tsb2NhdGlvbj0ibWFpbi5sdWEj
+MSIsd29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ic2NlbmVzL3NjZW5lX21hbmFnZXIubHVh
+IzMyIix3b3Jrc3BhY2VfaW5kZXg9MX0se2xvY2F0aW9uPSJzY2VuZXMvaW50cm9fc2NlbmUubHVh
+IzY1Iix3b3Jrc3BhY2VfaW5kZXg9MX0se2xvY2F0aW9uPSJzY2VuZXMvZXhwbG9zaW9uX3NjZW5l
+Lmx1YSMxNyIsd29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ibGlicy9nbWF0aC5sdWEjNCIs
+d29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0iZ2Z4LzAuZ2Z4Iix3b3Jrc3BhY2VfaW5kZXg9
+Mn0se2xvY2F0aW9uPSJtYXAvMC5tYXAiLHdvcmtzcGFjZV9pbmRleD0zfSx7bG9jYXRpb249InNm
+eC8wLnNmeCIsd29ya3NwYWNlX2luZGV4PTR9fV1dbHo0AAQAAAADAAAAMG5pbA==
+:: [eoc]
