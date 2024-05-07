@@ -8,12 +8,12 @@ version 2
 :: libs/
 :: gfx/0.gfx
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA5Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCIscmV2aXNpb249MTA4MV1dbHo0AG0AAAAFMQAA8xR7WzBdPXtibXA9cHh1
+NS0wNyAwMjoyNDo1OCIscmV2aXNpb249MTE5NF1dbHo0AG0AAAAFMQAA8xR7WzBdPXtibXA9cHh1
 AEMgEBAE8PAsZmxhZ3M9MCxwYW5feAgAz3k9MCx6b29tPTh9LDEA------------------------
 ----------------------------------------51BtPTh9fQ==
 :: gfx/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNyAwMjoyNDo1OCJdXWx6NAAEAAAAAwAAADBuaWw=
 :: libs/bump.lua
 b64$LS1bW3BvZF9mb3JtYXQ9InJhdyIsY3JlYXRlZD0iMjAyNC0wNS0wNiAyMzozMzoxMCIsbW9k
 aWZpZWQ9IjIwMjQtMDUtMDYgMjM6Mzk6MzYiLHJldmlzaW9uPTE1XV0KLS0tIFRoaXMgZnVuY3Rp
@@ -490,7 +490,10 @@ PSBjcm9zcywKICAgICAgICBzbGlkZSAgPSBzbGlkZSwKICAgICAgICBib3VuY2UgPSBib3VuY2UK
 ICAgIH0KCiAgICByZXR1cm4gYnVtcAplbmQKCmJ1bXAgPSBfX21ha2VfYnVtcCgpCl9fbWFrZV9i
 dW1wID0gbmls
 :: libs/debug.lua
---[[pod_format="raw",created="2024-05-06 21:26:16",modified="2024-05-06 23:56:08",revision=311]]
+--[[pod_format="raw",created="2024-05-06 21:26:16",modified="2024-05-07 02:24:58",revision=428]]
+function todo(msg)
+	error("TODO: "..msg)
+end	
 
 function assert_table_contains_all_fields(tbl, ...)
     local fields = {...}
@@ -522,8 +525,13 @@ function assert_is_rect(tbl)
 	assert(type(tbl) == "table", "Expected 'rect' to be a table but got '"..type(tbl).."'!")
 	assert_table_contains_all_fields(tbl, "x", "y", "w", "h")
 end
+
+function assert_is_circle(tbl)
+	assert(type(tbl) == "table", "Expected 'circle' to be a table but got '"..type(tbl).."'!")
+	assert_table_contains_all_fields(tbl, "x", "y", "r")
+end
 :: libs/gmath.lua
---[[pod_format="raw",created="2024-05-05 19:53:05",modified="2024-05-06 21:23:57",revision=259]]
+--[[pod_format="raw",created="2024-05-05 19:53:05",modified="2024-05-07 02:24:58",revision=293]]
 gmath = {}
 
 function gmath.clamp(num, n_min, n_max)
@@ -535,8 +543,12 @@ function gmath.clamp(num, n_min, n_max)
 		return num
 	end
 end
+
+function gmath.distance(x1, y1, x2, y2)
+  return sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+end
 :: libs/physics.lua
---[[pod_format="raw",created="2024-05-06 21:22:36",modified="2024-05-06 23:56:08",revision=379]]
+--[[pod_format="raw",created="2024-05-06 21:22:36",modified="2024-05-07 02:24:58",revision=503]]
 physics = {}
 
 function physics.is_point_in_rect(px, py, rx1, ry1, rx2, ry2)
@@ -600,6 +612,44 @@ function physics.get_rect_collision_direction(rect1, rect2)
    return angle
 end
 
+
+function physics.do_circles_overlap(x1,y1,r1, x2,y2,r2)
+	if type(x1) == "table" then
+		-- if x1 is a table then assume y2 is as well and extract the proper fields
+		assert_is_circle(x1)
+		assert_is_circle(y1)
+		
+		x2, y2, r2 = y1.x, y1.y, y1.r
+		x1, y1, r1 = x1.x, x1.y, x1.r
+	end
+
+	local distance = gmath.distance(x1,y1, x2,y2)
+	return distance - (r1+r2) < 0 
+end
+
+
+function physics.get_circ_collision_direction(circ1, circ2)
+	-- no colision for the same entity
+	if circ1 == circ2 then return nil end 
+	
+	local are_colliding = physics.do_circles_overlap(circ1, circ2)
+	
+	if not are_colliding then return nil end
+	
+	-- otherwise, get the relative direction to center
+   
+   -- Calculate the angle from the center of rect1 to the center of rect2
+   local angle = atan2(circ2.y - circ1.y, circ2.x - circ1.x) * 180 / math.pi
+   
+ 	-- and resolve the colision
+ 	local actualCirc1Pos = {} 
+ 	local actualCirc2Pos = {} 
+ 	todo("need to implement circle colision resolution!")
+ 
+   return angle
+end
+
+
 function physics.angle_to_direction(angle)
     -- Convert angle from radians to degrees
     angle = angle * 180 / math.pi
@@ -644,17 +694,17 @@ function table.sort(t)
 end
 :: libs/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjUyOjU4Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNyAwMjoyNDo1OCJdXWx6NAAEAAAAAwAAADBuaWw=
 :: map/0.map
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA4Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCIscmV2aXNpb249MTA3NV1dbHo0AGgAAABYEAAA8Ah7e2JtcD11c2VyZGF0
+NS0wNyAwMjoyNDo1OCIscmV2aXNpb249MTE4OF1dbHo0AGgAAABYEAAA8Ah7e2JtcD11c2VyZGF0
 YSgiaTE2IiwzMgMALyIwAQD--------------------78QgiKSxoaWRkZW49ZmFsc2UscGFuX3g9
 MAgA0nk9MCx0aWxlX2g9MTYKABB3CgCAem9vbT0xfX0=
 :: map/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNyAwMjoyNDo1OCJdXWx6NAAEAAAAAwAAADBuaWw=
 :: scenes/bouncing_scene.lua
---[[pod_format="raw",created="2024-05-05 19:20:24",modified="2024-05-06 23:56:08",revision=1019]]
+--[[pod_format="raw",created="2024-05-05 19:20:24",modified="2024-05-07 02:24:58",revision=1142]]
 -- defines the explosion scene code
 
 function init_bouncing_scene()
@@ -679,16 +729,14 @@ function init_bouncing_scene()
 		end
 
 		if keyp("space") then
-			local w = 10 + rnd(30)
-			local h = 10 + rnd(30)
+			local r = 10 + rnd(30)
 			local mean = 10
 			local stdev = mean / 2
 		
 			add(self.things, {
-				x = gmath.clamp(rnd(SCREEN_WIDTH), 0, SCREEN_WIDTH-w-1),
-				y = gmath.clamp(rnd(SCREEN_HEIGHT), 0, SCREEN_HEIGHT-h-1),
-				w = w,
-				h = h,
+				x = gmath.clamp(rnd(SCREEN_WIDTH), 0, SCREEN_WIDTH-r-1),
+				y = gmath.clamp(rnd(SCREEN_HEIGHT), 0, SCREEN_HEIGHT-r-1),
+				r = r,
 				sx = rnd(mean) - stdev,
 				sy = rnd(mean) - stdev,
 				c_inner = rnd(4*8),
@@ -700,21 +748,30 @@ function init_bouncing_scene()
 			t.x += t.sx
 			t.y += t.sy
 			
-			if t.x + t.w >= SCREEN_WIDTH or
-			   t.x <= 0 then
+			if t.x + t.r >= SCREEN_WIDTH or
+			   t.x - t.r <= 0 then
 				t.sx *= -1
 			end
 			
-			if t.y + t.h >= SCREEN_HEIGHT or
-		      t.y <= 0 then
+			if t.y + t.r >= SCREEN_HEIGHT or
+		      t.y - t.r <= 0 then
 		      t.sy *= -1
 		   end
 		   
 			-- collide
 			for _, other in ipairs(self.things) do
-				local collision_angle = physics.get_rect_collision_direction(t, other)
+				local collision_angle = physics.get_circ_collision_direction(t, other)
 				if collision_angle ~= nil then
 					local collision = physics.angle_to_direction(collision_angle)
+					
+					todo(-[[
+						instead of doing a simplistic directional flip, we should
+						use the angle information we already have and just move (both)
+						circles in that direction (perhaps there's a way to add it to
+						the current velocity so that we only bounce on the normal of the
+						colision?
+					]])
+					
 					if collision == "top" or collision == "bottom" then 
 						t.sy *= -1 
 					elseif collision == "left" or collision == "right" then
@@ -730,8 +787,8 @@ function init_bouncing_scene()
 		--print(#self.circles, 0,0,0)
 		
 		for _, t in pairs(self.things) do
-			rectfill	(t.x, t.y, t.x+t.w, t.y+t.h, t.c_inner)
-			rect		(t.x, t.y, t.x+t.w, t.y+t.h, t.c_outer)
+			circfill	(t.x, t.y, t.r, t.c_inner)
+			circ		(t.x, t.y, t.r, t.c_outer)
 		end
 	end
 	
@@ -802,7 +859,7 @@ function init_explosion_scene()
 	return exps
 end
 :: scenes/intro_scene.lua
---[[pod_format="raw",created="2024-05-05 19:04:25",modified="2024-05-06 22:02:40",revision=685]]
+--[[pod_format="raw",created="2024-05-05 19:04:25",modified="2024-05-07 02:12:17",revision=753]]
 -- defines the intro scene code
 
 function init_intro_scene()
@@ -813,6 +870,9 @@ function init_intro_scene()
 			  end },
 			{"Bouncing Things", function ()
 				SCENE_MANAGER:chance_scene(init_bouncing_scene())
+			  end},
+			{"Orbits", function ()
+				todo("Orbits scene not implemented yet")
 			  end},
 		}
 	}
@@ -871,16 +931,14 @@ function init_intro_scene()
 			local pd = bt.padding
 			if bt.w == nil then
 				local tw = print(bt.text, 0, -20)
-				local bh = bt.h
-				bt.w = bt.x+tw+pd*2
-				bt.h = bt.y+bh
+				bt.w = tw+pd*2
 			end
 			
 			local btn_width = bt.w
 			local btn_height = bt.h
 			
-			rectfill	(bt.x, bt.y, btn_width, btn_height, 4) 
-			rect		(bt.x, bt.y, btn_width, btn_height, 1)
+			rectfill	(bt.x, bt.y, bt.x+btn_width, bt.y+btn_height, 4) 
+			rect		(bt.x, bt.y, bt.x+btn_width, bt.y+btn_height, 1)
 			print		(bt.text, bt.x+pd*1.5, bt.y+pd*1.5)
 		end
 	end
@@ -929,22 +987,22 @@ function init_scene_manager()
 end
 :: scenes/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjA0OjE2Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNyAwMjoyNDo1OCJdXWx6NAAEAAAAAwAAADBuaWw=
 :: sfx/0.sfx
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA4Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCIscmV2aXNpb249MTA3Nl1dbHo0AKkAAACSFwAA-yxweHUAAygAAAQABA9A
+NS0wNyAwMjoyNDo1OCIscmV2aXNpb249MTE4OV1dbHo0AKkAAACSFwAA-yxweHUAAygAAAQABA9A
 EAIOAAGgASACoA4ADxAADfDKAQIDBAUGBwAP-5AICQoLDwwPDQ8ODw8AD--w-wEA6-8n0gEQBg8g
 EAEgASAB8AACEAIMEAEgDyEgATAPQPDDDygP--DGD-gKD-8PgA-3Dw0B8AkBEAYMMAD------70f
 -wEArL-ID0AADUD--7DwcAoA--------------------hFD-sPD-OQ==
 :: sfx/.info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE4OjQ2OjA3Iixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCJdXWx6NAAEAAAAAwAAADBuaWw=
+NS0wNyAwMjoyNDo1OCJdXWx6NAAEAAAAAwAAADBuaWw=
 :: constants.lua
---[[pod_format="raw",created="2024-05-05 18:56:02",modified="2024-05-06 23:56:08",revision=661]]
+--[[pod_format="raw",created="2024-05-05 18:56:02",modified="2024-05-07 02:24:58",revision=775]]
 SCREEN_WIDTH = 480
 SCREEN_HEIGHT = 270
 :: main.lua
---[[pod_format="raw",created="2024-05-05 18:46:08",modified="2024-05-06 23:56:08",revision=1175]]
+--[[pod_format="raw",created="2024-05-05 18:46:08",modified="2024-05-07 02:24:58",revision=1293]]
 include "constants.lua"
 
 include "libs/debug.lua"
@@ -961,10 +1019,10 @@ function _init()
 
 	SCENE_MANAGER = init_scene_manager()
 	SCENE_MANAGER:chance_scene(
-		--init_intro_scene()
+		init_intro_scene()
 		
 		--init_explosion_scene()	
-		init_bouncing_scene()
+		--init_bouncing_scene()
 	)
 end
 
@@ -976,12 +1034,13 @@ function _draw()	SCENE_MANAGER:draw()
 end
 :: .info.pod
 b64$LS1bW3BvZCxjcmVhdGVkPSIyMDI0LTA1LTA1IDE5OjAzOjIwIixtb2RpZmllZD0iMjAyNC0w
-NS0wNiAyMzo1NjowOCIscnVudGltZT03LHdvcmtzcGFjZXM9e3tsb2NhdGlvbj0ibWFpbi5sdWEj
-NSIsd29ya3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0iY29uc3RhbnRzLmx1YSMyIix3b3Jrc3Bh
-Y2VfaW5kZXg9MX0se2xvY2F0aW9uPSJzY2VuZXMvYm91bmNpbmdfc2NlbmUubHVhIzU4Iix3b3Jr
-c3BhY2VfaW5kZXg9MX0se2xvY2F0aW9uPSJsaWJzL3BoeXNpY3MubHVhIzI1Iix3b3Jrc3BhY2Vf
-aW5kZXg9MX0se2xvY2F0aW9uPSJsaWJzL2RlYnVnLmx1YSMxIix3b3Jrc3BhY2VfaW5kZXg9MX0s
-e2xvY2F0aW9uPSJnZngvMC5nZngiLHdvcmtzcGFjZV9pbmRleD0yfSx7bG9jYXRpb249Im1hcC8w
-Lm1hcCIsd29ya3NwYWNlX2luZGV4PTN9LHtsb2NhdGlvbj0ic2Z4LzAuc2Z4Iix3b3Jrc3BhY2Vf
-aW5kZXg9NH19XV1sejQABAAAAAMAAAAwbmls
+NS0wNyAwMjoyNDo1OCIscnVudGltZT03LHdvcmtzcGFjZXM9e3tsb2NhdGlvbj0ibWFpbi5sdWEj
+MTciLHdvcmtzcGFjZV9pbmRleD0xfSx7bG9jYXRpb249ImNvbnN0YW50cy5sdWEjMiIsd29ya3Nw
+YWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ic2NlbmVzL2JvdW5jaW5nX3NjZW5lLmx1YSM1OCIsd29y
+a3NwYWNlX2luZGV4PTF9LHtsb2NhdGlvbj0ibGlicy9waHlzaWNzLmx1YSM5NiIsd29ya3NwYWNl
+X2luZGV4PTF9LHtsb2NhdGlvbj0ibGlicy9kZWJ1Zy5sdWEjMzYiLHdvcmtzcGFjZV9pbmRleD0x
+fSx7bG9jYXRpb249ImxpYnMvZ21hdGgubHVhIzE0Iix3b3Jrc3BhY2VfaW5kZXg9MX0se2xvY2F0
+aW9uPSJnZngvMC5nZngiLHdvcmtzcGFjZV9pbmRleD0yfSx7bG9jYXRpb249Im1hcC8wLm1hcCIs
+d29ya3NwYWNlX2luZGV4PTN9LHtsb2NhdGlvbj0ic2Z4LzAuc2Z4Iix3b3Jrc3BhY2VfaW5kZXg9
+NH19XV1sejQABAAAAAMAAAAwbmls
 :: [eoc]
