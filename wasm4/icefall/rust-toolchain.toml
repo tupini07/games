@@ -1,0 +1,5 @@
+# Pin a specific nightly: the cart relies on unstable features (e.g. `int_roundings`).
+# rustup auto-installs this toolchain and target when building in this directory.
+[toolchain]
+channel = "nightly-2025-03-22"
+targets = ["wasm32-unknown-unknown"]

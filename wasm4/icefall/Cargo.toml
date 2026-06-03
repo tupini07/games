@@ -16,9 +16,11 @@ w4utils = {path = "./w4utils"}
 png2wasm4src = "0.1.0"
 
 [profile.release]
-lto = true
-opt-level = "z"
-# strip = "symbols"
+lto = true            # link-time optimization across all crates
+opt-level = "z"       # optimize aggressively for size
+strip = true          # drop symbols (the cart imports its own memory; debug info isn't needed)
+codegen-units = 1     # better optimization at the cost of slower compiles
+panic = "abort"       # no unwinding machinery -> smaller binary
 
 [features]
 # use `--no-default-features` or comment out next line to disable allocator
